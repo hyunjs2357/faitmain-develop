@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/customer_layout}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+<head>	
+
+	<!-- Style 
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/style.css}">-->
+     <!--  고유 스크립트 추가 -->
+    <script type="text/javascript"
+    		th:src = "@{/customerDesign/noticeListCss/js/listPage.js}"></script>
+	<th:block layout:fragment="title">
+	
+		<title>faitmain</title>
+	</th:block>
+	
+	<style>
+	
+	#out {
+	 	width: 100%;
+		padding: 20px;
+		/*margin: 15px;*/
+	 }
+	 
+	#in {
+	 	display: inline-block;	 	
+	 	/*height: 100px;*/
+	 }
+	 
+	 .table{
+		border: 1px solid #efefef;
+	}
+	
+	th{
+		border-right: 1px solid #efefef;
+		text-align: center;
+	}
+	
+	th, td{
+		padding: 10px 0px;
+	}
+	 
+	.btn_wrap > a{
+		margin: 10px;
+		color: black !important;
+	} 
+	
+	.btn_wrap > a:hover{
+		color: white !important;
+	} 
+	
+	</style>
+
+</head>
+
+<body>
+	<th:block layout:fragment="content">
+		<div id="out" class="container" th:action="@{/customer/detailBoard}">
+	
+			<div id="in" class="page-header p-b-30">
+				<h2 class="mtext-112 cl2">공지사항</h2>
+			</div>
+	     	   
+   				 <input type="hidden" name="boardNumber" th:value="${customer.boardNumber}">
+	   			 <input type="hidden" name="boardType" value='N'/>
+	   			 
+	   			 <table class="table">
+	   			 <tbody>
+					<tr >
+						 <th:block   sec:authorize="isAuthenticated()" >
+	       				 	<div class="btn_wrap text-center" sec:authorize="hasRole('ROLE_admin')">
+								<th scope="row">글 번호</th>
+									<td th:text="${customer.boardNumber}"></td>
+								</div>
+						</th:block>
+					</tr>
+					<tr>
+						<th scope="row">작성자</th>
+							<td th:text="${customer.customerId.id}"></td>
+						<th scope="row" style="border-left: 1px solid #efefef;">작성일</th>
+							<td th:text="${#dates.format( customer.boardRegDate, 'yyyy-MM-dd' )}"></td>
+					</tr>
+					<tr>
+						<th scope="row">제목</th>
+						<td colspan="3">
+							<th:block th:text="${customer.boardTitle } " style="resize:none; border:none;"></th:block>
+						</td>
+						
+					</tr>
+					<tr>
+						<td colspan="6"  class="view_text">
+							<textarea title="내용" id="contents" name="boardContent"  class="form-control input-sm"  style="height: 500px; resize:none; border:none; min-height:350px; "
+								th:text="${customer.boardContent }" readonly="readonly"  ></textarea>
+							<span class="help-block"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+	       			
+				<div class="btn_wrap flex-c-m flex-w w-full p-t-38" >
+					<a sec:authorize="hasRole('admin')" class="btn flex-c-m stext-101 size-105 bg0 bor17 hov-btn1 p-lr-10 trans-04 m-b-10" id="delete_btn">삭제</a>						
+					<a class="btn flex-c-m stext-101 size-105 bg0 bor17 hov-btn1 p-lr-10 trans-04 m-b-10" id="list_btn">목록</a>										
+					<a sec:authorize="hasRole('admin')" class="btn flex-c-m stext-101 size-105 bg0 bor17 hov-btn1 p-lr-10 trans-04 m-b-10" id="modify_btn">수정</a>	
+				</div>
+				<form id="infoForm"	th:action="@{/customer/updateBoard}" method="get">
+					<input type="hidden" id="boardNumber" name="boardNumber" th:value="${customer.boardNumber}"/>
+					<input type="hidden" id="boardType" name="boardType" value="N"/>
+					<!-- <input type="hidden" id="pageNum" name="pageNum" th:value="${pageMaker.paging.pageNum}"/>
+					<input type="hidden" name = "amount" th:value = "${pageMaker.paging.amount}" />
+					<input type="hidden" name = "keyword" th:value = "${pageMaker.paging.keyword}" > -->
+				</form>
+		
+	</div>
+	<!-- <th:block layout:fragment="script"> -->
+	
+	</th:block> 
+</body>
+</html> 

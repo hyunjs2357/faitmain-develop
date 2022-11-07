@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+	<!-- SideBar -->
+	<th:block th:fragment="sidebarCustomer">
+		
+		<div class="side-menu">
+			<!-- 고객센터 사이드 바 -->
+			<div class="p-t-20">
+			
+				<h4 class="mtext-103 cl2 p-b-33" style="font-weight: bold;">
+					고객센터
+				</h4>
+
+				<ul class="list-group list-group-flush">
+											
+					<li>
+						<a th:href="@{/customer/listBoard?boardType=N}" class="dis-block stext-115 cl6 hov-cl1 trans-04 p-tb-8 p-lr-4">
+							공지사항
+						</a>
+					</li>
+
+					<li>
+						<a th:href="@{/customer/listBoard?boardType=F&FAQCategoryCode=00}" class="dis-block stext-115 cl6 hov-cl1 trans-04 p-tb-8 p-lr-4">
+							자주 묻는 질문
+						</a>
+					</li>
+
+					<li>
+						<a th:href="@{/customer/detailGuide?boardType=L}" class="dis-block stext-115 cl6 hov-cl1 trans-04 p-tb-8 p-lr-4">
+							라이브 가이드
+						</a>
+					</li>
+					
+				</ul>
+				
+			</div>
+			
+		</div>
+		
+	</th:block>
+	
+</html>

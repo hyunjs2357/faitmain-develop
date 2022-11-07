@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html layout:decorate = "~{layout/default_layout}"
+      xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+>
+
+<head>
+    <meta charset = "UTF-8">
+    <title>주문페이지</title>
+    <!--  고유 CSS 추가 -->
+    <STYLE>
+        .content_main {
+            min-height: 700px;
+            padding-right: 350px;
+            position: relative;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        /* 사용자 정보  */
+        .buyer_table {
+            width: 100%;
+            border-spacing: 0;
+            border-top: 2px solid #363636;
+            border-bottom: 1px solid #b6b6b6;
+        }
+
+        .member_info_div td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        /* 사용자 정보  */
+        .buyer_table {
+            width: 100%;
+            border-spacing: 0;
+            border-top: 2px solid #363636;
+            border-bottom: 1px solid #b6b6b6;
+        }
+
+        .member_info_div td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        /* 사용자 주소 정보 */
+        .addressInfo_div {
+            margin-top: 30px;
+        }
+
+        .addressInfo_input_div_wrap {
+            /**/
+            padding-bottom: 20px;
+            border-bottom: 1px solid #efefef;
+            /*height: 225px;*/
+        }
+
+        .address_btn {
+            background-color: #f3f3f3;
+            color: #555;
+            float: left;
+            border: none;
+            border: 1px solid #cfcfcf;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            font-size: 14px;
+            width: 50%;
+        }
+
+        .address_btn:hover {
+            background-color: white;
+            color: black;
+        }
+
+        .addressInfo_button_div::after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+
+        .addressInfo_input_div {
+            padding: 12px;
+            text-align: left;
+            display: none;
+            line-height: 40px;
+        }
+
+        .addressInfo_input_div th {
+            /**/border-color: transparent;
+            background-color: transparent;
+        }
+
+        .addressInfo_input_div th {
+            padding: 12px 5px 12px 20px;
+            vertical-align: top;
+        }
+
+        .addressInfo_input_div td {
+            padding: 8px 12px;
+        }
+
+        .addressInfo_input_div_2 input {
+			border-bottom: 1px solid #dfdfdf;
+			
+            /*padding: 6px 5px;*/
+        }
+
+        .address_search_btn {
+            vertical-align: middle;
+            display: inline-block;
+            border: 1px solid #aaa;
+            width: 90px;
+            text-align: center;
+            height: 30px;
+            line-height: 30px;
+            color: #555;
+            cursor: pointer;
+            margin: 30px 0px 20px 80px;
+        }
+
+        .orderGoods_div {
+            margin: 50px 0px;
+        }
+
+        .goods_kind_div {
+            font-size: 18px;
+            line-height: 35px;
+           /* font-weight: bold;
+            text-align: center;*/
+        }
+
+        .goods_subject_table {
+            font-size: 14px;
+            line-height: 20px;
+            width: 100%;
+            text-align: center;
+
+        }
+
+        .goods_subject_table th {
+            text-align: center;
+            color: #555;
+            border-bottom: 1px solid #cfcfcf;
+            border-top: 2px solid #030302;
+            background: #f3f3f3;
+            padding: 10px 0;
+        }
+
+        .goods_table {
+            font-size: 14px;
+            line-height: 20px;
+            border-bottom: 1px solid #e7e7e7;
+            text-align: center;
+        }
+
+        .goods_table tr {
+            height: 110px;
+        }
+
+        .goods_table_price_td {
+            text-align: center;
+        }
+
+        /* 포인트 영역 */
+        .point_div {
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+
+        .point_div_subject {
+           font-size: 18px;
+            /* line-height: 35px;
+            font-weight: bold;*/
+        }
+
+        .point_table {
+            border-color: #ddd;
+            border-spacing: 0;
+            border-top: 1px solid #363636;
+            border-bottom: 1px solid #b6b6b6;
+            padding: 20px 0px;
+        }
+
+        .point_table th {
+            border-color: #ddd;
+            vertical-align: center;
+            text-align: center;
+            color: #333333;
+            background: #fbfbfb;
+            text-indent: 0;
+            padding: 20px;
+            font-size: 15px;
+            line-height: 20px;
+        }
+
+        .point_table td {
+            border-color: #ddd;
+            text-align: left;
+            color: #333333;
+            padding: 20px;
+        }
+
+        .order_point_input_btn {
+            vertical-align: middle;
+            display: inline-block;
+            border: 1px solid #aaa;
+            width: 60px;
+            text-align: center;
+            height: 20px;
+            line-height: 20px;
+            color: #555;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* 주문 종합 정보 */
+        .total_info_div {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            border: 1px solid #333;
+            border-top-width: 2px;
+
+        }
+
+        .total_info_price_div {
+            width: 90%;
+            margin: auto;
+            position: relative;
+        }
+
+        .total_info_div ul {
+            list-style: none;
+        }
+
+        .total_info_div li {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .price_span_label {
+            float: left;
+        }
+
+        .price_total_li {
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+
+        .strong_red {
+            color: red;
+        }
+
+        .total_price_red {
+            font-size: 25px;
+        }
+
+        .total_price_label {
+            margin-top: 5px;
+        }
+
+        .point_li {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            margin: 10px -15px 0;
+        }
+
+        .total_info_btn_div {
+            border-top: 1px solid #ddd;
+            text-align: center;
+            padding: 15px 20px;
+        }
+
+        .order_btn {
+            display: inline-block;
+            font-size: 21px;
+            line-height: 50px;
+            width: 200px;
+            height: 50px;
+            background-color: #030302;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* 이미지 */
+        .image_wrap {
+            width: 100%;
+            height: 100%;
+        }
+
+        .image_wrap img {
+            max-width: 85%;
+            height: auto;
+            display: block;
+        }
+    </STYLE>
+    <style>
+        #google {
+            font-family: 'Jeju Gothic', sans-serif;
+        }
+    </style>
+
+    <link href = "https://fonts.googleapis.com/earlyaccess/jejugothic.css" rel = "stylesheet">
+    
+    <!--  고유 스크립트 추가 -->
+    <script src = "/js/order/order.js"></script>
+    <!-- 다음주소 -->
+    <script src = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- iamport.payment.js -->
+    <script src = "https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+</head>
+<body>
+
+<!-- content -->
+<article id = "google" layout:fragment = "content">
+    <div class = "container p-t-30">
+        <div class = "wrap">
+            <div class = "content_area">
+                <div class = "content_main">
+                    <!-- 회원 정보 -->
+
+                    <!-- 배송지 정보 -->
+                    <div class = "addressInfo_div">
+                        <div class = "addressInfo_button_div">
+                            <button class = "address_btn address_btn_1" onclick = "showAddress('1')" style = "background-color: white; border-bottom: 1px solid white;">주문자 정보</button>
+                            <button class = "address_btn address_btn_2" onclick = "showAddress('2')">정보 새로 입력</button>
+                        </div>
+                        <div class = "addressInfo_input_div_wrap">
+                            <div class = "addressInfo_input_div addressInfo_input_div_1" style = "display: block">
+                                <div class = "hidden">
+                                    <input class = "selectAddress" type = "hidden" value = "T">
+                                    <input class = "address0_input" id = "receiverName" th:value = "${buyer.name}" type = "hidden">
+                                    <input class = "address1_input" id = "receiverAddress1" th:value = "${buyer.userAddress1}" type = "hidden">
+                                    <input class = "address2_input" id = "receiverAddress2" th:value = "${buyer.userAddress2}" type = "hidden">
+                                    <input class = "address3_input" id = "receiverAddress3" th:value = "${buyer.userAddress3}" type = "hidden">
+                                </div>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <th>이름</th>
+                                        <td th:text = "${buyer.name}"></td>
+
+                                    </tr>
+                                    <tr>
+                                        <th>주소</th>
+                                        <td th:text = "${buyer.userAddress1}"></td>
+                                        <td th:text = "${buyer.userAddress2}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>우편번호</th>
+                                        <td th:text = "${buyer.userAddress3}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>휴대폰번호</th>
+                                        <td><input class = "address5_input" th:value = "${buyer.phoneNumber}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class = "addressInfo_input_div addressInfo_input_div_2">
+                                <table >
+                                    <tbody>
+                                    <tr>
+                                        <th>이름</th>
+                                        <td><input class = "address0_input" type="text"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>주소</th>
+                                        <td style = "text-align: center">
+                                            <input class = "selectAddress" type = "hidden" value = "F">
+                                            <input class = "address2_input" type="text" readonly = "readonly">
+                                            <input class = "address3_input" type="text" readonly = "readonly">
+                                            <a class = "address_search_btn" onclick = "execution_daum_address()">주소 찾기</a>
+                                        </td>
+
+
+                                    </tr>
+                                    <tr>
+                                        <th>우편번호</th>
+                                        <td>
+                                            <input class = "address1_input" readonly = "readonly">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>휴대폰번호</th>
+                                        <td>
+                                            <input class = "address5_input" th:value = "${buyer.phoneNumber}">
+                                        </td>
+                                    </tr>
+                                    <br/>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 상품 정보 -->
+                    <div class = "orderGoods_div">
+                        <!-- 상품 종류 -->
+                        <div class = "goods_kind_div mtext-112 cl2 p-b-33">
+                            주문상품 <span class = "goods_kind_div_kind"></span>
+                        </div>
+                        <!-- 상품 테이블 -->
+                        <table class = "goods_subject_table">
+                            <colgroup>
+                                <col width = "15%">
+                                <col width = "45%">
+                                <col width = "40%">
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <th>이미지</th>
+                                <th>상품 정보</th>
+                                <th>판매가</th>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table class = "goods_table">
+                            <colgroup>
+                                <col width = "15%">
+                                <col width = "45%">
+                                <col width = "40%">
+                            </colgroup>
+                            <tbody>
+                            <tr th:each = "orderPageProduct: ${orderPageProductList}" th:if = "${#lists.size(orderPageProductList) > 0}">
+                                <td><img class = "image_wrap" th:src = "|../img/upload/${orderPageProduct.productMainImage }|" style="width: 50%; height: 50%;"></td>
+                                <td th:text = "${orderPageProduct.productName}"></td>
+                                <td class = "goods_table_price_td">
+                                    <th:block th:text = "${orderPageProduct.salePrice}"></th:block>
+                                    원
+                                    <th:block th:text = "${orderPageProduct.productOrderCount}"></th:block>
+                                    개<br>
+                                    <th:block th:text = "${orderPageProduct.totalPrice}"></th:block>
+                                    <br>[
+                                    <th:block th:text = "${orderPageProduct.totalPoint}"></th:block>
+                                    P]
+
+                                    <div class = "hidden">
+
+                                        <!-- HIDDEN CLASS VALUE -->
+                                        <input class = "individual_totalPrice_input" id = "amount" th:value = "${orderPageProduct.salePrice * orderPageProduct.productOrderCount}" type = "hidden">
+                                        <input class = "individual_totalPoint_input" th:value = "${orderPageProduct.totalPoint}" type = "hidden">
+                                        <input class = "individual_productOrderCount_input" th:value = "${orderPageProduct.productOrderCount}" type = "hidden">
+                                        <input class = "individual_productNumber_input" th:value = "${orderPageProduct.productNumber}" type = "hidden">
+                                        <input class = "individual_productPrice_input" th:value = "${orderPageProduct.productPrice}" type = "hidden">
+                                        <input class = "individual_salePrice_input" th:value = "${orderPageProduct.salePrice}" type = "hidden">
+                                        <input class = "individual_point_input" th:value = "${orderPageProduct.point}" type = "hidden">
+
+
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 포인트 정보 -->
+                    <div class = "point_div p-b-33">
+                        <div class = "point_div_subject mtext-112 cl2">포인트 사용</div>
+                        <table class = "point_table">
+                            <colgroup>
+                                <col width = "25%">
+                                <col width = "*">
+                                 <col width = "25%">
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <th>보유 포인트</th>
+                                <td class = "myPoint" th:text = "${buyer.totalPoint}"></td>
+                                <input class = "totalPoint" th:value = "${buyer.totalPoint}" type = "hidden">
+                                <th>사용 포인트</th>
+                                <td>
+                                    <input class = "order_point_input" th:value = "0"/>
+                                </td>
+                                <td>
+                                	<a class = "order_point_input_btn order_point_input_btn_N" data-state = "N">모두사용</a>
+                                    <a class = "order_point_input_btn order_point_input_btn_Y" data-state = "Y" style = "display: none;">사용취소</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 주문 종합 정보 -->
+                    <div class = "total_info_div">
+                        <!-- 가격 종합 정보 -->
+                        <div class = "total_info_price_div">
+                            <ul>
+                                <li>
+                                    <span class = "price_span_label">상품 금액</span>
+                                    <span class = "totalPrice_span">100000</span>원
+                                </li>
+                                <li>
+                                    <span class = "price_span_label">배송비</span>
+                                    <span class = "delivery_price_span">100000</span>원
+                                </li>
+                                <li>
+                                    <span class = "price_span_label">할인금액</span>
+                                    <span class = "usePoint_span">100000</span>원
+                                </li>
+                                <li class = "price_total_li">
+                                    <strong class = "price_span_label total_price_label">최종 결제 금액</strong>
+                                    <strong class = "strong_red">
+                                        <span class = "total_price_red finalTotalPrice_span">1500000</span>원
+                                    </strong>
+                                </li>
+                                <li class = "point_li">
+                                    <span class = "price_span_label">적립예정 포인트</span>
+                                    <span class = "totalPoint_span">7960원</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- 버튼 영역 -->
+                        <div class = "total_info_btn_div">
+                            <input class = "order_btn flex-c-m stext-101 cl2 size-101 bg0 bor13 hov-btn1 p-lr-15 trans-04 pointer m-tb-10" type = "button" value = "결제하기">
+                        </div>
+                        <!-- 주문 요청 form -->
+                        <form action = "/order/complete" class = "order_form" method = "post">
+                            <!-- 주문자 -->
+                            <input name = "buyerId" th:value = "${buyer.id}" type = "hidden">
+                            <!-- 주소록 & 받는이-->
+                            <input name = "receiverName" type = "hidden">
+                            <input name = "receiverAddress1" type = "hidden">
+                            <input name = "receiverAddress2" type = "hidden">
+                            <input name = "receiverAddress3" type = "hidden">
+                            <input name = "receiverPhone" type = "hidden">
+                            <!-- 사용 포인트 -->
+                            <input name = "usingPoint" type = "hidden">
+                            <!-- 상품 정보 -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</article>
+
+
+</body>
+</html>

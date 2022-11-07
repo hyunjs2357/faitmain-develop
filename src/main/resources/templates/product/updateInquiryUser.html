@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layout/default_layout}">
+<head>
+    <meta charset = "UTF-8">
+    <title>문의 수정</title>		
+	
+	<style>
+	
+		
+    </style>
+    
+    <script type="text/javascript">
+    	
+    	$(function () {
+	
+			$('#inquiryContent').on('keyup', function () {
+				$('#inquiryContent_cnt').html("(" + $(this).val().length + " / 300)");
+
+				if ($(this).val().length > 300) {
+					$(this).val($(this).val().substring(0, 300));
+					$('#inquiryContent_cnt').html("(300 / 300)");
+				}
+			});
+			
+		});
+		
+    </script>
+</head>
+<body>
+
+	<article class="py-5" layout:fragment="content">
+	
+		<!-- Content page -->
+		<section class="bg0 p-t-104 p-b-116">
+			<div class="container">
+				<div class="flex-w flex-tr">
+	
+					<!-- 문의 할 상품 정보 -->
+					<div class="size-208 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
+						<div class="flex-w w-full p-b-42">
+	
+							<div class="size-212 p-t-2">
+	
+								<img th:src="|../img/upload/${ inquiry.inquiryProduct.productMainImage }|" alt="IMG-PRODUCT"
+									class="stext-115 cl6 size-213 p-t-18" />
+	
+								<br /><br />
+	
+								<span class="mtext-110 cl2 txt-center"
+									th:text="${inquiry.inquiryProduct.productName}"></span>
+	
+							</div>
+	
+						</div>
+					</div>
+					<!-- =================== -->
+	
+					<!-- 문의 작성 form -->
+					<div class="size-209 bor10 flex-w flex-col-m p-lr-93 p-tb-30 p-lr-15-lg w-full-md">
+						<form th:action="@{/inquiry/updateInquiry}" method="post" th:object="${inquiry}"
+							name="updateInquiryForm" id="updateInquiryForm">
+	
+							<input type="hidden" th:field="*{inquiryNumber}" />
+							<input type="hidden" th:field="*{secret}" />
+							<input type="hidden" th:field="*{userId}" />
+	
+							<h4 class="mtext-105 cl2 txt-center p-b-30">
+								문의수정
+							</h4>
+	
+							<div class="bor8 m-b-20">
+								<input class="stext-111 cl2 plh3 size-116 p-l-28 p-r-30" type="text" name="inquiryTitle"
+									th:value="*{inquiryTitle}" />
+							</div>
+	
+							<div class="bor8 m-b-30">
+								<textarea class="stext-111 cl2 plh3 size-120 p-lr-28 p-tb-25" id="inquiryContent"
+									name="inquiryContent" th:text="*{inquiryContent}"></textarea>
+							</div>
+							<div id="inquiryContent_cnt">(0 / 300)</div>
+	
+							<br />
+							<div class="m-b-20 flex-w flex-m">
+								<input class="cl2 m-r-3" type="checkbox" name="secret"
+									th:checked="*{secret ? 'check' : ''}" />
+								<span class="cl2 stext-111">비밀글</span>
+							</div>
+	
+							<br />
+							<button type="submit"
+								class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+								수정
+							</button>
+	
+						</form>
+					</div>
+					<!-- ============ -->
+				</div>
+		</section>
+	
+	</article>
+	
+</body>
+</html>

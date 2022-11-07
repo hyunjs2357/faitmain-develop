@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ko" layout:decorate="~{layout/myPage_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<meta charset="UTF-8">
+	<title>상품 수정</title>
+
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+	<!-- Product -->
+	<link rel="stylesheet" type="text/css" href="/productDesign/fonts/linearicons-v1.0.0/icon-font.min.css">
+
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/select2/select2.min.css">
+
+	<script src="/productDesign/vendor/sweetalert/sweetalert.min.js"></script>
+
+
+	<style>
+
+		#optionIndex {
+			margin-top: 20px;
+		}
+
+		#cancelBtn, #updateProcutBtn {
+			margin-right: 20px;
+		}
+		
+		.deleteOption{
+			margin-left: 20px;			
+		}
+		
+		
+	</style>
+
+	<script type="text/javascript">
+	
+		/*<![CDATA[*/			
+			let productExtraImageSize = '[[${#lists.size(product.productExtraImage)}]]';
+			console.log("productExtraImageSize : " + productExtraImageSize);
+		/*]]>*/
+
+		$(document).ready(function () {
+			console.log('ready');
+
+			optionAdd();
+		});
+
+		
+		// 옵션 추가하기
+		function optionAdd() {
+
+			console.log('optionadd');
+
+			var optionIndex = 0;
+			//$("#fileIndex").append("<div><input type='file' style='float:left;' name='file_"+(fileIndex++)+"'>"+"<button type='button' style='float:right;' id='fileAddBtn'>"+"추가"+"</button></div>");
+			$("#optionAdd_btn").on("click", function () {
+				console.log('옵션추가');
+
+				$("#quantity").prop("readonly", true);
+				$("#quantity").prop("required", false);
+				
+				$("#quantity").val(0);
+
+				$("#optionIndex").append(
+
+					"<div  class='row p-b-25'>"
+
+					+ "<div class='col-sm-8 p-b-5'>"
+					+ "<input type='text' class='size-111 bor8 stext-102 cl2 p-lr-20' name='productOptions[" + optionIndex + "].productName' id='productOptions' placeholder='옵션명' />"
+					+ "</div>"
+
+					+ "<div class='col-sm-2 p-b-5'>"
+					+ "<input type='number' min='0' class='size-111 bor8 stext-102 cl2 p-lr-20 optionQuantity' name='productOptions[" + optionIndex + "].productQuantity' placeholder='수량'>"
+					+ "</div>"
+
+					+ "<div class='col-sm-2 p-b-5'>"
+					+ "<button type='button' id='optionDelBtn'><img src='/productDesign/images/icons/icon-close2.png' /></button>"
+					+ "</div>"
+
+					+ "</div>"
+
+				);
+
+				optionIndex++;
+				console.log(optionIndex);
+
+			});
+
+			$(document).on("click", "#optionDelBtn", function () {
+
+				console.log("aaaaaa : " + $(this).parent().parent().index());
+
+				if ($(this).parent().parent().index() == 0) {
+					$("#quantity").prop("readonly", false);
+					$("#quantity").prop("required", true);
+				}
+
+				$(this).parent().parent().remove();
+				optionIndex--;
+
+			});
+
+		};
+
+		// 이미지 썸네일 보여주기
+		function setThumbnail(event, where) {
+
+			where == 'main' ? $("#imageContainerMain").children().remove() : $("#imageContainerExtra").children().remove();
+
+			if (where == 'extra') {
+				
+				let maxFileCnt = 4 - productExtraImageSize;   // 첨부파일 최대 개수
+				let curFileCnt = event.target.files.length;  // 현재 선택된 첨부파일 개수
+				
+				if (curFileCnt > maxFileCnt) {
+					swal("추가 사진은 최대 " + maxFileCnt + "개까지만 가능합니다");
+					$("input[name='subImage']").val("");
+					return;
+				}
+				
+			}
+
+			for (var image of event.target.files) {
+				var reader = new FileReader();
+				reader.onload = function (event) {
+					var img = "<img src='" + event.target.result + "' width='100%' />";
+
+					if (where == 'main') {
+						$("#imageContainerMain").append(img);
+					} else {
+						$("#imageContainerExtra").append(img);
+					}
+
+				}
+
+				reader.readAsDataURL(image);
+
+			}
+
+			$("#imageContainerExtra").addClass(" how-itemcart2");
+		}
+		
+		
+		$(function () {
+			
+			$(".updateOption").on("click", function(){
+				
+				let optionNumber = $(this).parent().children(".optionNumber").val();
+				let optionName = $(this).parent().children(".optionName").val();
+				//let productOptionQuantity = Number($(this).parent().children(".productOptionQuantity").val());
+				
+				let productOptionQuantity = Number($(this).parent().parent().children('div:eq(1)').children().val());
+				console.log("productOptionQuantity : " + productOptionQuantity);
+				
+				$(this).parent().children(".productOptionQuantity").val(productOptionQuantity);
+				
+				/**/
+				$.ajax(
+					{
+						url: "/product/json/updateProductOption",
+						method: "POST",
+						dataType: "json",
+						headers: {
+							"Accept": "application/json",
+							"Content-Type": "application/json"
+						},
+						data: JSON.stringify({
+							productNumber: optionNumber,
+							productName: optionName,
+							productQuantity: productOptionQuantity
+						}),
+						success: function (JSONData, status) {
+							console.log(JSONData.responseCode);
+							swal('수정되었습니다');
+						}
+					})
+					
+				
+			});
+			
+			
+			$(".deleteOption").on("click", function(){
+				
+				console.log("dddd : " + $(this).parent().children(".optionNumber").val());
+				let optionNumber = $(this).parent().children(".optionNumber").val();
+				let productOptionQuantity = Number($(this).parent().parent().children('div:eq(1)').children().val());
+				
+				$.ajax(
+					{
+						url: "/product/json/deleteProductOption/" + optionNumber,
+						method: "GET",
+						dataType: "json",
+						headers: {
+							"Accept": "application/json",
+							"Content-Type": "application/json"
+						},
+						success: function (JSONData, status) {
+							console.log(JSONData.responseCode);
+						}
+					})
+									
+				$(this).parent().parent().remove();
+				
+				swal("삭제되었습니다");
+				
+			});			
+			
+			// 상품 추가 이미지 클릭하면 이미지 삭제하기
+			$("#imageContainerExtra").on("click", function () {
+
+				$("#imageContainerExtra").prop("className", "");
+				$("#imageContainerExtra").children().remove();
+				$("#subImage").val('');
+
+			});
+			
+			$(".wrao-pic-w.size-220.m-r-20.how-itemcart2").on("click", function() {
+				
+				console.log($(this).children("input[type=hidden]").val());
+				let imageNumber = $(this).children("input[type=hidden]").val();
+				
+				$.ajax(
+					{
+						url: "/product/json/deleteProductExtraImage/" + imageNumber,
+						method: "GET",
+						dataType: "json",
+						headers: {
+							"Accept": "application/json",
+							"Content-Type": "application/json"
+						},
+						success: function (JSONData, status) {
+							console.log(JSONData.responseCode);
+							productExtraImageSize--;
+						}
+					}).done(function () {
+						//$(this).parent().remove();
+					});
+					
+				$(this).remove();
+				
+				swal('삭제되었습니다');
+				
+			});
+
+			// summernote 구성
+			$('#summernote').summernote({
+				// 에디터 높이
+				height: 500,
+				// 에디터 한글 설정
+				lang: "ko-KR",
+				// 에디터에 커서 이동 (input창의 autofocus라고 생각)
+				focus: true,
+				toolbar: [
+					// 글꼴 설정
+					['fontname', ['fontname']],
+					// 글자 크기 설정
+					['fontsize', ['fontsize']],
+					// 굵기, 기울임꼴, 밑줄,취소 선, 서식지우기
+					['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+					// 글자색
+					['color', ['forecolor', 'color']],
+					// 표만들기
+					['table', ['table']],
+					// 글머리 기호, 번호매기기, 문단정렬
+					['para', ['ul', 'ol', 'paragraph']],
+					// 줄간격
+					['height', ['height']],
+					// 그림첨부
+					['insert', ['picture']],
+					// 코드보기, 확대해서보기, 도움말
+					['view', ['fullscreen', 'help']]
+				],
+				// 추가한 글꼴
+				fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', '맑은 고딕', '궁서', '굴림체', '굴림', '돋음체', '바탕체'],
+				// 추가한 폰트사이즈
+				fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72'],
+
+				callbacks: {
+					onImageUpload: function (files, editor, welEditable) {
+						// 파일 업로드(다중업로드를 위해 반복문 사용)
+						for (var i = files.length - 1; i >= 0; i--) {
+							console.log("aaa");
+							uploadSummernoteImageFile(files[i], this);
+						}
+					}
+				}
+			});
+
+
+			// 취소 버튼 클릭
+			$("#cancelBtn").on("click", function () {
+
+				history.back();
+
+			});
+			
+			$("#deleteBtn").on("click", function () {
+
+				swal({
+					title: "상품을 삭제하시겠습니까?",
+					text: "상품을 삭제하면 다시 복구되지 않습니다.",
+					icon: "warning",
+					buttons: true,
+					dangerMode: true,
+				}).then((result) => {
+					if (result) {
+
+						$.ajax({
+							url: "/product/json/deleteProduct/" + $("#productNumber").val(),
+							type: "GET",
+							dataType: "json",
+							success: function (data) {
+								console.log("컨트롤러에서 받은 data : " + data);
+
+								if (data.responseCode == 'success') {
+									swal("상품 삭제 완료", "삭제가 완료되었습니다!", "success").then(function () {
+										history.back();
+									});
+
+								} else {
+									swal("상품 삭제 불가", "판매 내역이 확인되어 삭제가 불가능합니다.", "error");
+								}
+							}
+						});
+
+					} else {
+						swal("취소되었습니다");
+					}
+
+				});
+
+			});
+				
+
+			// 수정 버튼 클릭
+			$("#updateProcutBtn").on("click", function () {
+				/**/
+				var productName = $("input[name='productName']").val();
+				var categoryCode = $("select[name='categoryCode']").val();
+				var productStatus = $("select[name='productStatus']").val();
+
+				if (productName.length > 50) {
+					swal("상품명을 50자 이내로 입력해주세요");
+					return;
+				}
+
+
+				if (categoryCode == null || categoryCode == '') {
+					swal("카테고리를 선택해주세요");
+					return;
+				}
+				
+				if (productStatus == null || productStatus == '') {
+					swal("상품 상태를 선택해주세요");
+					return;
+				}
+
+				let total = 0;
+				if($(".productOptionQuantity").length > 0){
+					$(".productOptionQuantity").each(function (index, item) {
+						total += Number($(item).val());
+					});
+				}
+
+				if ($(".size-111.bor8.stext-102.cl2.p-lr-20.optionQuantity").length > 0) {
+
+					$(".size-111.bor8.stext-102.cl2.p-lr-20.optionQuantity").each(function (index, item) {
+						total += Number($(item).val());
+					});					
+				}
+				
+				$("#quantity").val(total);
+				console.log(total);
+				$("#updateProductForm").attr("method", "POST").attr("action", "/product/updateProduct").submit();
+
+			});
+
+		});
+
+		// summernote 이미지 폴더에 저장하기
+		function uploadSummernoteImageFile(file, el) {
+			console.log("bbb");
+			data = new FormData();
+			data.append('file', file);
+			$.ajax({
+				data: data,
+				type: "POST",
+				url: "/product/json/uploadSummernoteImageFile",
+				contentType: false,
+				enctype: "multipart/form-data",
+				processData: false,
+				success: function (data) {
+					console.log(data.url);
+					$(el).summernote("editor.insertImage", data.url);
+				}
+			});
+		}
+
+	</script>
+</head>
+
+<body>
+	<article layout:fragment="content">
+
+		<!-- Content page -->
+		<section class="bg0 p-b-20">
+			<div class="container">
+				<div class="row">
+
+					<!-- 왼쪽 -->
+					<div class="col-md-8 col-lg-9 p-b-80">
+						<div class="p-r-45 p-r-0-lg">
+
+							<h4 class="mtext-112 cl2 p-b-33">
+								상품 수정
+							</h4>
+
+							<div class="p-t-40">
+
+								<form th:object="${product}" name="updateProductForm" id="updateProductForm" enctype="multipart/form-data">
+									
+									<input type="hidden" th:field="*{productNumber}" />	
+									
+									<div class="bor19 m-b-20">
+										<input th:field="*{productName}" class="stext-111 cl2 plh3 size-116 p-lr-18" type="text" placeholder="상품명 *" required>
+									</div>
+
+									<div class="bor19 m-b-20">
+										<input th:field="*{productPrice}" class="stext-111 cl2 plh3 size-116 p-lr-18" type="number" min="0" placeholder="가격 *" required>
+									</div>
+
+									<div class="bor19 m-b-30">
+										<input th:value="*{#lists.size(productOptions) > 0 ? 0 : productQuantity }"  id="quantity" class="stext-111 cl2 plh3 size-111 p-lr-18" type="number"
+											min='0' name="productQuantity" placeholder="수량" required>
+									</div>
+
+									<button type="button" id="optionAdd_btn"
+										class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+										옵션추가
+									</button>
+									
+									<div id="optionIndex">
+									
+										<div class='row p-b-25 existOption' th:if="${#lists.size(product.productOptions) > 0}" th:each="productOption : ${product.productOptions}">
+									
+											<div class='col-sm-8 p-b-5'>
+												<input type='text' class='size-111 bor8 stext-102 cl2 p-lr-20' th:value="${productOption.productName}" />
+											</div>
+									
+											<div class='col-sm-2 p-b-5'>
+												<input type='number' min='0' class='size-111 bor8 stext-102 cl2 p-lr-20' th:value="${productOption.productQuantity}">
+											</div>
+									
+											<div class='col-sm-2 p-b-5'>
+											
+												<input type="hidden" th:value="${productOption.productNumber}" class="optionNumber" />
+												
+												<input type="hidden" th:value="${productOption.productName}" class="optionName" />
+												
+												<input type="hidden" th:value="${productOption.productQuantity}" class="productOptionQuantity" />
+												
+												<button type='button' class="updateOption">수정</button>
+													
+												<button type='button' class="deleteOption"><img src='/productDesign/images/icons/icon-close2.png' /></button>
+												
+											</div>
+									
+										</div>
+										
+									</div>
+
+									<!--  상품이미지 -->
+									<div class="bor19 m-b-20">
+										<label for="mainImage" class="col-sm-offset-1 col-sm-3 control-label">상품 메인
+											이미지</label>
+										<div class="col-sm-4">
+											<input type="hidden" th:field=*{productMainImage}/>
+											<input type="file" class="stext-111 cl2 plh3 size-111 p-lr-18"
+												id="mainImage" name="mainImage" onchange="setThumbnail(event, 'main');"
+												required />
+										</div>
+									</div>
+
+									<div class="bor19 m-b-20">
+										<label for="subImage" class="col-sm-offset-1 col-sm-3 control-label">상품 추가
+											이미지</label>
+										<div class="col-sm-4">
+											<input type="file" class="stext-111 cl2 plh3 size-111 p-lr-18" id="subImage"
+												name="subImage" multiple onchange="setThumbnail(event, 'extra');" />
+										</div>
+
+									</div>
+
+									<div class="bor19 m-b-20">
+										<textarea id="summernote" name="productDetail" rows="10">
+											<th:block th:utext = "*{ productDetail }"></th:block>
+										</textarea>
+									</div>
+
+									<div class="flex-c-m flex-w w-full p-t-38">
+
+										<button type="button" id="cancelBtn"
+											class="flex-c-m stext-101 cl0 size-112 bg2 bor11 hov-btn3 p-lr-15 trans-04 m-b-10">
+											취소
+										</button>
+										
+										<button id="updateProcutBtn" type="button"
+											class="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10">
+											수정
+										</button>
+										
+										<button type="button" id="deleteBtn"
+											class="flex-c-m stext-101 cl0 size-112 bg2 bor11 hov-btn3 p-lr-15 trans-04 m-b-10">
+											삭제
+										</button>
+
+										
+
+									</div>
+
+									<!-- ============= -->
+							</div>
+
+						</div>
+					</div>
+					<!-- ========== -->
+
+					<!-- sidebar -->
+					<div class="col-md-4 col-lg-3 p-b-80">
+						<div class="side-menu">
+
+							<div>
+
+								<h4 class="mtext-112 cl2 p-b-33">
+									카테고리
+								</h4>
+
+								<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9"
+									style="margin-top: 47.500px;">
+									<select class="js-select2" name="categoryCode" require="required">
+										<option>선택</option>
+										<option value="01" th:selected="${product.categoryCode eq '01'}">식품</option>
+										<option value="02" th:selected="${product.categoryCode eq '02'}">생활</option>
+										<option value="03" th:selected="${product.categoryCode eq '03'}">뷰티</option>
+										<option value="04" th:selected="${product.categoryCode eq '04'}">패션</option>
+										<option value="05" th:selected="${product.categoryCode eq '05'}">인테리어</option>
+									</select>
+									<div class="dropDownSelect2"></div>
+								</div>
+
+							</div>
+							
+							
+							<div>
+
+								<h4 class="mtext-112 cl2 p-b-33" style="margin-top: 70px;">
+									상품상태
+								</h4>
+
+								<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
+									<select class="js-select2" name="productStatus" require="required">
+										<option value="">선택</option>
+										<option value="01" th:selected="${product.productStatus eq '01'}">판매중</option>
+										<option value="02" th:selected="${product.productStatus eq '02'}">판매중지</option>
+										<option value="03" th:selected="${product.productStatus eq '03'}">품절</option>
+									</select>
+									<div class="dropDownSelect2"></div>
+								</div>
+
+							</div>
+							
+							</form>
+							<div class="p-t-65">
+								<h4 class="mtext-112 cl2 p-b-33">
+									이미지
+								</h4>
+
+								<ul>
+
+									<span class="dis-block stext-115 cl6 trans-04 p-tb-8 p-lr-4">
+										메인 이미지
+									</span>
+
+									<li class="flex-w flex-t p-b-30">
+
+										<div id="imageContainerMain" class="wrao-pic-w size-217 m-r-20">
+											<img th:src="|../img/upload/${ product.productMainImage }|" width="100%">
+										</div>
+
+									</li>
+
+									<span class="dis-block stext-115 cl6 trans-04 p-tb-8 p-lr-4">
+										추가 이미지
+									</span>
+
+									<li class="flex-w flex-t p-b-30">
+									
+										<div class="wrao-pic-w size-220 m-r-20 how-itemcart2" th:each="extraImg : ${product.productExtraImage}">
+											<input type="hidden" th:value="${extraImg.imageNumber}" />
+											<img th:src="|../img/upload/${ extraImg.imageName }|" width="100%">
+										</div>
+
+
+										<div id="imageContainerExtra" class="wrao-pic-w size-220 m-r-20">
+											<img src="" width="100%">
+										</div>
+
+									</li>
+
+								</ul>
+							</div>
+
+						</div>
+					</div>
+					<!-- =========== -->
+
+
+				</div>
+			</div>
+		</section>
+		<!-- =========== -->
+		<script src="/productDesign/vendor/select2/select2.min.js"></script>
+		<script>
+			$(".js-select2").each(function () {
+				$(this).select2({
+					minimumResultsForSearch: 20,
+					dropdownParent: $(this).next('.dropDownSelect2')
+				});
+			})
+		</script>
+		<!-- =========== -->
+
+
+	</article>
+</body>
+
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html 
+      xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout" >
+ <!--  MYPAGE 슈르르ㅡㄺ layout-->
+
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+ 
+
+
+</head>
+
+
+
+    <title>  accessDenied </title>
+
+ 
+
+<script type="text/javascript">
+
+</script>
+ <style>
+	  
+		
+		body{font-family: 'Nanum Gothic Coding', monospace;}
+		 
+		 @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
+
+body{
+   margin:0;
+   padding:0;
+}
+section{
+   width:100%;
+   height:1090px;
+   background-color:#BDBDBD;
+}
+.accessdenied{
+   position:absolute;
+   width:40%;
+   height:400px;
+   background-color:#fff;
+   top:50%;
+   left:50%;
+   transform:translate(-50%,-50%);
+   box-shadow:0 5px 20px rgba(0,0,0,0.5);
+   text-align:center;
+}
+.accessdenied h1{
+   margin-top:100px;
+   font-size:40px;
+}
+.accessdenied h1 i{
+   padding:2%;
+   color: #D8000C;
+}
+.accessdenied span{
+   background-color:#636363;
+   color:#fff;
+   padding:2% 5%;
+}
+
+.accessdenied span:hover{
+   box-shadow:0 5px 20px rgba(0,0,0,0.5);
+   border:1px solid #000;
+   background-color:transparent;
+   color:#000;
+   cursor:pointer;
+}
+		 
+    </style>
+<body>
+  
+   <section>
+   <div class="accessdenied">
+      <h1> <i class="fa fa-warning"></i>Access Denied</h1>
+       <br>
+      <span onclick="javascript:history.back();">Exit</span>
+   </div>
+</section>
+  
+</body>
+
+
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/customer_default_layout2}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+<head>	
+	<th:block layout:fragment="title">
+	 
+		<title>faitmain</title>
+	</th:block>
+	<style>
+		#app {
+		 	width: 100%;
+			padding: 20px;
+			margin: 15px;
+		 }
+		#apps {
+		 	display: inline-block;
+		 	
+		 	height: 100px;
+		 }
+		  body, html {
+        	height: 100%;
+       }
+       
+		</style>
+</head>
+<body>
+<article  class="py-5" layout:fragment="content">
+<div class="container" id="app">
+  <div class="column is-two-thirds" id="apps">
+  <form class="form-horizontal" th:action="@{/customer/addReport}" method="post"  enctype="multipart/form-data" >
+    <section class="section">
+    <input type="hidden" name="boardType" value='R'/>
+      <h4 class="title">신고 등록</h4>
+      <hr />
+      <!-- form starts here -->
+      <section class="form">
+        <form v-on:submit.prevent="$validator.validateAll(); console.log(form);">
+          <div class="field" style="padding:13px 0 0 15px;">
+            <label class="label" >아이디</label>
+            <div class="control">
+              <input name="respondentId" class="input" type="text" placeholder=""  th:value="${#authentication.principal.user.id}"  readonly style="width: 500px;">
+            </div>
+            <p class="help is-danger" v-show="errors.has('name')">
+              
+            </p>
+          </div>
+
+          <div class="field" style="padding:13px 0 0 15px;">
+            <label class="label">닉네임</label>
+            <div class="control">
+              <input name="respondentNickname" class="text"  placeholder="상점회원일 경우 상점이름 입력해주세요" th:value="${#authentication.principal.user.nickname}" readonly style="width: 500px;"></input>
+            </div>
+            <p class="help is-danger" v-show="errors.has('message')">
+           
+            </p>
+          </div>
+
+          <div class="field" style="padding:13px 0 0 15px;">
+            <label class="label">핸드폰 번호</label>
+            <div class="control">
+              <div class="select">
+                <input name="phoneNumber" v-model="form.inquiry_type" th:value="${#authentication.principal.user.phoneNumber}"  readonly style="width: 500px;"></input>					
+              </div>
+            </div>
+          </div>
+
+       <div class="field" style="padding:13px 0 0 15px;">
+            <label class="label">신고 제목</label>
+            <div class="control">
+              <input name="reportTitle" class="input" type="text" placeholder="" style="width: 500px;">
+            </div>
+            <p class="help is-danger" v-show="errors.has('name')">
+              
+            </p>
+          </div>
+		<div class="field" style="padding:13px 0 0 15px;">
+            <label class="label">신고 내용</label>
+            <div class="control">
+              <textarea name="reportContent" class="textarea"  placeholder="신고할 닉네임을 꼭 같이 입력해주세요" 
+              style="width: 500px; height: 500px; resize:none;  min-height:350px;"></textarea>
+            </div>
+            <p class="help is-danger" v-show="errors.has('message')">
+             
+            </p>
+          </div>
+		
+
+          <div class="field" style="padding:13px 0 0 15px;">
+          	<div class="control">
+              	<label class="checkbox">
+					<input type="checkbox" v-model="form.terms">
+					I agree to the <a href="#">terms and conditions</a>
+				</label>
+           	 </div>
+          </div>
+
+          <div class="field" style="padding:13px 0 0 15px;">
+            <label>
+            	<strong>사진첨부</strong>
+            	<input type="file" id="image" name="image" multiple="multiple"/>
+            </label>
+            <div class="control">
+              
+            </div>
+          </div>
+
+
+          <div class="field is-grouped">
+            <div class="control" style="padding:13px 0 0 15px;">
+              <button  class="button is-primary">
+				Submit
+			</button>
+            </div>
+          </div>
+
+        </form>
+      </section>
+    </section>
+    </form>
+  </div>
+
+  <div class="column">
+    <section class="section" id="results">
+      <div class="box">
+        <ul>
+          <li v-for="(item, k) in form">
+           </li>
+        </ul>
+
+      </div>
+    </section>
+  </div>
+</div>
+</article>
+</body>
+</html>

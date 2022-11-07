@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html
+        xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"  >
+ <!--  MYPAGE 슈르르ㅡㄺ layout-->
+
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+     <link href="@{/css/styles.css}" rel="stylesheet" />
+</head>
+
+
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/user/main.css" />
+		<noscript><link rel="stylesheet" href="/user/noscript.css" /></noscript>
+
+</head>
+    <title>  </title>
+
+
+ <style>
+	  .form-group{
+ 
+		margin-top:10px ;
+ 	 
+		}
+		
+		body{font-family: 'Nanum Gothic Coding', monospace;}
+		 
+    </style>
+
+
+<script type="text/javascript">
+
+</script>
+
+<body>
+<article  class="py-5" layout:fragment="content"  >
+
+<!--   xmlns:sec="http://www.thymeleaf.org/extras/spring-security" 있어야 타임 리프에서 스프링 시큐리티 sec:authorize 값가져옴  -- >
+<!-- 참고하실 사이트 \
+
+https://velog.io/@on-n-on-turtle/SPRING-BOOT-%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0-%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84-secauthorizeisAnonymous-Spring-Security-Thymleaf-Library-Spring-security-thwithauthauthentication.getPrincipal
+
+
+ -- >
+ 
+ 
+<div sec:authorize="isAuthenticated()">  모두 보기 가능 </div>
+<div sec:authorize="hasRole('ROLE_admin')"> 권한이 어드민 </div>
+<div sec:authorize="hasRole('ROLE_store')"> 권한이 store</div>
+<div sec:authorize="hasRole('ROLE_storeX')"> 권한이 storeX </div>
+
+<div sec:authorize="hasRole('ROLE_user')"> 권한이 User </div>
+
+
+ name : <p th:text="${#authentication.name}"></p>
+
+ principal 인증 대상에 관한 정보(user 정보 나옴, 타고타고 ): <p th:text="${#authentication.principal.user.id}">  </p>
+ principal 인증 대상에 관한 정보(user 정보 나옴): <p th:text="${#authentication.principal}">  </p>
+
+authenticated(인증 여부): <p th:text="${#authentication.authenticated}">  </p>
+ 
+<div sec:authorize="isAuthenticated()">  모두 보기 가능 </div>
+<div sec:authorize="hasRole('ROLE_admin')"> 권한이 어드민 </div>
+<div sec:authorize="hasRole('ROLE_store')"> 권한이 store</div>
+<div sec:authorize="hasRole('ROLE_storeX')"> 권한이 storeX </div>
+
+<div sec:authorize="hasRole('ROLE_user')"> 권한이 User </div>
+
+ 
+ <!--  밑은 , 컨트롤러에서 보내준 user 정보를 가져옴 -->
+      name : <p th:text="${#authentication.name}"></p>
+     
+  아이디 : [[${user.id}]]  &nbsp; 이름 : &nbsp;  [[${user.name}]]  &nbsp; 주소1:  &nbsp; [[${user.userAddress1}]]    &nbsp; 주소2:&nbsp; [[${user.userAddress2}]]    &nbsp; 주소3:&nbsp; [[${user.userAddress3}]]  <br>
+    &nbsp; 권한: [[${user.role}]]   
+    principal 인증 대상에 관한 정보(user 정보 나옴, 타고타고 ): <p th:text="${#authentication.principal.user.role}">  </p>
+ 
+ 
+<!--https://cornarong.tistory.com/73  참고파일  -->
+
+ 
+ 								<section>
+									<h2>Form</h2>
+									<form method="post" action="#">
+										<div class="row gtr-uniform">
+											<div class="col-6 col-12-xsmall">
+												<input type="text" name="demo-name" id="demo-name" value="" placeholder="Name" />
+											</div>
+											<div class="col-6 col-12-xsmall">
+												<input type="email" name="demo-email" id="demo-email" value="" placeholder="Email" />
+											</div>
+											<div class="col-12">
+												<select name="demo-category" id="demo-category">
+													<option value="">- Category -</option>
+													<option value="1">Manufacturing</option>
+													<option value="1">Shipping</option>
+													<option value="1">Administration</option>
+													<option value="1">Human Resources</option>
+												</select>
+											</div>
+											<div class="col-4 col-12-small">
+												<input type="radio" id="demo-priority-low" name="demo-priority" checked>
+												<label for="demo-priority-low">Low</label>
+											</div>
+											<div class="col-4 col-12-small">
+												<input type="radio" id="demo-priority-normal" name="demo-priority">
+												<label for="demo-priority-normal">Normal</label>
+											</div>
+											<div class="col-4 col-12-small">
+												<input type="radio" id="demo-priority-high" name="demo-priority">
+												<label for="demo-priority-high">High</label>
+											</div>
+											<div class="col-6 col-12-small">
+												<input type="checkbox" id="demo-copy" name="demo-copy">
+												<label for="demo-copy">Email me a copy</label>
+											</div>
+											<div class="col-6 col-12-small">
+												<input type="checkbox" id="demo-human" name="demo-human" checked>
+												<label for="demo-human">Not a robot</label>
+											</div>
+											<div class="col-12">
+												<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
+											</div>
+											<div class="col-12">
+												<ul class="actions">
+													<li><input type="submit" value="Send Message" class="primary" /></li>
+													<li><input type="reset" value="Reset" /></li>
+												</ul>
+											</div>
+										</div>
+									</form>
+								</section>
+ 
+ 
+ 
+ 
+ 
+			
+			
+ 								<section>
+									<h2>Form</h2>
+									<form method="post" action="#">
+										<div class="row gtr-uniform">
+											<div class="col-6 col-12-xsmall">
+												<input type="text" name="demo-name" id="demo-name" value="" placeholder="Name" />
+											</div>
+											<div class="col-6 col-12-xsmall">
+												<input type="email" name="demo-email" id="demo-email" value="" placeholder="Email" />
+											</div>
+											<div class="col-12">
+												<select name="demo-category" id="demo-category">
+													<option value="">- Category -</option>
+													<option value="1">Manufacturing</option>
+													<option value="1">Shipping</option>
+													<option value="1">Administration</option>
+													<option value="1">Human Resources</option>
+												</select>
+											</div>
+											<div class="col-4 col-12-small">
+												<input type="radio" id="demo-priority-low" name="demo-priority" checked>
+												<label for="demo-priority-low">Low</label>
+											</div>
+											<div class="col-4 col-12-small">
+												<input type="radio" id="demo-priority-normal" name="demo-priority">
+												<label for="demo-priority-normal">Normal</label>
+											</div>
+											<div class="col-4 col-12-small">
+												<input type="radio" id="demo-priority-high" name="demo-priority">
+												<label for="demo-priority-high">High</label>
+											</div>
+											<div class="col-6 col-12-small">
+												<input type="checkbox" id="demo-copy" name="demo-copy">
+												<label for="demo-copy">Email me a copy</label>
+											</div>
+											<div class="col-6 col-12-small">
+												<input type="checkbox" id="demo-human" name="demo-human" checked>
+												<label for="demo-human">Not a robot</label>
+											</div>
+											<div class="col-12">
+												<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
+											</div>
+											<div class="col-12">
+												<ul class="actions">
+													 <li><input type="submit" value="Send Message" class="info" /></li>
+
+													<li><input type="submit" value="Send Message" class="primary" /></li>
+													<li><input type="reset" value="Reset" /></li>
+												</ul>
+											</div>
+										</div>
+									</form>
+								</section>
+			 <!-- 컨테이너 끝-->		  
+  
+ 
+</body>
+
+
+</html>

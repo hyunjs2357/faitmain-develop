@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang = "ko"
+      xmlns:th = "http://www.thymeleaf.org"
+      xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- [head] 영역 시작 -->
+<head>
+    <meta charset = "UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="icon" type="image/png" href="/img/rainbow.png"/>
+    
+    <link rel = "stylesheet" th:href = "@{/css/bootstrap.min.css}"/> 
+    
+    <link rel="stylesheet"  href="/productDesign/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" 	href="/productDesign/fonts/iconic/css/material-design-iconic-font.min.css">
+ 	 	 	 	
+    <link rel = "stylesheet" th:href = "@{/css/main.css}"/>
+    <link rel = "stylesheet" th:href = "@{/css/util.css}"/>
+    
+    <!--===============================================================================================-->	
+	<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+	<!--===============================================================================================-->	
+	<script th:src="@{/js/bootstrap.min.js}"></script>	
+	
+	<style>
+	
+		@import url(//fonts.googleapis.com/earlyaccess/jejugothic.css);
+	
+		article{			
+			margin-top: 100px;	
+			height: auto;
+			min-height: 100%;
+			padding-bottom: 136.984px;		
+		}
+		
+		#wrapper {
+			height: auto;
+			min-height: 100%;
+			padding-bottom: 72px;
+		}
+
+		footer {
+			height: 72px;
+			position: relative;
+			transform: translateY(-100%);
+		}
+		
+	</style>
+			
+</head>
+<!-- [head] 영역 끝 -->
+
+<body >
+
+	<div id="wrapper">
+		<!-- [header] 영역 시작 -->
+		<header th:replace="/layout/fragment/header :: header" class=""></header>
+		<!-- [header] 영역 끝 -->
+
+		<!-- [content] 영역 시작 -->
+		<article layout:fragment="content"></article>
+		<!-- [content] 영역 끝 -->
+	</div>
+
+	<!-- [footer] 영역 시작 -->
+	<footer th:replace = "/layout/fragment/footer :: footer"></footer>
+	<!-- [footer] 영역 끝 -->
+	
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+	
+	<script type="text/javascript">
+		$(window).on('scroll', function () {
+			if ($(window).scrollTop()) {
+				$('.container-menu-desktop').addClass('fix-menu-desktop');
+				$('.wrap-menu-desktop').css('top', '0');
+			} else {
+				$('.container-menu-desktop').removeClass('fix-menu-desktop');
+				$('.wrap-menu-desktop').css('top', '40px');
+			}
+		});
+	</script>
+	<!-- -->			
+</body>
+
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- [head] 영역 시작 -->
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<link rel="icon" type="image/png" href="/img/rainbow.png" />
+	
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+	
+	<link rel="stylesheet" href="/productDesign/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" href="/productDesign/fonts/iconic/css/material-design-iconic-font.min.css">
+	
+	
+	<link rel="stylesheet" th:href="@{/css/main.css}" />
+	<link rel="stylesheet" th:href="@{/css/util.css}" />
+	
+	<!--===============================================================================================-->
+	<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+	<!--===============================================================================================-->
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
+
+
+	<style type="text/css">
+	
+		@import url(//fonts.googleapis.com/earlyaccess/jejugothic.css);
+
+		* { 
+		 font-family: 'Jeju Gothic', sans-serif;
+		}
+	
+		article{
+			
+			margin-top: 20px;			
+			
+		}
+		
+		.header-v3 .wrap-menu-desktop {
+		    background-color: black;
+		    top: 0;
+		    border-bottom: none;
+		}
+		
+		.main-menu > li.active-menu > a, .main-menu > li > a{
+		    color: white;
+		}
+		
+		.main-menu > li:hover > a {
+		  text-decoration: none;
+		  /*color: #6c7ae0;*/
+		  color: white;
+		}
+	
+		h4.myShopping {
+			padding-left: 15px;
+			padding-top: 20px;
+			margin-bottom: 0px;
+		}
+		/**/
+		#wrapper {
+			height: auto;
+			min-height: 100%;
+			padding-bottom: 72px;
+		}
+
+		footer {
+			height: 72px;
+			position: relative;
+			transform: translateY(-100%);
+		}
+
+		/*   */
+		.box {
+			width: 80px;
+			height: 80px;
+			border-radius: 50%;
+			overflow: hidden;
+			margin: 0 auto;
+		}
+		
+		.profile {
+			width: 100%;
+			height: 99%;
+		}
+
+		.cal-md-10 {
+
+			padding-left: 0px;
+		}
+
+		.tempClass {
+			width: 80px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.tempClass>div {
+			text-align: center;
+		}
+
+		.tempClass>span {
+			text-align: center;
+		}
+		
+		.iconLink {
+			color: #ffffff;
+		}
+		
+		.iconLink:hover {
+			color: #ffffff;
+		}
+
+
+	</style>
+
+</head>
+<!-- [head] 영역 끝 -->
+
+
+<body>
+	<div id="wrapper">
+	
+		<!-- [header] 영역 시작 -->
+    	<header th:replace = "/layout/fragment/headerMypage :: headerMypage"></header>
+    	<!-- [header] 영역 끝 -->		
+		
+		<!--마이페이지-->
+		<div style="width: 100%; margin-top: 84px; background-color: black;">
+			
+			<div class="container" style="padding-top: 20px; ">			
+				
+				<span class="mtext-101 cl0 p-lr-45">MyPage</span>
+				
+				<div class="row p-b-25" style="margin-top: 30px; ">
+				
+					<div class="col-2 p-b-5">
+						<!-- user,admin일 때 프로필 -->
+						<th:block sec:authorize="hasAnyRole('ROLE_user','ROLE_admin')">
+							<div class="box" style="background: #BDBDBD;">
+								<img class="profile" src="/img/gallery-09.jpg">
+							</div>
+						</th:block>
+				
+						<!-- ROLE_store,ROLE_storeX일 때 프로필 -->
+						<th:block sec:authorize="hasAnyRole('ROLE_store','ROLE_storeX')">
+							<div class="box" style="background: #BDBDBD;">
+								<img class="profile" th:src="@{/img/upload/} +${#authentication.principal.user.storeLogoImage}" />
+							</div>
+						</th:block>
+					</div>
+				
+					<div class="col-4 p-b-5">
+						
+						<span>
+							<span class="navbar-brand cl0">[[${#authentication.principal.user.id}]]</span><br>
+							<p>
+								<!--유지 일때만 포인트가 보임-->
+								<th:block sec:authorize="hasRole('ROLE_user')">
+									<i class="zmdi zmdi-parking"> </i> 보유 보인트 : [[${#authentication.principal.user.totalPoint}]]
+									<!-- 포인트--> <br>
+								</th:block>
+						
+								<i class="zmdi zmdi-calendar"></i> 멤버의 가입일 : [[${#authentication.principal.user.regDate}]]
+						
+							</p>
+						
+						</span>
+					
+					</div>
+					
+					<div class="col-6 p-b-5">
+						
+						<div class="right-box" style="float: right;">
+						
+							<div class="container-fluid " style="display:flex;">
+												
+								<!-- <div class="tempClass">			
+										<div style="font-size: 30px;">
+								 			<i class="fas fa-donate"></i>  >
+								  		</div>
+								  		<span>5000포인트</span>
+						 			 </div> -->
+												
+								<!-- User 입장에서 보이는 오른쪽 아이콘-->								
+								<th:block sec:authorize="hasRole('ROLE_user')">
+						
+									<a class="iconLink" th:href="@{/cart/__${#authentication.principal.user.id}__}" style="margin-right: 20px;">
+										<div class="tempClass text-center">
+											<div style="font-size: 30px;">
+												<i class="zmdi zmdi-shopping-cart"></i>
+											</div>
+											<span>장바구니</span>
+										</div>
+									</a>
+						
+									<a class="iconLink" th:href="@{/live/getUserAlarmList}">
+										<div class="tempClass text-center">
+											<div style="font-size: 30px;">									
+												<i class="zmdi zmdi-notifications"></i> <!-- 알림 -->
+											</div>
+											<span>알림 목록</span>
+										</div>
+									</a>
+								</th:block>
+														
+								<!-- Store입장에서 보이는 아이콘 -->
+								<th:block sec:authorize="hasAnyRole('ROLE_store','ROLE_storeX')">
+								
+									<a class="iconLink" th:href="@{/live/addLiveView}" style="margin-right: 20px;">								
+										<div class="tempClass text-center">
+											<div style="font-size: 30px;">
+												<!-- zmdi zmdi-videocam -->
+												<i class="zmdi zmdi-play"></i>
+											</div>
+											<span>라이브 시작</span>
+										</div>
+									</a>
+								
+									<a class="iconLink" th:href="@{/live/getStoreAlarmList}">
+										<div class="tempClass text-center">
+											<div style="font-size: 30px;">
+												<i class="zmdi zmdi-notifications"></i> <!-- 알림 -->
+											</div>
+											<span>팔로우 목록</span>
+										</div>
+									</a>
+								</th:block>
+						
+							</div>
+						
+						</div>
+					
+					</div>
+				
+				</div>
+				
+			</div>
+			
+		</div>		
+		<!----마이페이지 끝!!-->
+		
+		<!-- bottom content -->
+		<section class="bg0 p-t-20 p-b-20 p-lr-45">
+			<div class="row">
+			
+				<div class="col-md-2 col-lg-2 p-b-80">
+					<th:block th:replace="/layout/fragment/sidebar :: sidebar"></th:block>
+				</div>
+			
+				<div class="col-md-10 col-lg-10 p-b-80">
+					<article layout:fragment="content"></article>
+				</div>
+				
+			</div>
+			
+		</section>
+				
+	</div>
+
+	<!-- [footer] 영역 시작 -->
+	<footer th:replace="/layout/fragment/footer :: footer"></footer>
+	<!-- [footer] 영역 끝 -->
+
+</body>
+
+</html>

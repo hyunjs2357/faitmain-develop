@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <meta charset = "UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    {"openapi":"3.0.3","info":{"title":"vChatCloud REST API Documentation","description":"브이챗 클라우드 REST API 명세서
+
+    <br/>BaseURL:
+    https://vchatcloud.com/openapi","contact":{"name":"이세븐웍스(주)","url":"https://vchatcloud.com/","email":"support@vchatcloud.com"},"version":"1.0"},"servers":[{"url":"https://vchatcloud.com","description":"vChat"},{"url":"http://localhost:8080","description":"local"}],"tags":[{"name":"1.
+    Token","description":"토큰 API"},{"name":"2. ChatRoom","description":"채팅방 관리 API"},{"name":"3.
+    ChatUser","description":"유저
+    API"},{"name":"4. Chat","description":"채팅 API"}],"paths":{"/openapi/v1/custom/{roomId}":{"post":{"tags":["4.
+    Chat"],"summary":"커스텀 메세지 보내기(sendCustom)","description":"채팅방으로 커스텀 메시지를 전송한다.
+
+    <br/><br/>즉시 전송: `sendDate`를 공란으로
+    비워둔다.<br/><br/>예약 전송: `sendDate`에 값을 입력한다.(`scheduleId` 리턴)
+
+    <br/><br/>`sendDate`형식: `YYYYMMDDHH24MISS` ex) 2022년 5월 26일 오후 5시 17분 17초 >>>
+    20220526171717","operationId":"sendCustomUsingPOST","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}}],"requestBody":{"content":{"application/x-www-form-urlencoded":{"schema":{"required":["jsonString","nickName"],"type":"object","properties":{"jsonString":{"type":"string","description":"JSON
+    메시지(`※ type:
+    json`)"},"nickName":{"type":"string","description":"대화명"},"sendDate":{"type":"string","description":"전송일시"}}}}}},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"201":{"description":"Created"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/custom/{roomId}/{scheduleId}":{"delete":{"tags":["4.
+    Chat"],"summary":"커스텀 메세지 취소(cancelCustom)","description":"예약된 커스텀 메시지 전송을 취소한다.
+
+    <br/><br/>`scheduleId`: `sendCustom
+    API`에서 반환된
+    `scheduleId`","operationId":"cancelCustomUsingDELETE","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}},{"name":"scheduleId","in":"path","description":"커스텀
+    메시지
+    예약번호","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"204":{"description":"No
+    Content"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/notice/{roomId}":{"post":{"tags":["4.
+    Chat"],"summary":"공지사항 보내기(sendNotice)","description":"채팅방으로 공지사항을
+    전송한다.","operationId":"sendNoticeUsingPOST","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}}],"requestBody":{"content":{"application/x-www-form-urlencoded":{"schema":{"required":["nickName","notice"],"type":"object","properties":{"nickName":{"type":"string","description":"대화명"},"notice":{"type":"string","description":"공지사항
+    메시지"}}}}}},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"201":{"description":"Created"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/whisper/{roomId}/{clientKey}":{"post":{"tags":["4.
+    Chat"],"summary":"귓속말 보내기(sendWhisperMessage)","description":"선택한 유저에게 귓속말을 전송한다.
+
+    <br/><br/>※ 귓속말을 받을 대상의 `clientKey`
+    필요.","operationId":"sendWhisperUsingPOST","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}},{"name":"clientKey","in":"path","description":"유저키","required":true,"style":"simple","schema":{"type":"string"}}],"requestBody":{"content":{"application/x-www-form-urlencoded":{"schema":{"required":["message","nickName"],"type":"object","properties":{"message":{"type":"string","description":"메시지"},"nickName":{"type":"string","description":"대화명"}}}}}},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"201":{"description":"Created"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/rooms":{"get":{"tags":["2.
+    ChatRoom"],"summary":"채팅방 리스트 정보 조회","description":"채팅방 리스트 정보를
+    가져온다.","operationId":"listRoomUsingGET","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]},"post":{"tags":["2.
+    ChatRoom"],"summary":"채팅방
+    생성","description":"채팅방을 생성한다.
+
+    <br/><br/>영상 채팅: `webrtc` 필드에 옵션 값(10진수)을
+    입력한다.","operationId":"createRoomUsingPOST","requestBody":{"content":{"application/x-www-form-urlencoded":{"schema":{"required":["maxUser","roomName"],"type":"object","properties":{"maxUser":{"type":"string","description":"최대
+    유저수"},"roomName":{"type":"string","description":"채팅방 제목"},"webrtc":{"type":"string","description":"RTC 옵션
+    설정(10진수)"}}}}}},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"201":{"description":"Created"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/rooms/{roomId}":{"get":{"tags":["2.
+    ChatRoom"],"summary":"채팅방 상세 정보 조회","description":"채팅방 상세 정보를
+    가져온다.","operationId":"getRoomInfoUsingGET","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]},"post":{"tags":["2.
+    ChatRoom"],"summary":"채팅방
+    수정","description":"채팅방을 수정한다.
+
+    <br/><br/>영상 채팅: `webrtc` 필드에 옵션 값(10진수)을
+    입력한다.","operationId":"modifyRoomUsingPOST","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}}],"requestBody":{"content":{"application/x-www-form-urlencoded":{"schema":{"required":["maxUser","roomName"],"type":"object","properties":{"maxUser":{"type":"string","description":"최대
+    유저수"},"roomName":{"type":"string","description":"채팅방 제목"},"roomStatus":{"type":"string","description":"채팅방
+    상태(`A`:진행중,`S`:중지)"},"webrtc":{"type":"string","description":"RTC 옵션
+    설정(10진수)"}}}}}},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"201":{"description":"Created"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]},"delete":{"tags":["2.
+    ChatRoom"],"summary":"채팅방 삭제","description":"채팅방을
+    삭제한다.","operationId":"destoryRoomUsingDELETE","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"204":{"description":"No
+    Content"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/exiles/{roomId}":{"get":{"tags":["3.
+    ChatUser"],"summary":"채팅방 추방유저 조회(listExileUser)","description":"채팅방의 추방 유저 리스트 정보를
+    가져온다.","operationId":"listExileUserUsingGET","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/exiles/{roomId}/{clientKey}":{"put":{"tags":["3.
+    ChatUser"],"summary":"채팅방 유저 추방 해제(unexileUser)","description":"채팅방 특정 유저의 추방을 해제한다.
+
+    <br/><br/>※ 추방 해제 대상의 `clientKey`
+    필요.","operationId":"unexileUserUsingPUT","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}},{"name":"clientKey","in":"path","description":"유저키","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"201":{"description":"Created"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]},"post":{"tags":["3.
+    ChatUser"],"summary":"채팅방
+    유저 추방(exileUser)","description":"채팅방 특정 유저를 추방한다.
+
+    <br/><br/>※ 추방 대상의 `clientKey`
+    필요.","operationId":"exileUserUsingPOST","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}},{"name":"clientKey","in":"path","description":"유저키","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"201":{"description":"Created"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/mute/{roomId}":{"get":{"tags":["3.
+    ChatUser"],"summary":"채팅방 글쓰기 제한 유저 조회(listMuteUser)","description":"채팅방의 글쓰기 제한 유저 리스트 정보를
+    가져온다.","operationId":"listMuteUserUsingGET","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/mute/{roomId}/{clientKey}":{"put":{"tags":["3.
+    ChatUser"],"summary":"채팅방 유저 글쓰기 제한 해제(unmuteUser)","description":"채팅방 특정 유저의 글쓰기 제한을 해제한다.
+
+    <br/><br/>※ 글쓰기 제한 해제 대상의
+    `clientKey` 필요.","operationId":"unmuteUserUsingPUT","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}},{"name":"clientKey","in":"path","description":"유저
+    키","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"201":{"description":"Created"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]},"post":{"tags":["3.
+    ChatUser"],"summary":"채팅방
+    글쓰기 제한(muteUser)","description":"채팅방 특정 유저의 글쓰기를 제한한다.
+
+    <br/><br/>※ 글쓰기 제한 대상의 `clientKey`
+    필요.","operationId":"muteUserUsingPOST","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}},{"name":"clientKey","in":"path","description":"유저
+    키","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"201":{"description":"Created"},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/v1/users/{roomId}":{"get":{"tags":["3.
+    ChatUser"],"summary":"채팅방 유저 조회(listUser)","description":"채팅방의 유저 리스트 정보를
+    가져온다.","operationId":"listUserUsingGET","parameters":[{"name":"roomId","in":"path","description":"채팅방
+    아이디(채널키)","required":true,"style":"simple","schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+    Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}},"/openapi/token":{"get":{"tags":["1.
+    Token"],"summary":"토큰 발급","description":"`인증 토큰(X-AUTH-TOKEN)`을 발급한다.
+
+    <br/><br/>반환된 `인증 토큰`은 API 호출시 `API KEY`와 함께 <b>HTTP 헤더에 포함</b>해야 한다.
+</div>
+
+<br/><br/>※ `Authorize` 버튼을 통해 `API KEY`를 Global(전역 변수) 설정한 경우<b>중복으로 값이 전송</b>되므로 파라미터의 `api_key` 필드는 공란으로 놓는다."
+          ,"operationId":"tokenUsingGET","parameters":[{"name":"api_key","in":"header","description":"API
+          KEY","required":false,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BasicResponse"}}}},"401":{"description":"Unauthorized"},"403":{"description":"Forbidden"},"404":{"description":"Not
+          Found"}},"security":[{"API_KEY":["global"]},{"X-AUTH-TOKEN":["global"]}]}}},"components":{"schemas":{"BasicResponse":{"title":"BasicResponse","type":"object","properties":{"result_cd":{"type":"integer","description":"응답
+          코드","format":"int32","example":1},"result_msg":{"type":"string","description":"응답
+          메시지","example":"\"\""}}}},"securitySchemes":{"API_KEY":{"type":"apiKey","name":"API_KEY","in":"header"},"X-AUTH-TOKEN":{"type":"apiKey","name":"X-AUTH-TOKEN","in":"header"}}}}
+</body>
+</html>

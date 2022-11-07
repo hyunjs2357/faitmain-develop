@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset = "UTF-8">    
+</head>
+<body>
+	<!-- 페이지(어떻게 할지 모르겠다) -->
+	<div class="flex-c-m flex-w w-full p-t-38" th:fragment="pageNavi">
+		<nav aria-label="Page navigation">
+		
+			<ul class="pagination">
+		
+				<!--  <<== 좌측 nav -->
+				<th:block th:if="${ resultPage.currentPage > resultPage.pageUnit }">
+					<li>
+				
+						<a th:href="|javascript:fncGetList('${ resultPage.currentPage-1}')|" aria-label="Previous" class="flex-c-m how-pagination1 trans-04 m-all-7">
+							<span aria-hidden="true">&lt;</span>
+						</a>
+					</li>
+				</th:block>
+				
+				<!--  중앙  -->
+				<!--<c:forEach var="i"  begin="${resultPage.beginUnitPage}" end="${resultPage.endUnitPage}" step="1">-->
+				<th:block th:each="num : ${#numbers.sequence(resultPage.beginUnitPage,resultPage.endUnitPage)}">
+					<!--<th:block th:if test="${ resultPage.currentPage == num }">-->
+					<!--  현재 page 가르킬경우 : active -->
+					<li class="active" th:if="${ resultPage.currentPage == num }">
+						<a th:href="|javascript:fncGetList('${ num }');|" th:text="${num}" 
+							th:class="|flex-c-m how-pagination1 trans-04 m-all-7 ${resultPage.currentPage == num ? 'active-pagination1' : ''}|">
+							<span class="sr-only">(current)</span>
+						</a>
+					</li>
+		
+					<!--<c:if test="${ resultPage.currentPage != i}">-->
+					<li th:if="${ resultPage.currentPage != num }" >
+						<a th:href="|javascript:fncGetList('${ num }');|" th:text="${num}" class="flex-c-m how-pagination1 trans-04 m-all-7"></a>
+					</li>
+					<!--</c:if>-->
+				</th:block>
+		
+				<!--  우측 nav==>> -->
+				<th:block th:if="${ resultPage.endUnitPage < resultPage.maxPage }">
+					<li>
+				
+						<a th:href="|javascript:fncGetList('${resultPage.endUnitPage+1}')|" aria-label="Next" class="flex-c-m how-pagination1 trans-04 m-all-7">
+							<span aria-hidden="true">&gt;</span>
+						</a>
+					</li>
+				</th:block>	
+			</ul>
+		
+		</nav>
+	</div>	
+</body>
+</html>

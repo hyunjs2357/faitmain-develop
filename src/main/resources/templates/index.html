@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/default_layout}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+           	
+        <title>Fait-Main</title>
+        
+        <!-- live -->		
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+       	<script th:src="@{js/vchatcloud-1.2.0.min.js}"></script> 
+		<script th:src="@{js/like.js}"></script>
+    	<script th:src="@{js/draw.js}"></script>
+    	<script th:src="@{js/scripts.js}"></script>
+    	<script th:src="@{js/errMsg.js}"></script>
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+    	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    	<script src="https://kit.fontawesome.com/c13f14f04a.js" crossorigin="anonymous"></script>
+    	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    	<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+    	
+    	<style>
+			
+    		div.livecommerce {
+			    width: 900px !important;
+			    height: 675px !important;
+			    overflow: hidden !important;
+			    position: relative !important;
+			    border: 8px solid #555555 !important;
+			    border-radius: 15px !important;
+			}
+			
+			
+			.livecommerce .title {
+			    width: 100% !important;
+			    height: 139px !important;
+			    position: absolute !important;
+			    top: 0 !important;
+			    left: 0 !important;
+			    background: url(/img/livecommerce_titleBG.png) !important;
+			}
+    		
+    		video {
+    			height : 690px !important;
+    		}
+    		
+    		article.title{
+    			margin-top : 0px;
+    		}
+    		
+    		.livecommerce .title p{
+				width: 335px;
+				font-size: 30px;
+				color: #fff;
+				line-height: 1.7;
+				margin: 20px;
+				text-align: left;
+			}
+			
+			.livecommerce .title span{
+				font-size: 30px;
+				color: #fff;
+				border-radius: 3px;
+				background: #ec2014;
+				padding: 2px 5px;
+				margin-right: 6px;
+			}
+    	</style>
+		
+    </head>
+    
+    <body>
+    
+    	<article layout:fragment="content">
+    	
+    		<!-- Slider -->
+			<section class="section-slide">
+			
+				<div class="wrap-slick1" style="background-color: #fff;">
+					<div class="container h-full">
+			
+						<div class="row align-items-center justify-content-center" style="padding-top: 84px; padding-bottom: 30px;">
+							<div class="col-md-4 text-center" style="width: 424px">
+								<div class="row">
+									<div class="col-md-12"
+										style="height: 100px; display: flex; align-items: center; flex-direction:row; justify-content: center;">
+										<a class="flex-c-m stext-101 cl2 size-101 bg0 bor13 hov-btn1 p-lr-15 trans-04 pointer m-tb-10" th:href="@{live/getLiveReservationCal}">
+											프리미엄 라이브 예약 확인
+										</a>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 "
+										style="border-radius:30px; right:15px; padding-top: 20px; height: 570px; background-color:white; border: 1px solid #555555;">
+										<div>
+											<h5 class="mtext-106">프리미엄 상품 목록</h5>
+										</div>
+										<div>
+											<table class="table">
+												<colgroup>
+													<col width="10px" />
+													<col width="330px" />
+												</colgroup>
+			
+												<tbody>
+													<th:block th:if="${liveReservation!=null}">
+														<th:block th:each="liveProduct : ${liveReservation.liveProduct}">
+															<tr style="cursor:pointer"
+																th:onclick="'openProductView('+${liveProduct.productNumber}+');'">
+																<th scope="row">
+																	<img th:src="'../img/upload/'+${liveProduct.productMainImage}"
+																		style="width:50px; height:50px;">
+																</th>
+																<td style="text-align: left;">
+																	<div th:text="${liveProduct.productName}"></div>
+																	<marquee>
+																		<th:block th:text="${liveProduct.productDetail}"></th:block>
+																	</marquee>
+																</td>
+															</tr>
+														</th:block>
+													</th:block>
+													<th:block th:unless="${liveReservation!=null}">
+														등록된 예약이 없습니다.
+													</th:block>
+												</tbody>
+			
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+			
+							<div class="livecommerce col-md-8" style="padding-left:0px; padding-right:0px;">
+								<div id="remote_cam">
+			
+			
+								</div>
+			
+								<article class="title">
+									<p id=roomNm><span>Live</span></p>
+								</article>
+							</div>
+			
+						</div>
+			
+					</div>
+			
+				</div>
+				
+			</section>
+			
+			<!-- LiveList section-->
+			<section id="features" class="bg0 p-t-80 p-b-140">						
+				<div class="container">
+				
+					<p class="px-10 stext-106">Live List</p>
+					
+					<div class="row">
+					
+						<div class="col-md-12">
+						
+							<div class="row">
+			
+								<div class="col-md-3 pb-3" th:each="live : ${map.liveList}">
+									
+									<div class="card" style="height : 520px; position : relative">
+										<a th:href="@{'live/watchLive/' + ${live.liveNumber}}">
+											<img class="card-img-top" alt="Bootstrap Thumbnail First" src="https://dummyimage.com/235x400/343a40/6c757d"
+												style="height : 400px" />
+										</a>
+										<div style="position: absolute; left:10px; top: 370px;">
+											<strong>실시간 시청자 : 
+												<span th:if="${live.liveWatcher} == -1">0</span>
+												<span th:if="${live.liveWatcher} != -1">[[${live.liveWatcher}]]</span>
+											</strong>
+										</div>
+										<div class="card-block">
+											<div>
+												<h5 th:text="${live.liveTitle}" class="card-title pt-3 pb-2 px-2">
+													Live Title
+												</h5>
+											</div>
+											<div>
+												<h6 th:text="${live.liveIntro}" class="card-text px-2">Intro</h6>
+											</div>
+											<div style="display: flex; align-items : center; position: absolute; bottom: 5px; left:5px;">
+												<div>
+													<img th:src="|../img/upload/${map.store[__${liveStat.index}__].storeLogoImage}|"
+														style="height : 25px; width: 25px; margin-left: 5px; margin-right: 5px;" />
+												</div>
+												<div>
+													<h6 th:text="${map.store[__${liveStat.index}__].storeName}">storeName</h6>
+												</div>
+												<div>
+												</div>
+											</div>
+										</div>
+			
+									</div>
+								</div>
+			
+							</div>
+			
+						</div>
+					</div>
+				</div>		
+			</section>
+			
+			<!-- product 표시 -->
+			<section class="bg0 p-t-23 p-b-140">
+				<div class="container">
+					
+					<!-- product 표시 -->
+					<div class="row isotope-grid">
+						<th:block th:each="product : ${map.list}">
+							<div th:class="|col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${product.categoryCode}|">
+							
+								<!-- prodcut img, name, price -->
+								<div class="block2">
+									<div class="block2-pic hov-img0">
+										<a th:href="@{/product/getProduct?productNumber=} + ${product.productNumber}">
+											<img th:src="|../img/upload/${ product.productMainImage }|" alt="IMG-PRODUCT">
+										</a>
+										<!-- 
+										<a th:href="@{/product/getProduct?productNumber=} + ${product.productNumber}"
+											class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+											Quick View
+										</a>
+										-->
+									</div>
+						
+									<div class="block2-txt flex-w flex-t p-t-14">
+										<div class="block2-txt-child1 flex-col-l ">
+										
+											<a th:href="@{/product/getProduct?productNumber=} + ${product.productNumber}" th:text="${product.productName}"
+												class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+											</a>
+											
+											<a th:href="@{/product/getProduct?productNumber=} + ${product.productNumber}">
+												<span class="stext-105 cl3" th:text="${#numbers.formatInteger(product.productPrice, 3, 'COMMA') + '원'}">
+												</span>
+											</a>
+											
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</th:block>
+						<!-- Product 관련 js -->
+						<!-- ==================================================== -->
+						<!-- 충돌나서 main.js를 scripts.js에 추가함 -->
+						<!-- ============ -->
+					</div>	
+					
+					<!-- Load more -->
+					<div class="flex-c-m flex-w w-full p-t-45">
+						<a th:href="@{/product/getProductList?resultJsp=listProduct}" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+							전체 상품
+						</a>
+					</div>
+					
+				</div>
+			</section>		
+					
+    		<input th:if="${live} != null" type="hidden" id="storeId" th:value="${live.storeId}">
+			<input th:if="${live} != null" type="hidden" id="channelKey" th:value="${live.roomId}">
+			<input th:if="${liveReservation} != null" type="hidden" id="storeName" th:value="${liveReservation.store.storeName}">
+				
+    	</article>	
+		
+    </body>
+
+</html>

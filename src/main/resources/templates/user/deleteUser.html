@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout/default_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+
+<head>
+
+
+	<link href="/css/styles.css" rel="stylesheet" />
+	<link href="/user/form.css" rel="stylesheet" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic+Coding:wght@400;700&display=swap"
+		rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/select2/select2.min.css">
+
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+
+
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/animsition/css/animsition.min.css">
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!--sweetalert  -->
+	<meta charset="UTF-8">
+	<title> 회원 탈퇴 </title>
+	<style>
+		.form-group p {
+
+			margin-top: 10px;
+
+		}
+
+		body {
+			font-family: 'Nanum Gothic Coding', monospace;
+		}
+
+		.form-group {
+			padding: 30px;
+
+		}
+	</style>
+
+
+
+
+
+
+    <script type = "text/javascript">
+
+
+ function withdrawUser() {
+
+					var formData = $("#form").serialize();
+					 alert(formData) ;
+					$.ajax({
+						url: "/user/json/deleteUser",
+						type: 'POST',
+						data: formData,
+						//	 dataType : 'json',
+
+						success: function (data) { //컨트롤러에서 넘어온 cnt값을 받는다
+
+
+
+							if (data == 1) { // 1이면 탈퇴 
+
+									swal("회원탈퇴가 완료 되었습니다.", "지금까지 fait-main과 함께해주셔서 감사합니다. 더욱 성장하는 fait-main이 되도록 노력하겠습니다. ",
+										"info").then(function () { 
+										opener.document.location.reload(); // 부모창 리로드
+ 										window.close()
+
+										});
+
+
+							} else {
+								console.log("탈퇴 안됨 " +data);
+							} // 탈퇴 아님
+
+
+						}//성공 괄호
+
+					}); // ajax 콸호 
+
+
+	}
+
+
+			 
+	</script>
+
+ </head>
+
+
+<body>
+ 
+	<article layout:fragment="content">
+
+
+		<div>
+			<div class="container col-md-8">
+				<form id="form">
+						<div class="text-center">
+		
+							<h2 class="fw-bolder"> 회원 탈퇴 </h2>
+						</div>
+		
+						<hr>
+						<form id="form">
+							<div class="form-group">
+								<h3> 아이디 : <span th:text="${#authentication.principal.user.id}"> </h3></span>
+						
+						
+						
+						
+								<input type="hidden" id="id" name="id" th:value="${#authentication.principal.user.id}">
+						
+								<p>
+									탈퇴 유의 사항<br>
+									-포인트 ,알림도 데이터는 삭제 됩니다.<br>
+									-탈퇴 회원 정보는 삭제되나 1:1 문의 , 상품 문의 , 삼품 리뷰,게시글과 댓글은 삭제 되지 않습니다.<br>
+									-회원 탈퇴 시 다시 회원 가입이 불가능합니다. <br>
+		 						</p>
+						
+							</div>
+					
+						
+						
+							<a class="flex-c-m stext-101 cl0 size-121 bg11 bor1 hov-btn3 p-lr-15 trans-04 pointer" onclick="window.close();" role="button"> 취소 <a>
+									<div  style="text-align:right;">
+										<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" onclick="withdrawUser();" id="withdrawUser"> 회원탈퇴 </a>
+						
+								</div>
+						
+				</form>
+
+			</div>
+		</div>
+
+
+
+	</article>
+
+
+
+</body>
+
+
+</html>

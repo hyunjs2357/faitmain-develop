@@ -1,0 +1,37 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">-->
+
+<!--<configuration>-->
+
+<!--    <properties>-->
+<!--        <property name="mapperLocations" value="classpath:mapper/*.xml"/>-->
+<!--    </properties>-->
+
+<!--    <settings>-->
+<!--        <setting name="mapUnderscoreToCamelCase" value="true"/>-->
+<!--        <setting name="callSettersOnNulls" value="false"/> &lt;!&ndash;true: 쿼리 결과 필드가 null인 경우, 누락이 되서 나오는데 누락이 안되게 하는 설정&ndash;&gt;-->
+<!--        <setting name="jdbcTypeForNull" value="NULL"/> &lt;!&ndash; 쿼리에 보내는 파라메터가 null인 경우, 오류 발생하는 것 방지  예) #{search.user} &ndash;&gt;-->
+<!--    </settings>-->
+
+<!--    <typeAliases>-->
+<!--        <package name="com.faitmain.domain.insertOrder.domain"/>-->
+<!--        <package name="com.faitmain.domain.live.domain"/>-->
+<!--        <package name="com.faitmain.domain.product.domain"/>-->
+<!--        <package name="com.faitmain.domain.user.domain"/>-->
+<!--        <package name="com.faitmain.domain.customer.domain"/>-->
+<!--    </typeAliases>-->
+
+<!--    <mappers>-->
+<!--        <mapper resource="mapper/LiveMapper.xml"/>-->
+<!--        <mapper resource="mapper/CartMapper.xml"/>-->
+<!--        <mapper resource="mapper/CustomerBoardMapper.xml"/>-->
+<!-- 		<mapper resource="mapper/BanStatusMapper.xml"/>-->
+<!--        <mapper resource="mapper/InquiryMapper.xml"/>-->
+<!--        <mapper resource="mapper/OrderMapper.xml"/>-->
+<!--        <mapper resource="mapper/ProductMapper.xml"/>-->
+<!--        <mapper resource="mapper/UserMapper.xml"/>-->
+<!--    </mappers>-->
+
+
+
+<!--</configuration>-->

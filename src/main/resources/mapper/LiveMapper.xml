@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.faitmain.domain.live.mapper.LiveMapper">
+   
+   <resultMap id="liveMap" type="Live">
+      <result property="liveNumber"    column="live_number"       jdbcType="INTEGER"/>
+      <result property="roomId"		   column="room_id"			  jdbcType="VARCHAR"/>
+      <result property="storeId"       column="store_id"             jdbcType="VARCHAR"/>
+      <result property="liveTitle"       column="live_title"             jdbcType="VARCHAR"/>
+      <result property="liveIntro"       column="live_intro"             jdbcType="VARCHAR"/>
+      <result property="liveImage"       column="live_image"             jdbcType="VARCHAR"/>
+      <result property="chattingStatus"       column="chatting_status"             jdbcType="BIT"/>
+      <result property="liveStatus"         column="live_status"            jdbcType="BIT"/>
+   </resultMap>
+   
+   <resultMap id="liveChatMap" type="LiveChat">
+       <result property="liveNumber" column="live_number" jdbcType="INTEGER" />
+       <result property="writer" column="writer" jdbcType="VARCHAR" />
+       <result property="chattingMessage" column="chatting_message" jdbcType="VARCHAR" />
+       <result property="sendDate" column="send_date" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <resultMap id="liveProductMap" type="LiveProduct">
+       <result property="liveProductNumber" column="live_product_number" jdbcType="INTEGER" />
+       <result property="liveNumber" column="live_number" jdbcType="INTEGER" />
+       <result property="liveReservationNumber" column="live_reservation_number" jdbcType="INTEGER" />
+       <result property="productNumber" column="product_number" jdbcType="INTEGER"/>
+       <result property="productMainImage" column="product_main_image" jdbcType="VARCHAR"/>
+       <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+       <result property="productDetail" column="product_detail" jdbcType="VARCHAR"/>
+       <result property="price" column="product_price" jdbcType="INTEGER"/>
+    </resultMap>   
+   
+   <resultMap id="liveReservationMap" type="LiveReservation">
+       <result property="liveReservationNumber" column="live_reservation_number" jdbcType="INTEGER" />
+       <result property="reservationDate" column="reservation_date" jdbcType="DATE" />
+       <result property="title" column="title" jdbcType="VARCHAR" />
+       <result property="reservationTime" column="reservation_time" jdbcType="INTEGER" />
+       
+       <association property="store" javaType="User">
+       		<id property="id" column="store_id" jdbcType="VARCHAR" />
+       		<result property="storeName" column="store_name" jdbcType="VARCHAR" />
+       		<result property="storeLogoImage" column="store_logo_image" jdbcType="VARCHAR" />
+       </association>
+     
+    </resultMap>
+    
+    <resultMap id="liveUserStatusMap" type="LiveUserStatus">
+       <result property="liveNumber" column="live_number" jdbcType="INTEGER" />
+       <result property="id" column="id" jdbcType="VARCHAR" />
+       <result property="nickName" column="nick_name" jdbcType="VARCHAR" />
+       <result property="alarmStatus" column="alarm_status" jdbcType="INTEGER" />
+       <result property="kickStatus" column="kick_status" jdbcType="INTEGER" />
+       <result property="dumbStatus" column="dumb_status" jdbcType="INTEGER" />
+       <result property="date" column="date" jdbcType="DATE" />
+    </resultMap>
+    
+    <!-- ================================================================================= ADD =================================================================================== -->
+    <!-- ADD Live -->
+    <insert id="addLive" parameterType="Live">
+       INSERT INTO live
+          ( room_id, store_id, live_title, live_intro, live_image, chatting_status, live_status )
+      VALUES
+          ( #{roomId}, #{storeId}, #{liveTitle}, #{liveIntro}, #{liveImage}, #{chattingStatus}, 1 )
+    
+    </insert>
+    
+    <!-- ADD LiveChat -->
+     <insert id="addLiveChat" parameterType="LiveChat">
+       INSERT INTO live_chat
+          (live_number, writer, chatting_message, send_date)
+      VALUES
+          (#{liveNumber}, #{writer}, #{chattingMessage}, NOW())
+    </insert>
+    
+    <!-- ADD LiveProduct -->
+     <insert id="addLiveProduct" parameterType="LiveProduct">
+       INSERT INTO live_product
+          (live_number, live_reservation_number, product_number, product_main_image, product_name, product_detail, product_price)
+      VALUES
+          (#{liveNumber}, #{liveReservationNumber}, #{productNumber}, #{productMainImage}, #{productName}, #{productDetail}, #{price})
+    </insert>
+    
+    <!-- ADD LiveReservation -->
+     <insert id="addLiveReservation" useGeneratedKeys="true" keyProperty="liveReservationNumber" parameterType="LiveReservation">
+       INSERT INTO live_reservation
+          (store_id, reservation_date, reservation_time)
+      VALUES
+          (#{store.id}, #{reservationDate}, #{reservationTime})
+    </insert>
+    
+    <!-- ADD LiveUserStatus -->
+     <insert id="addLiveUserStatus" parameterType="LiveUserStatus">
+       INSERT INTO live_user_status
+          (live_number, id, nick_name, alarm_status, kick_status, dumb_status, date)
+       VALUES
+          (#{liveNumber}, #{id}, #{nickName}, #{alarmStatus}, #{kickStatus}, #{dumbStatus}, now())
+    </insert>   
+    
+    <!-- ================================================================================= UPDATE============================================================================== -->
+    <!-- UPDATE Live -->
+    <update id="updateLive" parameterType="Live">
+       UPDATE live
+       <set>
+          live_title = #{liveTitle}, 
+          live_intro = #{liveIntro},
+          live_status = #{liveStatus}
+       </set>
+       WHERE live_number = #{liveNumber}
+    </update>
+    
+    <!-- UPDATE LiveChat (필요없음) -->
+    
+    <!-- UPDATE LiveProduct (필요없음) -->
+    
+    <!-- UPDATE LiveReservation -->
+    <update id="updateLiveReservation" parameterType="LiveReservation">
+    	UPDATE live_reservation
+    	<set>
+    		reservation_date = #{reservationDate},
+    		reservation_time = #{reservationTime}
+    	</set>
+    	<where>
+    		live_reservation_number = #{liveReservationNumber}
+    	</where>
+    </update>
+    
+    <!-- UPDATE LiveUserStatus -->
+    <update id="updateLiveUserStatus" parameterType="LiveUserStatus">
+       UPDATE live_user_status
+       <set>
+          alarm_status = #{alarmStatus},
+          kick_status = #{kickStatus},
+          dumb_status = #{dumbStatus}
+       </set>
+       <where>
+          live_number = #{liveNumber}
+          AND id = #{id}
+       </where>
+    </update>
+    
+    <!-- ================================================================================= GET ============================================================================== -->
+    <!-- GET Live -->
+    <select id="getLive" parameterType="int" resultMap="liveMap">
+       SELECT * FROM live
+      WHERE live_number = #{liveNumber}
+    </select>
+    
+    <!-- GET Live By Store Id -->
+    <select id="getLiveByStoreId" parameterType="String" resultMap="liveMap">
+       SELECT * FROM live
+      WHERE store_id = #{storeId}
+    </select>
+    
+    <!-- GET LiveProduct -->
+    <select id="getLiveProduct" parameterType="LiveProduct" resultMap="liveProductMap">
+       SELECT * FROM live_product
+       WHERE live_product_number = #{liveProductNumber}
+    </select>
+
+   <!-- GET LiveUserStatus -->
+   <select id="getLiveUserStatus" parameterType="LiveUserStatus" resultMap="liveUserStatusMap">
+      SELECT * FROM live_user_status
+	<where>
+         live_number = #{liveNumber}
+     	 AND id = #{id}
+	</where>
+   </select>
+   
+   <!-- GET LiveReservation -->
+   <select id="getLiveReservation" parameterType="int" resultMap="liveReservationMap">
+   		SELECT * FROM live_reservation
+   		<where>
+   			live_reservation_number = #{liveReservationNumber}
+   		</where>
+   </select>
+   
+   <!-- GET CurrnetLiveReservation -->
+   <select id="getCurrentLiveReservation" parameterType="LiveReservation" resultMap="liveReservationMap">
+   		SELECT * FROM live_reservation
+   		<where>
+   			reservation_date = #{reservationDate}
+   			AND reservation_time = #{reservationTime}
+   		</where>
+   </select>
+   
+   <!-- GET LiveReservationByStoreId -->
+   <select id="getLiveReservationByStoreId" parameterType="LiveReservation" resultMap="liveReservationMap">
+   		SELECT * FROM live_reservation
+   		<where>
+   			store_id = #{store.id}
+   			AND reservation_date > #{reservationDate} OR (reservation_date = #{reservationDate} AND reservation_time >= #{reservationTime})
+   		</where>
+   </select>
+   
+   <select id="getLiveNumberByRoomId" parameterType="string" resultMap="liveMap">
+   	SELECT * FROM live
+   	<where>
+   	 room_id = #{roomId}
+   	</where>
+   </select>
+   
+   <!-- GET LiveReservation 
+    <select id="">
+       SELECT * FROM live_reservation
+       <where
+          
+       </where>
+    </select> -->
+    
+    
+    <!-- ================================================================================= GET LIST ============================================================================== -->
+    <!-- GET LIST Live -->
+    <select id="getLiveList" resultMap="liveMap">
+       SELECT * FROM live
+       WHERE live_status = 1;
+    </select>
+    
+    <!-- GET LIST LiveChat -->
+    <select id="getLiveChatList" parameterType="LiveChat" resultMap="liveChatMap">
+       SELECT * FROM live_chat
+       <where>
+          live_number = #{liveNumber}
+          AND writer = #{writer}
+       </where>
+    </select>
+    
+    <!-- GET LIST LiveProduct -->
+    <select id="getLiveProductList" parameterType="int" resultMap="liveProductMap">
+       SELECT * FROM live_product
+       <where>
+       		live_reservation_number = #{value}
+       </where>
+    </select>
+    
+        <!-- GET LIST LiveProduct By LiveNumber -->
+    <select id="getLiveProductListByLiveNumber" parameterType="int" resultMap="liveProductMap">
+       SELECT * FROM live_product
+       <where>
+       		live_number = #{value}
+       </where>
+    </select>
+	
+	<!-- GET LIST ListReservationCal -->
+	<select id="getLiveReservationCal" resultMap="liveReservationMap">
+		SELECT reservation_date, COUNT(*) AS title FROM live_reservation
+		group by reservation_date
+	</select>
+	    
+	<!-- GET LIST ListReservationList -->
+	<select id="getLiveReservationList" parameterType="String" resultMap="liveReservationMap">
+		SELECT l.*, u.store_name, u.store_logo_image
+        FROM live_reservation l, user u
+		WHERE l.store_id = u.id
+			  AND l.reservation_date = #{value}
+		ORDER BY l.reservation_time;
+	</select>
+	    
+    <!-- GET LIST ListStoreUserStatus -->
+    <select id="getStoreLiveUserStatusList" parameterType="int" resultMap="liveUserStatusMap">
+      SELECT * FROM live_user_status
+      <where>
+         live_number = #{liveNumber}
+         AND alarm_status = 1
+      </where>
+   	</select>
+	
+	<!-- GET LIST ListUseLiveUserrStatus -->
+	<select id="getUserLiveUserStatusList" parameterType="LiveUserStatus" resultMap="liveUserStatusMap">
+      SELECT * FROM live_user_status
+      <where>
+         id = #{id}
+         AND alarm_status = 1
+      </where>
+   	</select>
+	
+
+   <!-- ================================================================================= DELETE ============================================================================== -->
+   <delete id="deleteLiveReservation" parameterType="int">
+   		DELETE FROM live_reservation
+   		<where>
+   			live_reservation_number = #{liveReservationNumber}
+   		</where>
+   </delete>
+   
+   <delete id="deleteLiveProduct" parameterType="int">
+      DELETE FROM live_product
+      <where>
+         live_number = #{liveNumber}
+      </where>
+   </delete>
+   
+   <delete id="deleteLiveProductByReservationNumber" parameterType="int">
+   		DELETE FROM live_product
+   		<where>
+   			live_reservation_number = #{value}
+   		</where>
+   </delete>
+   
+   
+</mapper>

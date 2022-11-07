@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/default_layout}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>premiuem Live List</title>
+
+	<!-- Bootstrap v4.6 css -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+	
+	<!-- Bootstrap v4.6 js -->
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.touchswipe/1.6.4/jquery.touchSwipe.min.js"></script>
+	<script th:src="@{/js/liveReservationList.js}"></script>
+
+	
+	<style>
+		@font-face{
+			src: url("../font/BMJUA_ttf.ttf");
+			font-family: "jua";
+		}
+		
+		h3 {
+			padding-top: 20px;
+			padding-bottom: 15px;
+			padding-left: 20px;
+		}
+		
+		h6{
+    		margin-left: 7px;
+		}
+		
+		div.product-img{
+			display: inline-table;
+			float: left;
+			width: 200px;
+			height: 200px;
+			
+		}
+		
+		div.product-context{
+			display: inline-table;
+			float: left;
+			
+		}
+		
+		.product-img{
+			margin-right:20px;
+		}
+		
+		.product-context{
+			margin-top:20px;
+		}
+		
+		.carousel-indicators {
+		    text-align: right;
+		    float: right;
+		    left: inherit;
+		}
+		
+		.carousel .carousel-indicators li {  
+			background-color: gray; 
+		}
+		
+		.carousel .carousel-indicators li.active { 
+			background-color: black; 
+		}
+	</style>
+</head>
+<body>
+	<article layout:fragment="content">
+		<div class="container" style="font-family:jua;">
+			<h2 style="margin-top:20px;">프리미엄 라이브 예약 목록</h2>
+			<h3 th:text="${date}" style="text-align: center;">date</h3>
+			<hr/>
+			
+			<div class="row">
+				<div class="col-md-1" style="text-align : center;">
+					<h5>시간</h5>
+				</div>
+				<div class="col-md-9" style="text-align : center;">
+					<h5>상품</h5>
+				</div>
+				<div class="col-md-2" style="text-align : center;">
+					<h5>비고</h5>
+				</div>
+			</div>
+			
+			<hr/>
+				
+			<div th:each="prodList : ${list}">
+				<div th:if="${#lists.size(prodList.liveProduct)==1  or #lists.size(prodList.liveProduct)==0}" class="row" style="margin-bottom: 10px; background-color : #ffffff; border-bottom: 1px solid #444444; padding-bottom: 10px;">
+					<div class="col-md-1" style="display:flex; align-items:center">
+						<h5 th:text="${prodList.reservationTime}" style="display : inline">hour</h5><h5 style="display : inline">:00</h5>
+					</div>
+					<div class="col-md-9">
+						<div class="product-main">
+							<div class="product-img">
+								<img th:src="'/img/upload/'+${prodList.liveProduct[0].productMainImage}" style="width:200px; height:200px;">
+							</div>
+							<div class="product-context">
+								<div>
+									<h5 th:text="${prodList.liveProduct[0].productName}">productName</h5>
+									<h6 th:text="${prodList.liveProduct[0].productDetail}" style="margin-left:10px;">productDetail</h6>
+									<h6 th:text="${prodList.liveProduct[0].price}" style="margin-left:10px;">price</h6>
+									<div style="bottom:5px; display:flex; align-items:center;">
+										<img th:src="'/img/profile/' + ${prodList.store.storeLogoImage}" style="width:50px; height:50px; float:left">
+										<h6 th:text="${prodList.store.storeName}" style="font-size:20px;">storeName</h6>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-2" style="text-align: center;display: flex;align-items: center;flex-direction: column;justify-content: space-evenly;">
+							
+							<th:block sec:authorize="isAuthenticated()">
+								<th:block th:if="${prodList.store.userNumber} == ${#authentication.principal.user.userNumber}">
+									<a type="button" class="btn btn-info" th:href="@{/live/updateLiveReservation/{liveProductNum}/{date}(liveProductNum = ${prodList.liveReservationNumber}, date = ${prodList.reservationDate})}">수정 하기</a>
+									<a type="button" class="btn btn-danger" th:href="@{/live/deleteLiveReservation/{liveProductNum}/{date}(liveProductNum = ${prodList.liveReservationNumber}, date = ${prodList.reservationDate})}">삭제 하기</a>
+								</th:block>
+							</th:block>
+						
+					</div>
+				</div>
+					
+				<div th:unless="${#lists.size(prodList.liveProduct)==1  or #lists.size(prodList.liveProduct)==0}" class="row" style="margin-bottom: 10px; background-color : #ffffff; border-bottom: 1px solid #444444; padding-bottom: 10px;">
+					<div class="col-md-1" style="display:flex; align-items:center">
+						<h5 th:text="${prodList.reservationTime}" style="display : inline">hour</h5><h5 style="display : inline">:00</h5>
+					</div>
+						
+					<div class="col-md-9">
+						<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+							
+							<ol class="carousel-indicators" style="margin-right: 50px;">
+								<th:block th:each="productListIndicators : ${prodList.liveProduct}">
+								    <li th:if="${productListIndicatorsStat.first}" data-target="#myCarousel" th:data-slide-to="${productListIndicatorsStat.index}" class="active"></li>
+								    <li th:unless="${productListIndicatorsStat.first}" data-target="#myCarousel" th:data-slide-to="${productListIndicatorsStat.index}"/>
+								</th:block>
+							</ol>
+							
+							<div class="carousel-inner">		
+								<th:block th:each="productList : ${prodList.liveProduct}" >
+									<div th:if="${productListStat.first}" class="product-main carousel-item active">
+										<div class="product-img">
+											<img th:src="'/img/upload/' + ${productList.productMainImage}" style="width:200px; height:200px;">
+										</div>
+										<div class="product-context">
+											<h5 th:text="${productList.productName}">productName</h5>
+											<h6 th:text="${productList.productDetail}" style="margin-left:10px;">productDetail</h6>
+											<h6 th:text="${productList.price}" style="margin-left:10px;">price</h6>
+											<div style="bottom:5px; position:absolute; float:left; display:flex; align-items:center;">
+												<img th:src="'/img/upload/' + ${prodList.store.storeLogoImage}" style="width:50px; height:50px; float:left">
+												<h6 th:text="${prodList.store.storeName}" style="font-size:20px;">storeName</h6>
+											</div>
+										
+										</div>
+									</div>
+									<div th:unless="${productListStat.first}" class="product-main carousel-item">
+										<div class="product-img">
+											<img th:src="'/img/upload/' + ${productList.productMainImage}" style="width:200px; height:200px;">
+										</div>
+										<div class="product-context">
+											<h5 th:text="${productList.productName}">productName</h5>
+											<h6 th:text="${productList.productDetail}" style="margin-left:10px;">productDetail</h6>
+											<h6 th:text="${productList.price}" style="margin-left:10px;">price</h6>
+											<div style="bottom:5px; position:absolute; float:left; display:flex; align-items:center;">
+												<img th:src="'/img/upload/' + ${prodList.store.storeLogoImage}" style="width:50px; height:50px; float:left">
+												<h6 th:text="${prodList.store.storeName}" style="font-size:20px;">storeName</h6>
+											</div>
+										</div>
+										
+									</div>
+								</th:block>
+								
+							</div>
+						</div>
+						
+					</div>
+						
+					<div class="col-md-2" style="text-align: center; display: flex; align-items: center;">
+							
+						<th:block sec:authorize="isAuthenticated()">
+							<th:block th:if="${prodList.store.userNumber} == ${#authentication.principal.user.userNumber}">
+								<div>
+								<div><a type="button" class="btn btn-info" th:href="@{/live/updateLiveReservation/{liveProductNum}/{date}(liveProductNum = ${prodList.liveReservationNumber}, date = ${prodList.reservationDate})}" style="margin-bottom: 10px;">수정 하기</a></div>
+								<div><a type="button" class="btn btn-danger" th:href="@{/live/deleteLiveReservation/{liveProductNum}/{date}(liveProductNum = ${prodList.liveReservationNumber}, date = ${prodList.reservationDate})}">삭제 하기</a></div>
+								</div>
+							</th:block>
+						</th:block>
+							
+					</div>
+				</div>
+					
+			</div>
+				
+			<div style="text-align:center; height : 50px; margin-bottom:15px;">
+				<th:block sec:authorize="isAuthenticated()">
+						<th:block th:if="${#authentication.principal.user.role} == store">
+							<a type="button" class="btn btn-success" th:href="@{/live/addLiveReservation}" style="font-size:30px; width:150px; height:50px;">등록 하기</a>
+						</th:block>
+					</th:block>
+			</div>
+		</div>
+	</article>
+</body>
+</html>

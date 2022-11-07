@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layout/default_layout}">
+<head>
+    <meta charset = "UTF-8">
+    <title>문의 등록</title>
+    		
+	<style>
+	
+		
+    </style>
+    
+    <script type="text/javascript">
+    	
+    	$(function () {
+	
+			$('#inquiryContent').on('keyup', function () {
+				$('#inquiryContent_cnt').html("(" + $(this).val().length + " / 300)");
+
+				if ($(this).val().length > 300) {
+					$(this).val($(this).val().substring(0, 300));
+					$('#inquiryContent_cnt').html("(300 / 300)");
+				}
+			});
+			
+		});
+		
+    </script>
+</head>
+<body>
+	<article layout:fragment="content">
+	
+		<!-- Content page -->
+		<section class="bg0 p-t-104 p-b-116">
+			<div class="container">
+				<div class="flex-w flex-tr">
+					<!-- 문의 할 상품 정보 -->
+					<div class="size-208 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">					
+						<div class="flex-w w-full p-b-42">
+					
+							<div class="size-212 p-t-2">
+															
+								<img th:src="|../img/upload/${ product.productMainImage }|" alt="IMG-PRODUCT" class="stext-115 cl6 size-213 p-t-18"/>
+								
+								<p class="stext-115 cl7 hov-cl1 size-213 p-t-18">
+									<a class="stext-115 cl7 hov-cl1 size-213 p-t-18" th:href="@{/product/getStoreInfo(storeId=${product.store.id})}" th:text="${product.store.storeName}"></a>
+								</p>
+								
+								<br/>
+								
+								<span class="mtext-110 cl2 txt-center" th:text="${product.productName}"></span>
+								
+							</div>
+							
+						</div>
+					</div>
+					<!-- =================== -->
+					
+					<!-- 문의 작성 form -->
+					<div class="size-209 bor10 flex-w flex-col-m p-lr-93 p-tb-30 p-lr-15-lg w-full-md">					
+						<form th:action="@{/inquiry/addInquiry}" method="post" name="addInquiryForm" id="addInquiryForm">
+						
+							<input type="hidden" name="inquiryProduct.productNumber" th:value="${product.productNumber}" />
+							<input type="hidden" name="userId" th:value="${userId}" />
+							<input type="hidden" name="storeId" th:value="${product.store.id}" />
+							
+							<h4 class="mtext-105 cl2 txt-center p-b-30">
+								문의하기
+							</h4>
+							
+							<div class="bor8 m-b-20">
+								<input class="stext-111 cl2 plh3 size-116 p-l-28 p-r-30" type="text" name="inquiryTitle" placeholder="문의제목" />
+							</div>
+							
+							<div class="bor8 m-b-30">
+								<textarea class="stext-111 cl2 plh3 size-120 p-lr-28 p-tb-25" id="inquiryContent" name="inquiryContent" placeholder="문의내용"></textarea>								
+							</div>
+							<div id="inquiryContent_cnt">(0 / 300)</div>
+							
+							<br/>
+							<div class="m-b-20 flex-w flex-m">
+								<input class="cl2 m-r-3" type="checkbox" name="secret" />
+								<span class="cl2 stext-111">비밀글</span>
+							</div>
+							
+							<br/>
+							<button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+								등록
+							</button>
+						
+						</form>
+					
+					</div>
+					<!-- =================== -->					
+				
+				</div>
+			
+			</div>
+		
+		</section>	
+		
+	</article>
+</body>
+</html>

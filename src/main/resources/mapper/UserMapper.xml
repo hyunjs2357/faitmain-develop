@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.faitmain.domain.user.mapper.UserMapper">
+
+
+
+<!-- 회원 가입 -->
+    <insert id ="addUser"   parameterType="User"   >
+
+		INSERT INTO user ( id
+						 , password
+						 , gender
+						 , user_address1
+						 , user_address2
+						 , user_address3
+						 , nickname
+						 , phone_number
+						 , name
+						 , reg_date
+						 , join_path
+						 , store_logo_image
+						 , store_introduction
+						 , role
+						 , store_name
+						 )
+		VALUES ( #{id}
+			   , #{password}
+			   , #{gender}
+			   , #{userAddress1}
+			   , #{userAddress2}
+			   , #{userAddress3}
+			   , #{nickname}
+			   , #{phoneNumber}
+			   , #{name}
+			   , NOW( )
+			   , #{joinPath}
+			   , #{storeLogoImage}
+			   , #{storeIntroduction}
+			   , #{role}
+			   , #{storeName}
+			   );
+
+	</insert>
+<!-- 스토어 싱청 -->
+	<insert id ="addStoreApplicationDocument" parameterType="StoreApplicationDocument"     >
+		INSERT INTO store_application_document ( id, examination_status, product_detail, reg_date)
+		VALUES
+		    (#{id}, 'W', #{productDetial}, NOW() )
+		 
+ 	</insert>
+ 	
+ <select id ="getLogin"  parameterType="User" resultType="int">
+ 	SELECT COUNT(*) FROM user 
+ 		WHERE id = #{id} AND password = #{password}
+ 
+ </select>	   
+<!--  유저 정보 가져오기 -->
+<select id ="getUser" parameterType="String"    resultMap="userMap" >
+	SELECT user_number, id, `password`, gender, user_address1 , user_address2, user_address3, nickname, phone_number, `name`, reg_date, join_path, book_number, total_point, store_logo_image, store_introduction, `role`, store_name, withdrawal_status
+		FROM user
+ 		WHERE
+ 			id = #{value}
+  </select>
+ 
+ <!--
+ <select id ="getMapUser" parameterType="map"   resultMap="userMap"  >
+	SELECT user_number, id, password, gender, user_address1 , user_address2, user_address3, nickname, phone_number, `name`, reg_date, join_path, book_number, total_point, store_logo_image, store_introduction,  `role`, store_name, withdrawal_status
+		FROM user
+ 			<where>
+ 			${userCondition} = #{userKeyword}
+			   </where>
+ </select>
+   -->
+ 
+  <select id ="findUser" parameterType="map"  resultType="int" >  <!-- 이것은 findUser 때에따라 들어가는 값 확인하기 -->
+	SELECT COUNT(*)
+	FROM user
+		WHERE  phone_number =#{phoneNumber}  
+		AND  ${findcondition}= #{findkeyword} ;
+
+	</select>
+	
+   <select id ="findGetIdPw" parameterType="map"  resultMap="userMap"  >  <!-- 이것은 findUser 때에따라 들어가는 값 확인하기 -->
+	SELECT *
+	FROM user
+		WHERE  phone_number =#{phoneNumber}  
+		AND  ${findcondition}= #{findkeyword} ;
+
+	</select>
+ 
+ 
+ <!-- 	이것은 유효성 검사 할때 쓰일 Mapper  아직은 둠    -->
+
+	  <select id="getchechDuplicationCount" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM user WHERE ${checkcondition}= #{checkkeyword}
+        
+    </select>
+	
+ 
+  <!-- 가장 최신의 스토어 신청서 번호 가지고 있기  -->
+	 <select id ="getStoreApplicationDocumentNumber" parameterType="String" resultType="int">
+		SELECT store_application_document_number
+		FROM store_application_document
+		WHERE id = #{value}
+		ORDER BY store_application_document_number desc LIMIT 1
+	</select>
+ 
+ <!--  //SELECT 스토어 신청서 넘버로 스토어 가져오기   -->
+ 	 <select id ="getStoreApplicationDocument" parameterType="int"  resultMap="StoreApplicationDocumentMap" >
+		SELECT	 s.* , u.store_name , u.store_introduction  ,u.store_logo_image
+			FROM	 store_application_document s ,user u  
+			WHERE	  s.id = u.id and store_application_document_number = #{value} 
+ 			
+	</select>
+ 
+ 
+ 
+ <!-- 키워드나 정렬 조건 새로 붙이기  망함 --> 
+ <select id ="getlist" parameterType="map"  resultMap ="userMap" >  
+	SELECT user_number, id,   phone_number, name, reg_date, join_path,role, store_name, withdrawal_status
+	FROM user
+	 	
+			 	<where>
+						<if test="searchCondition != null and searchCondition != '' and searchCondition != 'ALL' ">
+								    role LIKE CONCAT('%', #{searchkeword},  '%'   )
+			    		 </if>
+			    
+			    </where>
+order by reg_date desc;
+</select>
+
+ 
+
+
+
+ 
+  
+         
+ <!-- 유저 업데이트 정보 업데이트 -->
+  	 <update	id="updateUser"	parameterType="User" >
+	   	UPDATE user
+	   	<set>
+	   		nickname 		= #{nickname} ,
+			user_address1 = #{userAddress1} ,
+			user_address2 = #{userAddress2},
+			user_address3 = #{userAddress3},
+			phone_number	=	#{phoneNumber} ,
+			store_introduction				=	#{storeIntroduction}
+			
+	   	</set>
+	   	WHERE  id = #{id}
+	 </update>
+ 
+ <!-- UPUDATEPASSword -->
+   	 <update	id="updateUserPassword"	parameterType="User" >
+	   	UPDATE user
+	   	<set>
+	   		password 		= #{password}    				
+	   	</set>
+	   	WHERE  id = #{id}
+	 </update>
+	 
+	 
+ 
+<!--  스토어 신청서 승인시 role 상승 --> 
+  	 <update	id="updateUserStore"	parameterType="map" >
+	   	UPDATE user
+	   	<set>
+	   		role = #{role}
+	   	</set>
+	   	WHERE  id = #{id}
+	 </update>
+ <!-- List  -->
+ 
+  
+
+ 
+ 
+ 
+ <!-- 스토어 -->
+ 
+
+ 
+ 	 
+ 	 <update	id="updateStoreApplicationDocument"  parameterType="StoreApplicationDocument"  >
+	   	UPDATE store_application_document
+	   	<set>
+	   		examination_status 		= #{examinationStatus} ,	   	
+ 			 		
+	   	</set>
+	   	WHERE  store_application_document_number = #{storeApplicationDocumentNumber}
+	 </update>
+
+
+
+ 
+	<select id ="getStoreApplicationDocumentALLList" parameterType="Map"   resultMap ="StoreApplicationDocumentMap">
+		select inner_table.* ,u.store_name
+		 FROM	(SELECT *
+						FROM store_application_document
+				    		<where>
+				    				<if test="searchCondition != null and searchCondition != '' ">
+				    		
+				    			examination_status = #{searchCondition}
+				    			    	</if>
+				    			
+				    		</where>
+				   
+						
+				 		) inner_table ,User u
+		WHERE inner_table.id = u.id  ORDER BY reg_date desc  
+		 		
+	</select>
+
+ 
+	
+	
+ <!-- updateWithdrawalStatus -->
+   	 <update	id="deleteUser"	parameterType="String"   >
+	   	UPDATE user
+	   	<set>
+	   		withdrawal_status 		= 1		
+ 	   	</set>
+	   	WHERE  id =  #{value}
+	 </update>
+
+
+
+
+
+
+
+		<select id="login" resultType="user">
+			SELECT * FROM user
+		</select>
+	
+	
+		<!-- 스토어 신청서 LIST 뽑아오기 -->
+	<select id="getStoreApplicationDocumentList"
+		resultMap="StoreApplicationDocumentMap">
+		 
+			SELECT s.* , u.store_name
+			FROM store_application_document s , user u
+			
+			WHERE s.id =  u.id
+			
+			<if test="keyword != null and keyword != '' ">
+			 and examination_status =#{keyword}
+	
+			</if>
+	
+	
+			order by store_application_document_number desc
+			limit #{skip}, #{amount}
+			
+		
+		
+	</select>
+	
+		<!-- 스토어 총 개수 -->
+		<select id="getStoreApplicationDocumentListTotal" resultType="int">
+			select count(*) from `store_application_document`
+			<if test="keyword != null  and keyword != '' ">
+				where examination_status =#{keyword}
+			</if>
+		</select>
+	
+
+		<!-- 유저 리스트  LIST 뽑아오기 -->
+	<select id="getUserList"
+		resultMap="userMap">
+		 
+			SELECT *
+			FROM user
+			
+ 			
+			<if test="keyword != null  and keyword != '' ">
+				where role =#{keyword}
+			</if>
+	
+	
+			order by reg_date desc
+			limit #{skip}, #{amount}
+			
+		
+		
+	</select>
+	
+		<!-- 유저 리스트  개수 -->
+		<select id="getUserListTotal" resultType="int">
+			select count(*) from user
+			<if test="keyword != null  and keyword != '' ">
+				where role =#{keyword}
+			</if>
+		</select>
+	
+
+
+
+
+
+ 
+
+
+
+
+ 
+ 
+    <resultMap id="userMap" type="User">
+   			 <result property="userNumber" 					column="user_number" 				jdbcType="INTEGER"/>
+            <result property="id" 					column="id" 						jdbcType="VARCHAR"/>
+                <result property="gender"				column="gender" 					jdbcType="VARCHAR" />
+            
+            
+            <result property="password"				column="password" 					jdbcType="VARCHAR" />
+            <result property="userAddress1" 				column="user_address1" 					jdbcType="VARCHAR"/>
+            <result property="userAddress2" 				column="user_address2" 					jdbcType="VARCHAR"/>
+            <result property="userAddress3" 				column="user_address3" 					jdbcType="VARCHAR"/>
+
+             <result property="nickname"				column="nickname" 					jdbcType="VARCHAR" />
+             <result property="storeName" 			column="store_name" 				jdbcType="VARCHAR"/>
+             <result property="name" 				column="name" 						jdbcType="VARCHAR"/>
+
+             <result property="phoneNumber"			column="phone_number" 				jdbcType="VARCHAR" />
+             <result property="regDate"				column="reg_date" 					jdbcType="DATE" />
+            <result property="joinPath" 			column="join_path" 					jdbcType="VARCHAR"/>
+
+             <result property="bookNumber"			column="book_number" 				jdbcType="INTEGER" />
+            <result property="totalPoint" 			column="total_point" 				jdbcType="INTEGER"/>
+            
+            <result property="storeLogoImage" 		column="store_logo_image" 			jdbcType="VARCHAR"/>
+            
+             <result property="storeIntroduction"	column="store_introduction" 		jdbcType="VARCHAR" />
+             <result property="role"					column="role" 						jdbcType="VARCHAR" />
+             <result property="withdrawalStatus"		column="withdrawal_status" 			jdbcType="TINYINT" />
+             
+             
+             <result property="storeApplicationDocumentNumber" 					column="store_application_document_number" 	jdbcType="INTEGER"/>
+
+
+    </resultMap>
+   
+    <resultMap id="StoreApplicationDocumentMap" type="StoreApplicationDocument">
+            <result property="storeApplicationDocumentNumber" 					column="store_application_document_number" 	jdbcType="INTEGER"/>
+            <result property="id" 												column="id" 								jdbcType="VARCHAR"/>
+            <result property="examinationStatus"								column="examination_status" 				jdbcType="VARCHAR" />
+            <result property="productDetial" 									column="product_detail" 					jdbcType="LONGVARCHAR"/>
+             <result property="regDate"											column="reg_date" 							jdbcType="DATE" />
+             <result property="storeIntroduction"								column="store_introduction" 				jdbcType="VARCHAR" />
+             <result property="storeName" 										column="store_name" 						jdbcType="VARCHAR"/>
+             <result property="storeLogoImage" 									column="store_logo_image" 				jdbcType="VARCHAR"/>
+
+
+    </resultMap>
+
+        <resultMap id="imageSelectMap" type="com.faitmain.global.common.Image">
+            <result property="imageNumber" column="image_number" jdbcType="INTEGER"/>
+            <result property="imageClassificationCode" column="image_classification_code" jdbcType="CHAR"/>
+            <result property="imageClassificationNumber" column="image_classification_number" jdbcType="INTEGER"/>
+            <result property="imageName" column="image_name" jdbcType="VARCHAR"/>
+        </resultMap>
+
+
+
+	 
+<!-- 리스트 서치시 밑 이용 가능  -->
+ <!-- 망한 잔제  
+ 	 <select id ="getStoreApplicationDocumentList" parameterType="com.faitmain.global.common.Search"   resultMap ="StoreApplicationDocumentMap">
+		SELECT *
+		FROM store_application_document
+		<if test="searchCondition != null">
+    		<where>
+    			examination_status = #{searchKeyword}
+    		</where>
+    	</if>
+   
+		
+ 		ORDER BY reg_date desc  
+	</select>
+	
+	
+		 <select id ="getStoreApplicationDocumentALLList" parameterType="Map"   resultMap ="StoreApplicationDocumentMap">
+		SELECT *
+		FROM store_application_document
+		<if test="searchCondition != null">
+    		<where>
+    			examination_status = #{searchKeyword}
+    		</where>
+    	</if>
+   
+		
+ 		ORDER BY reg_date desc  
+	</select>
+	  -->
+	<!-- 0 전체 1 - R , 2 -A , 3 - W -->
+<!-- 0 전체 1 - R , 2 -A , 3 - W --><!-- role 따라  
+	  <select id ="getStoreApplicationDocumentList" parameterType="map"  resultMap="StoreApplicationDocumentMap" > 
+		SELECT *
+		  	FROM (	SELECT inner_table.* ,u.store_name , @ROWNUM := @ROWNUM+1 AS row_seq
+			  			FROM(	SELECT *
+								FROM store_application_document
+									<where>
+							 	 
+							 		<if test="searchCondition == R">
+										examination_status = 'R'  
+									</if>
+									
+							 		<if test="searchCondition == A">
+										examination_status = 'A'  
+									</if>		
+									
+							 		<if test="searchCondition == W">
+										examination_status = 'W'  
+									</if>																			 
+								 </where>
+								 ) inner_table  ,User u  
+						WHERE inner_table.id = u.id  and
+							 (@ROWNUM:=0)=0 limit ${endRowNum} ) total
+			WHERE row_seq BETWEEN ${startRowNum} AND ${endRowNum} 
+	</select>
+	
+	
+	
+		<select  id="getStoreApplicationDocumenTotalCount"  parameterType="map"	 resultType="int">
+	  	SELECT COUNT(*)
+	  		FROM(	
+	  			SELECT COUNT(*) 	
+	  				FROM store_application_document
+									<where>
+							 		
+							 		<if test="searchCondition == R   ">
+										examination_status = 'R'  
+									</if>
+									
+							 		<if test="searchCondition == A  ">
+										examination_status = 'A'  
+									</if>		
+									
+							 		<if test="searchCondition == W    ">
+										examination_status = 'W'  
+									</if>												 
+								 </where>
+	  	
+	  	
+	  	
+	  	
+	  	
+	  	) countTable						
+	 </select> 
+-->
+	
+	
+	
+	
+	<!-- store  -->
+ 
+	
+
+
+ 
+	 
+</mapper>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+					
+<mapper namespace="com.faitmain.domain.product.mapper.ReviewMapper">
+
+	<resultMap id="reviewSelectMap" type="com.faitmain.domain.product.domain.Review">
+		<result property="reviewNumber" 		column="review_number" 			jdbcType="INTEGER"/>
+		<result property="reviewContent"		column="review_content" 		jdbcType="VARCHAR" />
+		<result property="reviewImage" 			column="review_image" 			jdbcType="VARCHAR" />
+		<result property="rating" 				column="rating" 				jdbcType="INTEGER" />
+		<result property="userId" 				column="user_id"				jdbcType="VARCHAR" />
+		<result property="reviewRegDate" 		column="reg_date" 				jdbcType="DATE" />
+		<result property="orderProductNumber" 	column="order_product_number" 	jdbcType="INTEGER" />
+				
+		<association property="orderProduct"  javaType="Product">
+			<id property="productNumber" 			column="product_number" 		jdbcType="INTEGER"/>			
+			<result property="productName"			column="product_name" 			jdbcType="VARCHAR" />
+			<result property="productGroupNumber" 	column="product_group_number" 	jdbcType="INTEGER" />
+			<result property="productMainImage" 	column="product_main_image" 	jdbcType="VARCHAR" />
+		</association>				
+	</resultMap>
+	
+	<!-- 리뷰 등록 전 조회할 것 -->
+	<select id="getOrderProduct" parameterType="int" resultMap="reviewSelectMap">
+		SELECT odp.order_product_number, odp.product_number, p.product_name, p.product_group_number, p.product_main_image 
+		FROM order_product odp, product p 
+		WHERE odp.product_number = p.product_number AND odp.order_product_number = #{orderProductNumber};
+	</select>
+			
+	<!-- 리뷰 등록 -->
+	<insert id="addReview" parameterType="com.faitmain.domain.product.domain.Review">	
+		INSERT
+		INTO review(order_product_number, review_content, review_image, rating, reg_date, user_id, product_number, product_name )
+		VALUES (#{orderProductNumber}, #{reviewContent}, #{reviewImage:VARCHAR}, #{rating}, now(), #{userId}, #{orderProduct.productNumber}, #{orderProduct.productName})
+	</insert>
+	
+	<!-- 리뷰 상세 조회 -->	    
+    <select id="getReview" parameterType="int"	resultMap="reviewSelectMap">
+    	SELECT r.*, p.product_group_number, p.product_main_image 
+    	FROM review r, product p 
+    	WHERE r.product_number = p.product_number
+    		  AND r.review_number = #{reviewNumber}
+    </select>
+	
+	<!-- 리뷰 목록 조회 (현재 search 없어서 if문 수정 필요) -->
+	<select  id="getReviewList"  parameterType="com.faitmain.global.common.Search"	resultMap="reviewSelectMap">
+	  	SELECT *
+	  	FROM (	SELECT inner_table.* , @ROWNUM := @ROWNUM+1 AS row_seq
+	  			FROM		(	SELECT r.*, p.product_group_number 
+	  							FROM review r, product p 	  								  			
+								<where>					
+									r.product_number = p.product_number
+									<if test="searchCondition != null">
+										<if test="searchCondition == 'userId' and searchKeyword !='' ">
+							 				AND r.user_id = #{searchKeyword}
+										</if> 
+										<!-- 
+										<if test="searchCondition == 'productNumber' and searchKeyword !='' ">
+							 				AND p.product_number = #{searchKeyword}
+										</if>
+										 -->										
+										<if test="searchCondition == 'productGroupNumber' and searchKeyword !='' ">
+							 				AND (p.product_group_number = #{searchKeyword} OR p.product_number = #{searchKeyword} )
+										</if>																			
+									</if>
+									
+								</where>
+						ORDER BY r.reg_date DESC ) inner_table
+				WHERE (@ROWNUM:=0)=0 limit #{endRowNum} ) result_table
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
+	 </select>
+	 
+	 <!-- SQL : SELECT ROW Count (현재 search 없음) -->	 
+	<select  id="getTotalCount"  parameterType="com.faitmain.global.common.Search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(	SELECT r.*, p.product_group_number 
+				FROM review r, product p 	  								  			
+				<where>					
+					r.product_number = p.product_number
+					<if test="searchCondition != null">
+						<if test="searchCondition == 'userId' and searchKeyword !='' ">
+			 				AND r.user_id = #{searchKeyword}
+						</if> 
+						<if test="searchCondition == 'productNumber' and searchKeyword !='' ">
+			 				AND p.product_number = #{searchKeyword}
+						</if>										
+						<if test="searchCondition == 'productGroupNumber' and searchKeyword !='' ">
+			 				AND (p.product_group_number = #{searchKeyword} OR p.product_number = #{searchKeyword} )
+						</if>																			
+					</if>					
+				</where>
+			) countTable						
+	 </select> 
+
+	<!-- 리뷰 수정 -->	
+	<update id="updateReview" parameterType="com.faitmain.domain.product.domain.Review" >
+		UPDATE review
+		<set>
+			review_content = #{reviewContent},
+			review_image = <if test="reviewImage == '' or reviewImage == null">null</if>
+						   <if test="reviewImage != ''">#{reviewImage:VARCHAR}</if>,		
+			rating = #{rating}
+		</set>
+		WHERE review_number = #{reviewNumber}
+	</update>
+			
+	<!-- 리뷰 삭제 -->
+	<delete id="deleteReview" parameterType="int">
+    	DELETE FROM review WHERE review_number = #{reviewNumber}
+  	</delete>
+  	
+</mapper>

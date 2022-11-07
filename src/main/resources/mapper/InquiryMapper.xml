@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+					
+<mapper namespace="com.faitmain.domain.product.mapper.InquiryMapper">
+
+	<resultMap id="inquirySelectMap" type="com.faitmain.domain.product.domain.Inquiry">
+		<result property="inquiryNumber" 		column="inquiry_number" 		jdbcType="INTEGER"/>
+		<result property="inquiryTitle"			column="inquiry_title" 			jdbcType="VARCHAR" />
+		<result property="inquiryContent" 		column="inquiry_content" 		jdbcType="VARCHAR" />
+		<result property="inquiryDate" 			column="inquiry_date" 			jdbcType="DATE" />
+		<result property="userId" 				column="user_id"				jdbcType="VARCHAR" />
+		<result property="storeId" 				column="store_id" 				jdbcType="VARCHAR" />		
+		<result property="inquiryReplyStatus" 	column="inquiry_reply_status" 	jdbcType="TINYINT" />
+		<result property="inquiryReplyContent" 	column="inquiry_reply_content" 	jdbcType="VARCHAR" />
+		<result property="inquiryReplyDate" 	column="inquiry_reply_date" 	jdbcType="DATE" />
+		<result property="secret" 				column="secret" 				jdbcType="TINYINT" />
+		
+		<association property="inquiryProduct"  javaType="Product">
+			<id property="productNumber" 			column="product_number" 		jdbcType="INTEGER"/>
+			<result property="productName"			column="product_name"			jdbcType="VARCHAR" />
+			<result property="productMainImage" 	column="product_main_image" 	jdbcType="VARCHAR" />
+		</association>		
+		
+	</resultMap>
+	
+	<!-- 문의 등록 -->
+	<insert id="addInquiry" parameterType="com.faitmain.domain.product.domain.Inquiry">		
+		INSERT
+		INTO inquiry(inquiry_title, inquiry_content, inquiry_date, user_id, store_id, product_number, secret)
+		VALUES (#{inquiryTitle}, #{inquiryContent}, now(), #{userId}, #{storeId}, #{inquiryProduct.productNumber}, #{secret})
+	</insert>	
+		
+	<!-- 문의 상세 조회 -->	    
+    <select id="getInquiry" parameterType="int"	resultMap="inquirySelectMap">
+	    SELECT i.inquiry_number, i.inquiry_title, i.inquiry_content, i.inquiry_date, i.user_id, i.store_id, i.inquiry_reply_content, i.inquiry_reply_date,
+		p.product_number, p.product_name, p.product_main_image, 
+		IF(inquiry_reply_status, 'true', 'false') as inquiry_reply_status,
+		IF(secret, 'true', 'false') as secret
+		FROM inquiry i, product p
+		WHERE i.product_number = p.product_number
+		  	  AND i.inquiry_number = #{inquiryNumber}
+    </select>
+		
+	<!-- 상품 목록 조회 (현재 search 없어서 if문 수정 필요) -->
+	<select  id="getInquiryList"  parameterType="com.faitmain.global.common.Search"	resultMap="inquirySelectMap">
+	  	SELECT *
+	  	FROM (	SELECT inner_table.* , @ROWNUM := @ROWNUM+1 AS row_seq
+	  			FROM		(	SELECT i.inquiry_number, i.inquiry_title, i.inquiry_content, i.inquiry_date, i.user_id, i.store_id, i.inquiry_reply_content, i.inquiry_reply_date,
+									   p.product_number, p.product_name, p.product_main_image, 
+									   IF(inquiry_reply_status, 'true', 'false') as inquiry_reply_status,
+									   IF(secret, 'true', 'false') as secret
+								FROM inquiry i, product p
+								<where>	
+									i.product_number = p.product_number								
+									<if test="searchCondition != null">
+										<if test="searchCondition == 'productNumber' and searchKeyword !='' ">
+							 				AND i.product_number = #{searchKeyword}
+										</if> 
+										<if test="searchCondition == 'userId' and searchKeyword !='' ">
+							 				AND i.user_id = #{searchKeyword}
+										</if>
+										<if test="searchCondition == 'storeId' and searchKeyword !='' ">
+							 				AND i.store_id = #{searchKeyword}
+										</if>	
+										<if test="searchCondition == 'replyStatus' and searchKeyword !='' ">
+							 				AND i.inquiry_reply_status = #{searchKeyword}
+										</if>																	
+									</if>
+								</where>
+						ORDER BY inquiry_date DESC ) inner_table
+				WHERE (@ROWNUM:=0)=0 limit #{endRowNum} ) result_table
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
+	 </select>
+	 		
+	<!-- SQL : SELECT ROW Count (현재 search 없음) -->	 
+	<select  id="getTotalCount"  parameterType="com.faitmain.global.common.Search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(	SELECT i.*
+				FROM inquiry i, product p
+				<where>	
+					i.product_number = p.product_number									
+					<if test="searchCondition != null">
+						<if test="searchCondition == 'productNumber' and searchKeyword !='' ">
+			 				AND i.product_number = #{searchKeyword}
+						</if> 
+						<if test="searchCondition == 'userId'and searchKeyword !='' ">
+			 				AND i.user_id = #{searchKeyword}
+						</if>	
+						<if test="searchCondition == 'storeId' and searchKeyword !='' ">
+			 				AND i.store_id = #{searchKeyword}
+						</if>
+						<if test="searchCondition == 'replyStatus' and searchKeyword !='' ">
+			 				AND i.inquiry_reply_status = #{searchKeyword}
+						</if>																	
+					</if>
+				</where>
+			) countTable						
+	 </select> 
+
+	<!-- 문의 수정 -->	
+	<update id="updateInquiry" parameterType="com.faitmain.domain.product.domain.Inquiry" >
+		UPDATE inquiry
+		<set>
+			<if test="inquiryTitle != null">inquiry_title = #{inquiryTitle},</if>
+			<if test="inquiryContent != null">inquiry_content = #{inquiryContent},</if>
+			<if test="secret != null">secret = #{secret},</if>
+			<if test="inquiryReplyStatus != null">inquiry_reply_status = #{inquiryReplyStatus},</if>			
+			<if test="inquiryReplyContent != null">inquiry_reply_content = #{inquiryReplyContent},</if>
+			inquiry_reply_date = <if test="inquiryReplyStatus == true">now()</if>
+								 <if test="inquiryReplyStatus == false || inquiryReplyStatus == null">null</if>
+		</set>
+		WHERE inquiry_number = #{inquiryNumber}
+	</update>
+	
+	<!-- 상품 삭제 -->
+	<delete id="deleteInquiry" parameterType="int">
+    	DELETE FROM inquiry WHERE inquiry_number = #{inquiryNumber}
+  	</delete>
+  	
+</mapper>

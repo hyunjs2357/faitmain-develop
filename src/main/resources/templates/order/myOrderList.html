@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html layout:decorate = "~{layout/myPage_layout}"
+      xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec = "http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset = "UTF-8">
+    <title>주문현황 페이지</title>
+    <!--  고유 CSS 추가 -->
+
+    <style>
+        .table-shopping-cart .table_row {
+            height: 5px;
+        }
+    </style>
+    <!--  고유 스크립트 추가 -->
+    <script src = "/js/order/orderList.js"></script>
+
+    <style>
+        .table-shopping-cart .fuku {
+            height: 100px;
+        }
+
+        .column {
+            width: 10px;
+            text-align: center;
+        }
+    </style>
+
+    <script type = "text/javascript">
+        $(function () {
+            //==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+            $("#search").on("click", function () {
+                fncGetList(1);
+            });
+        });
+    </script>
+
+    <style type = "text/css">
+        .btn {
+            margin-top: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            /*padding: 10px;*/
+        }
+    </style>
+</head>
+<body>
+<article layout:fragment = "content">
+
+    <div class = "container">
+
+        <!--<div class = "row">-->
+            <div class = "form-horizontal">
+                <div class = "form-group">
+                    <!-- 주문완료 페이지 -->
+                    <form class = "bg0 p-b-85">
+                        <div class = "container">
+                            <div class = "row" style = "text-align: center">
+
+                                <!-- 상품 -->
+                                <h1 class="title mtext-112 cl2 p-b-33" style = "margin-bottom: 10px;">주문 내역</h1>
+                                <table class = "table-shopping-cart" style = "text-align: center">
+                                    <colgroup>
+                                        <col width = "20%"/>
+                                        <col width = "30%"/>
+                                        <col width = "30%"/>
+                                        <col width = "20%"/>
+										<col width = "10%"/>
+                                    </colgroup>
+                                    <th:block th:each = "list : ${list}">
+                                        <tr  class = "table_head" style = "text-align: center">
+                                            <th class = "column">주문번호</th>
+                                            <th class = "column">주문날짜</th>
+                                            <th class = "column">주문상태</th>
+                                            <th class = "column">사용포인트</th>
+                                            <th class = "column" style="color: transparent;">dskjdd</th>
+                                        </tr>
+                                        <tr class = "fuku">
+                                            <th class = "column" th:text = "${list.orderNumber}"></th>
+                                            <th class = "column" th:text = "${list.orderDate}"></th>
+                                            <th class = "column" th:text = "${list.orderStatus}"></th>
+                                            <th class = "column" th:text = "${list.usingPoint}"></th>
+                                            <th class = "column"></th>
+                                        </tr>
+                                        <tr bgcolor = "#efefef" class = "table_head">
+                                            <th class = "column" >이미지</th>
+                                            <th class = "column">상품명</th>
+                                            <th class = "column">수량</th>
+                                            <th class = "column">가격</th>
+                                            <th class = "column"></th>
+                                        </tr>
+                                        <tr class = "fuku" th:each = " orplist :${list.orderProductList}" th:style = "${orplistStat.last ? 'border-bottom-width: 50px':'' }">
+                                            <th class = "column">
+                                                <div class = "how-itemcart" style = "margin:auto">
+                                                    <a th:href = "@{/product/getProduct?productNumber=__${orplist.productNumber}__}">
+                                                        <img class = "img_product" th:src = "|/img/upload/${orplist.productMainImage}|"/>
+                                                    </a>
+                                                </div>
+                                            </th>
+                                            <th class = "column">
+                                                <a class = "stext-115 cl7 hov-cl1 size-213 p-t-18" th:text = "${orplist.productName}"></a>
+                                            </th>
+                                            <th class = "column">
+                                                <a th:text = "${orplist.productOrderCount}"></a>
+                                            </th>
+                                            <th class = "column">
+                                                <a th:text = "${orplist.productPrice}"></a>
+                                            </th>
+                                            <th class = "column" style = "width: 20px;">
+                                                <a class = "stext-115 cl7 hov-cl1 size-213 p-t-18" th:href = "@{/review/addReview(orderProductNumber=${orplist.orderProductNumber})}">리뷰</a>
+                                            </th>
+                                        </tr>
+                                    </th:block>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            <!--</div>-->
+        </div><!-- class=row -->
+    </div><!-- class=container -->
+
+</article>
+</body>
+</html>

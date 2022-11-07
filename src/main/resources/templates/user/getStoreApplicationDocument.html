@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/myPage_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+<head>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	
+
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/select2/select2.min.css">
+
+	
+	<!--<link href="/css/styles.css" rel="stylesheet" />-->
+	<link href="/user/css/form.css" rel="stylesheet" />
+
+	<meta charset="UTF-8">
+	<title>상세정보 </title>
+	<style>
+		.form-group {
+
+			margin-top: 10px;
+
+		}
+
+
+		form-horizontal {
+			/*font-family: 'Nanum Gothic Coding', monospace;*/
+		}
+		
+		.div_IMAGE{
+					 padding-left: 50px;
+					 padding-right: 50px;
+
+		}
+	/*모달 박스 */
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			/* 15% from the top and centered */
+			padding: 20px;
+			border: 1px solid #888;
+			width: 50%;
+			/* Could be more or less, depending on screen size */
+		}
+
+		.close {
+			color: #aaa;
+			float: right;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}		
+		
+		
+	</style>
+
+	<script type="text/javascript">
+
+
+		/*
+		function showValue(target){
+		 console.log(target.value);	
+		 let examinationStatus = target.value ;
+		}
+		*/
+
+		$(function () {
+			$("#button").on("click", function () {
+
+
+				//alert("버튼울림 :: ") ;
+
+				var formData = $("#form").serialize();
+				// alert(formData) ;
+				$.ajax({
+					url: "/user/json/updateStoreApplicationDocument",
+					type: 'POST',
+					data: formData,
+					//	 dataType : 'json',
+
+					success: function (data) { //컨트롤러에서 넘어온 cnt값을 받는다
+
+
+
+						if (data == 'W') {
+
+						} else if (data == 'A') {
+
+
+							$("#examinationStatus").val("승인")
+							$("#StoreApplicationDocumentinfo").css("display", "none"); // 심사 영역 안보이게
+
+
+
+						} else if (data == 'R') {
+							$("#examinationStatus").val("반려")
+							$("#StoreApplicationDocumentinfo").css("display", "none"); // 심사 영역 안보이게
+
+						}
+
+						console.log("결과 :: " + data);
+
+					}
+
+
+				}) //ajax 괄호
+
+
+
+
+
+			});
+
+		});
+
+
+	</script>
+
+</head>
+
+<body>
+	<article layout:fragment="content">
+		<div class="container col-lg-3">
+		</div>
+
+
+		<section class="sec-product-detail bg0 p-b-60">
+		
+			<div class="container">
+		
+				<div class="bor10 m-t-50 p-t-43 p-b-40" style="width: 800px; margin: 0 auto; padding: 30px 70px;">
+		
+					<div class="text-center">
+						<h3 class="title mtext-112 cl2 p-b-33"> 스토어 신청서</h3>
+						<p class="mtext-102 cl3 p-b-33"> 등록하신 스토어 신청서 입니다. </p>
+					</div>
+		
+					<div class="col-12">
+						<div>
+		
+							<form id="form">
+								<div class="form-group">
+		
+									<div class='row'>
+										<div class='col-md-12 text-center'>
+											<img class="img-thumbnail" id="user_image" name="storeLogoImage"
+												th:src="@{/img/upload/} +${StoreApplicationDocument.storeLogoImage}" />
+											<br>
+											<h5 class="cl8 stext-115 p-t-20">[[${StoreApplicationDocument.storeName}]]</h5>
+											<p>[[${StoreApplicationDocument.id}]]</p>
+										</div>
+		
+		
+									</div>
+		
+		
+		
+									<div class="div_IMAGE">
+		
+										<h5 class="cl8 stext-115 p-t-20"> 소개 : </h5> [[${StoreApplicationDocument.storeIntroduction}]] <br>
+										<h5 class="cl8 stext-115 p-t-20 p-b-10"> 스토어 심사 상태 </h5>
+										<input th:if="${StoreApplicationDocument.examinationStatus =='W'}"
+											id="examinationStatus" type="text" class="form-control" value="대기" disabled>
+										<input th:if="${StoreApplicationDocument.examinationStatus =='A'}"
+											id="examinationStatus" type="text" class="form-control" value="승인" disabled>
+										<input th:if="${StoreApplicationDocument.examinationStatus =='R'}"
+											id="examinationStatus" type="text" class="form-control" value="반려" disabled>
+										<div class="div_css"> <br>
+											<h5 class="cl8 stext-115 p-t-20 p-b-10"> 제품소개 및 심사 사진 </h5>
+											<hr>
+											<span th:utext=${StoreApplicationDocument.productDetial}></span>
+										</div>
+		
+										<input type="hidden" th:id="storeApplicationDocumentNumber"
+											th:name="storeApplicationDocumentNumber"
+											th:value="${StoreApplicationDocument.storeApplicationDocumentNumber}">
+										<input type="hidden" class="form-control" th:id="id" th:name="id"
+											th:value="${StoreApplicationDocument.id}">
+		
+		
+										<!-- 슈르륵-->
+										<div sec:authorize="hasRole('admin')">
+											<div id="StoreApplicationDocumentinfo"
+												th:if="${StoreApplicationDocument.examinationStatus =='W'}">
+												<br>
+												<hr>
+												<div class="form-group">
+		
+													<span
+														class="flex-c-m stext-101 cl5 size-121 bg0 bor21 hov-btn1 p-lr-15 trans-04 pointer"
+														onclick="openModal();"> 심사하기</span>
+		
+		
+		
+													<span th:if="${StoreApplicationDocument.examinationStatus !='W'}"> 이미 심사된
+														스토어
+														신청서입니다. </span>
+		
+													<br>
+												</div>
+											</div>
+										</div>
+		
+		
+		
+										<a href="javascript:history.back()"
+											class="flex-c-m stext-101 cl5 size-121 bg0 bor21 hov-btn1 p-lr-15 trans-04 pointer"
+											role="button">확인</a>
+										<br><br>
+										<div sec:authorize="hasRole('storeX')">
+											<a th:if="${StoreApplicationDocument.examinationStatus =='R'}"
+												class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
+												role="button" th:href="@{../../../user/addStoreApplication}"> 스토어 재심청 <a>
+										</div>
+		
+		
+										<input type="hidden" th:id="storeApplicationDocumentNumber"
+											th:name="storeApplicationDocumentNumber"
+											th:value="${StoreApplicationDocument.storeApplicationDocumentNumber}">
+		
+		
+		
+		
+									</div>
+								</div>
+						</div>
+						<!-- -->
+		
+		
+		
+		
+		
+		
+					</div>
+		
+		
+		
+					</form>
+		
+		
+				</div>
+		
+			</div>
+		
+		</section>
+		
+
+
+
+		<div class="container col-lg-6 ">
+			<div>
+				
+						<div id="myModal" class="modal">
+					<form id="Modalform">
+						<!-- Modal content -->
+						<div class="modal-content">
+							<span id="close" class="close" onclick="clseoModal();">&times;</span>
+							<!--모달에 x버튼 클릭시 나가기  -->
+							<p> 스토어 신청성 심사 </p>
+							<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
+								<select class="js-select2" th:id="examinationStatus" name="examinationStatus">
+									<option value="W">대기</option>
+									<option value="A">승인</option>
+									<option value="R">반려</option>
+								</select>
+								<div class="dropDownSelect2"></div>
+							</div>
+							<a href=""
+								class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
+								onclick="examination();" role="button">심사 </a>
+
+
+							<input type="hidden" th:id="storeApplicationDocumentNumber"
+								th:name="storeApplicationDocumentNumber"
+								th:value="${StoreApplicationDocument.storeApplicationDocumentNumber}">
+					</form>
+				</div>
+				<!-- =========== -->
+				<script src="/productDesign/vendor/select2/select2.min.js"></script>
+				<script>
+					$(".js-select2").each(function () {
+						$(this).select2({
+							minimumResultsForSearch: 20,
+							dropdownParent: $(this).next('.dropDownSelect2')
+						});
+					})
+				</script>
+				<!-- =========== -->
+
+			</div>
+			<!-- modal 함수 -->
+			<script>
+
+				function openModal() {
+					modal.style.display = "block";
+				}
+				function clseoModal() {
+
+					console.log("spane");
+					modal.style.display = "none";
+
+
+					window.close()
+
+				}
+				function examination() {
+					console.log("examination");
+
+					modal.style.display = "none";
+
+					//        $("#Modalform").attr("method","POST").attr("action","/user/updateStoreApplicationDocument").submit();
+
+
+					$(function () {
+
+						var formData = $("#Modalform").serialize();
+						$.ajax({
+							url: "/user/json/updateStoreApplicationDocument",
+							type: 'POST',
+							data: formData,
+							success: function (data) { //컨트롤러에서 넘어온 cnt값을 받는다
+								if (data == 'W') {
+
+								} else if (data == 'A') {
+									$("#StoreApplicationDocumentinfo").css("display", "none"); // 심사 영역 안보이게
+
+									$("#examinationStatus").val("승인")
+
+
+
+								} else if (data == 'R') {
+									$("#examinationStatus").val("반려")
+									$("#StoreApplicationDocumentinfo").css("display", "none"); // 심사 영역 안보이게
+
+								}
+
+							}
+
+
+
+						}) //ajax 괄호
+
+						let storeApplicationDocumentNumber = $("#storeApplicationDocumentNumber").val();
+						self.location = "/user/getStoreApplicationDocument?storeApplicationDocumentNumber=" + storeApplicationDocumentNumber;
+
+					});
+
+
+
+
+
+
+
+
+				}
+
+				var modal = document.getElementById('myModal');
+
+				// Get the button that opens the modal
+				var btn = document.getElementById("myBtn");
+
+				// Get the <span> element that closes the modal
+				var span = document.getElementById("close");
+				console.log("span" + span);
+
+				// When the user clicks on the button, open the modal 
+				btn.onclick = function () {
+					modal.style.display = "block";
+				}
+
+				// When the user clicks on <span> (x), close the modal
+				span.onclick = function () {
+					console.log("spane");
+					modal.style.display = "none";
+
+
+
+				}
+
+				// When the user clicks anywhere outside of the modal, close it
+				window.onclick = function (event) {
+					if (event.target == modal) {
+						modal.style.display = "none";
+					}
+				}
+
+			</script>
+													<div sec:authorize="hasRole('admin')">
+														<div id="StoreApplicationDocumentinfo" th:if="${StoreApplicationDocument.examinationStatus =='W'}">
+													
+															<br><br>
+															<hr>
+													
+															<div>
+													
+																<span th:if="${StoreApplicationDocument.examinationStatus !='W'}"> 이미 심사된
+																	스토어 신청서입니다. </span>
+															</div>
+													
+														</div>
+													</div>
+													
+
+			</div>
+
+		</div>
+
+		<div class="container col-lg-3">
+
+			<br><br>
+
+		</div>
+
+
+
+
+	</article>
+
+
+</body>
+
+</html>

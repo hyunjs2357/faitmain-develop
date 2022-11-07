@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html lang = "ko" layout:decorate = "~{/layout/default_layout}" xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+	<head>
+		<title>스토어 정보</title>
+		<meta charset="utf-8" />
+		
+		<style>
+		</style>
+		
+	</head>
+	<body>
+	<article layout:fragment = "content">
+		
+		<!-- Content page -->
+		<section class="bg0 p-t-52 p-b-20">
+			<div class="container">
+				<div class="row">
+				
+					<div class="col-md-4 col-lg-3 p-b-80">
+						<div class="side-menu">
+									
+							<div>
+								<h4 class="mtext-112 cl2 p-b-33" th:text="${store.storeName}">
+								</h4>
+					
+								<ul>
+									<li class="flex-w flex-t p-b-30">
+										<a href="#" class="wrao-pic-w size-214 hov-ovelay1 m-r-20">
+											<img th:src = "|../img/upload/${ store.storeLogoImage }|" alt="PRODUCT" width="100%">
+										</a>
+					
+										<div class="size-215 flex-col-t p-t-8">
+											<span class="stext-116 cl8 hov-cl1 trans-04" th:text="${store.storeIntroduction}">
+											</span>
+										</div>
+									</li>
+								</ul>
+							</div>
+							
+						</div>
+					</div>
+					
+					<div class="col-md-8 col-lg-9 p-b-80">
+						<div class="p-r-45 p-r-0-lg">
+						
+							<div class="sec-banner bg0 p-b-50">
+								<div class="container">
+									<div class="row">
+									
+										<div class="col-md-6 col-xl-4 p-b-30 m-lr-auto" th:each="product : ${list}">
+											<div class="block1 wrap-pic-w">
+												<img th:src = "|../img/upload/${ product.productMainImage }|" alt="IMG-BANNER" style="filter: brightness(50%); ">
+												
+												<a th:href="@{/product/getProduct(productNumber=${product.productNumber})}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+													<div class="block1-txt-child1 flex-col-l">
+														<span class="block1-name stext-115 cl0 trans-04 p-b-8" th:text="${product.productName}">
+														</span>
+												
+														<span class="block1-info stext-102 cl0 trans-04" th:text="${#numbers.formatInteger(product.productPrice, 3, 'COMMA') + '원'}">
+														</span>
+													</div>
+												
+													<div class="block1-txt-child2 p-b-4 trans-05">
+														<div class="block1-link stext-101 cl0 trans-09">
+															구매하러 가기
+														</div>
+													</div>
+												</a>
+												
+											</div>
+										</div>
+										
+									</div>
+								</div>
+							</div>							
+							
+						</div>
+					</div>
+				
+				</div>
+			</div>
+		</section>		
+
+	</article>
+	</body>
+</html>

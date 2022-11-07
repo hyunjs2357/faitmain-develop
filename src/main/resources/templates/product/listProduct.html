@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layout/default_layout}">
+<head>
+    <meta charset = "UTF-8">
+    <title>상품 목록</title>
+	
+	<!-- Product -->
+	
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/animsition/css/animsition.min.css">
+	
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/select2/select2.min.css">
+	
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/slick/slick.css">
+	
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/jqueryui/jquery-ui.css">
+			
+	<style>
+	
+ 		.form-group{ 
+			margin-top:10px ; 	 
+		}
+		
+		h5,span{font-family: 'Nanum Gothic Coding', monospace;}
+			
+   	</style>
+    
+   	<script type="text/javascript">
+	   	function fncGetList(currentPage) {
+				$("#currentPage").val(currentPage);
+				$("form").submit();
+			}
+
+
+			$(function () {
+				//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+				$("#search").on("click", function () {
+					fncGetList(1);
+				});
+
+				$(".orderName li a").on("click", function () {
+					console.log("선택됨" + $(this).text());
+					let selectOrderBy = $.trim($(this).text());
+
+					if (selectOrderBy == '최신순') {
+						console.log("최신순");
+						$("#orderName").val("reg_date DESC");
+					} else if (selectOrderBy == '최저가순') {
+						console.log("최저가순");
+						$("#orderName").val("product_price");
+					} else if (selectOrderBy == '최고가순') {
+						console.log("최고가순");
+						$("#orderName").val("product_price DESC");
+					}
+					$("form").submit();
+				});
+
+				$("#searchKeyword").autocomplete({
+					source: function (request, response) {
+						$.ajax({
+							url: "/product/json/getProductNameList/" + $("#searchKeyword").val(),
+							type: "GET",
+							success: function (data) {
+								response(
+									$.map(data, function (item) {
+										console.log("item : " + item);
+										return {
+											label: item,
+											value: item
+
+										};
+									})
+								);
+							},
+							error: function () {
+								console.log("error");
+							}
+
+						});
+					},
+					minLength: 1,
+					select: function (evt, ui) {
+						console.log("전체 data: " + JSON.stringify(ui));
+						console.log("db Index : " + ui.item.idx);
+						console.log("검색 데이터 : " + ui.item.value);
+					},
+					focus: function (evt, ui) {
+						return false;
+					},
+					close: function (evt) {
+					}
+				});
+				
+				$(".categoryBtn").on("click", function(){
+					
+					
+					
+				});
+
+			});
+   	</script>
+	
+	
+</head>
+<body >
+	<article layout:fragment="content">
+		
+		<div class="bg0 m-t-23 p-b-140">
+			<div class="container">				
+					<div class="flex-w flex-sb-m p-b-52">
+						<div class="flex-w flex-l-m filter-tope-group m-tb-10">
+							<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+								All Products
+							</button>
+					
+							<button class="categoryBtn stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".01">
+								식품
+							</button>
+					
+							<button class="categoryBtn stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".02">
+								생활
+							</button>
+					
+							<button class="categoryBtn stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".03">
+								뷰티
+							</button>
+					
+							<button class="categoryBtn stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".04">
+								패션
+							</button>
+					
+							<button class="categoryBtn stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".05">
+								인테리어
+							</button>
+						</div>
+					
+						<div class="flex-w flex-c-m m-tb-10">
+							<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
+								<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
+								<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
+								Filter
+							</div>
+					
+							<div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
+								<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
+								<i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
+								Search
+							</div>
+						</div>
+					
+						<!-- 검색 & 정렬 -->
+						<!-- Search product -->
+						<div class="dis-none panel-search w-full p-t-10 p-b-15">
+							<div class="bor8 dis-flex p-l-15">
+								<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04" id="search">
+									<i class="zmdi zmdi-search"></i>
+								</button>
+								<form th:action="@{/product/getProductList?resultJsp=listProduct}" method="POST" style="width: 500px;">
+									<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" id="searchKeyword" name="searchKeyword" placeholder="Search">
+									<input type="hidden" id="currentPage" name="currentPage" value="0" />
+									<input type="hidden" id="orderName" name="orderName" th:value="${search.orderName}" />
+									<input type="hidden" id="searchCategory" name="searchCategory" th:value="${search.searchCategory}" />
+								</form>	
+							</div>
+						</div>
+						
+					
+					
+						<!-- Filter -->
+						<div class="dis-none panel-filter w-full p-t-10">
+							<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+								<div class="filter-col1 p-r-15 p-b-27">
+									<div class="mtext-102 cl2 p-b-15">
+										Sort By
+									</div>
+					
+									<ul class="orderName">
+										<li class="p-b-6">
+											<a href="#" class="filter-link stext-106 trans-04">
+												최신순
+											</a>
+										</li>
+					
+										<li class="p-b-6">
+											<a href="#" class="filter-link stext-106 trans-04">
+												최저가순
+											</a>
+										</li>
+					
+										<li class="p-b-6">
+											<a href="#" class="filter-link stext-106 trans-04">
+												최고가순
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>																
+					</div>
+				
+				<!-- ============================ -->
+				
+				<!-- product 표시 -->
+				<div class="row isotope-grid">
+					<th:block th:each="product : ${list}">
+						<div th:class="|col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${product.categoryCode}|">
+				
+							<!-- prodcut img, name, price -->
+							<div class="block2">
+								<div class="block2-pic hov-img0">
+									<a th:href="@{/product/getProduct?productNumber=} + ${product.productNumber}">
+										<img th:src="|../img/upload/${ product.productMainImage }|" alt="IMG-PRODUCT">
+									</a>
+									<!-- 
+										<a th:href="@{/product/getProduct?productNumber=} + ${product.productNumber}"
+											class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+											Quick View
+										</a>
+									-->
+								</div>
+				
+								<div class="block2-txt flex-w flex-t p-t-14">
+									<div class="block2-txt-child1 flex-col-l ">
+										<a th:href="@{/product/getProduct?productNumber=} + ${product.productNumber}"
+											th:text="${product.productName}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+										</a>
+										
+										<a th:href="@{/product/getProduct?productNumber=} + ${product.productNumber}">
+											<span class="stext-105 cl3"
+												th:text="${#numbers.formatInteger(product.productPrice, 3, 'COMMA') + '원'}">
+											</span>
+										</a>
+									</div>
+								</div>
+				
+							</div>
+						</div>
+					</th:block>
+					<!-- Product 관련 js -->
+					<script src="/productDesign/vendor/jqueryui/jquery-ui.js"></script>
+					<script src="/productDesign/vendor/animsition/js/animsition.min.js"></script>
+					<script src="/productDesign/vendor/bootstrap/js/popper.js"></script>
+					<script src="/productDesign/vendor/bootstrap/js/bootstrap.min.js"></script>
+				
+					<script src="/productDesign/vendor/isotope/isotope.pkgd.min.js"></script>
+					<!-- ==================================================== -->
+					<script src="/productDesign/js/main.js"></script>
+					<!-- ============ -->
+				</div>
+				
+				<!-- Load more -->
+				<!-- 페이지(어떻게 할지 모르겠다) -->
+				<div  th:replace="/product/pageNavigation :: pageNavi">
+				</div>
+				<!-- =============== -->
+				
+			</div>			
+		</div>				
+		
+	</article>
+	
+</body>
+</html>

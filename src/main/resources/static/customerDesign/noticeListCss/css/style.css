@@ -1,0 +1,134 @@
+ body, html {
+        	height: 100%;
+       }
+       
+
+p {
+  color: #b3b3b3;
+  font-weight: 300; }
+
+h3.mb-5{
+	padding-top: 20px;
+}
+a {
+  -webkit-transition: .3s all ease;
+  -o-transition: .3s all ease;
+  transition: .3s all ease; }
+  a, a:hover {
+    text-decoration: none !important; }
+
+.content {
+  padding: 7rem 0; }
+
+h2 {
+  font-size: 20px; }
+
+.custom-table {
+  min-width: 900px; }
+  .custom-table thead tr, .custom-table thead th {
+    border-top: none;
+    border-bottom: none !important; }
+  .custom-table tbody th, .custom-table tbody td {
+    color: #777;
+    font-weight: 400;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    font-weight: 300;
+    border: none; }
+    .custom-table tbody th small, .custom-table tbody td small {
+      color: #b3b3b3;
+      font-weight: 300; }
+  .custom-table tbody tr {
+    -webkit-transition: .3s all ease;
+    -o-transition: .3s all ease;
+    transition: .3s all ease; }
+    .custom-table tbody tr:hover, .custom-table tbody tr:focus {
+      background: #fff; }
+  .custom-table .td-box-wrap {
+    padding: 0; }
+  .custom-table .box {
+    background: #fff;
+    border-radius: 4px;
+    margin-top: 15px;
+    margin-bottom: 15px; }
+    .custom-table .box td, .custom-table .box th {
+      border: none !important; }
+      
+.pageInfo_area{
+	list-style : none;
+     display: inline-block;
+  	 margin: 50px 0 0 100px;      
+}
+.pageInfo_area li{
+	float: left;
+   font-size: 20px;
+   margin-left: 18px;
+   padding: 7px;
+   font-weight: 500;
+ }
+a:link {color:black; text-decoration: none;}
+a:visited {color:black; text-decoration: none;}
+a:hover {color:black; text-decoration: underline;}
+.active{
+	background-color: #cdd5ec;
+}
+/* 검색 영역 */
+ .search_wrap {
+     margin-top: 15px;
+ }
+
+ .search_input {
+     position: relative;
+     text-align: center;
+ }
+
+ .search_input input[name='keyword'] {
+     padding: 4px 10px;
+     font-size: 15px;
+     height: 20px;
+     line-height: 20px;
+ }
+
+ .search_btn {
+     height: 32px;
+     width: 80px;
+     font-weight: 600;
+     font-size: 18px;
+     line-height: 20px;
+     position: absolute;
+     margin-left: 15px;
+     background-color: #717377;
+ }
+
+/* 페이지 버튼 인터페이스 */
+ .pageMaker_wrap {
+     text-align: center;
+     margin-top: 30px;
+     margin-bottom: 40px;
+ }
+
+ .pageMaker {
+     list-style: none;
+     display: inline-block;
+ }
+
+ .pageMaker_btn {
+     float: left;
+     width: 70px;
+     height: 40px;
+     line-height: 40px;
+     margin-left: 20px;
+     border-radius: 5px;
+ }
+
+
+ .next, .prev {
+     border: 1px solid #ff0404;
+     padding: 0 10px;
+ }
+
+ .next a, .prev a {
+     color: #ff0000;
+ }  
+      
+      

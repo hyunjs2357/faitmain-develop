@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.faitmain.domain.order.mapper.OrderMapper">
+
+    <!-- 주문자 주소 정보 -->
+    <select id="selectBuyer" resultType="com.faitmain.domain.user.domain.User">
+        SELECT *
+          FROM `user`
+         WHERE id = #{id}
+    </select>
+
+    <!-- 주문 테이블 등록 -->
+    <insert id="insertOrder">
+        INSERT INTO `order`( order_number
+                           , buyer_id
+                           , order_status
+                           , order_date
+                           , delivery_charge
+                           , receiver_name
+                           , receiver_phone
+                           , receiver_address1
+                           , receiver_address2
+                           , receiver_address3
+                           , using_point
+                           , imp_uid )
+        VALUES ( #{orderNumber}
+               , #{buyerId}
+               , '주문접수'
+               , NOW( )
+               , #{deliveryCharge}
+               , #{receiverName}
+               , #{receiverPhone}
+               , #{receiverAddress1}
+               , #{receiverAddress2}
+               , #{receiverAddress3}
+               , #{usingPoint}
+               , #{impUid} )
+    </insert>
+
+    <!-- 주문 상품 테이블 등록 -->
+    <insert id="insertOrderProduct">
+        INSERT INTO order_product
+        ( order_number
+        , product_name
+        , product_main_image
+        , product_number
+        , product_order_count
+        , product_price
+        , reward_point
+        , total_price
+        , total_reward_point )
+        VALUES ( #{orderNumber}
+               , #{productName}
+               , #{productMainImage}
+               , #{productNumber}
+               , #{productOrderCount}
+               , #{productPrice}
+               , #{rewardPoint}
+               , #{totalPrice}
+               , #{totalRewardPoint} );
+    </insert>
+
+    <!-- 주문 금액 차감 -->
+    <update id="updatePoint">
+        UPDATE `user`
+           SET total_point = #{totalPoint}
+         WHERE user_number = #{userNumber}
+    </update>
+
+    <!-- 주문 재고 차감 -->
+    <update id="updateStock">
+        UPDATE product
+           SET product_quantity = #{productQuantity}
+         WHERE product_number = #{productNumber}
+    </update>
+
+    <!-- 주문 상품 정보 (주문 페이지) -->
+    <select id="selectOrderPageProduct" resultType="com.faitmain.domain.order.domain.OrderPageProduct">
+        SELECT product_number, product_name, product_price
+          FROM product
+         WHERE product_number = #{productNumber};
+    </select>
+
+    <!--  주문 상품 정보 (주문 처리) -->
+    <select id="selectOrderProduct" resultType="com.faitmain.domain.order.domain.OrderProduct">
+        SELECT *
+          FROM product
+         WHERE product_number = #{productNumber};
+    </select>
+
+    <!-- 주문 리스트 -->
+    <select id="selectOrderList" resultType="com.faitmain.domain.order.domain.Order">
+        select *
+        from `order`
+        <if test="keyword != null">
+            where `order`.buyer_id like concat('%',#{keyword}, '%')
+        </if>
+        order by order_date desc
+        limit #{skip}, #{amount}
+    </select>
+
+    <!-- 상품 총 개수 -->
+    <select id="selectOrderTotal" resultType="int">
+        select count(*) from `order`
+        <if test="keyword != null">
+            where `order`.buyer_id like concat('%',#{keyword}, '%')
+        </if>
+    </select>
+
+    <!-- 주문취소 -->
+    <update id="deleteOrder">
+        UPDATE `order`
+           SET order_status = '주문취소'
+         WHERE order_number = #{orderNumber}
+    </update>
+
+    <!-- 주문 상품 정보(주문취소) -->
+    <select id="selectOrderProductList" resultType="com.faitmain.domain.order.domain.OrderProduct">
+        SELECT *
+          FROM order_product
+         WHERE order_number = #{orderNumber}
+    </select>
+
+    <!-- 주문 정보(주문 취소) -->
+    <select id="selectOrder" resultType="com.faitmain.domain.order.domain.Order">
+        SELECT *
+          FROM `order`
+         WHERE order_number = #{orderNumber}
+    </select>
+
+
+
+
+    <select id="selectBuyerOrders" resultType="com.faitmain.domain.order.domain.Order">
+        SELECT *
+          FROM `order`
+         WHERE buyer_id = #{buyerId}
+         ORDER BY order_date DESC
+    </select>
+
+
+</mapper>

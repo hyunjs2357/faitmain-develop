@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- [head] 영역 시작 -->
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<link rel="icon" type="image/png" href="/img/rainbow.png" />
+	
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+	
+	<link rel="stylesheet" href="/productDesign/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" href="/productDesign/fonts/iconic/css/material-design-iconic-font.min.css">
+	
+	
+	<link rel="stylesheet" th:href="@{/css/main.css}" />
+	<link rel="stylesheet" th:href="@{/css/util.css}" />
+	
+	<!--===============================================================================================-->
+	<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+	<!--===============================================================================================-->
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
+
+
+	<style type="text/css">
+	
+		@import url(//fonts.googleapis.com/earlyaccess/jejugothic.css);
+
+		* { 
+		 font-family: 'Jeju Gothic', sans-serif;
+		}
+	
+		article{
+			
+			margin-top: 20px;			
+			
+		}		
+	
+		h4.myShopping {
+			padding-left: 15px;
+			padding-top: 20px;
+			margin-bottom: 0px;
+		}
+		/**/
+		#wrapper {
+			height: auto;
+			min-height: 100%;
+			padding-bottom: 72px;
+		}
+
+		footer {
+			height: 72px;
+			position: relative;
+			transform: translateY(-100%);
+		}
+
+		/*   */
+		.box {
+			width: 80px;
+			height: 80px;
+			border-radius: 50%;
+			overflow: hidden;
+			margin: 0 auto;
+		}
+		
+		.profile {
+			width: 100%;
+			height: 99%;
+		}
+
+		.cal-md-10 {
+
+			padding-left: 0px;
+		}
+
+		.tempClass {
+			width: 80px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.tempClass>div {
+			text-align: center;
+		}
+
+		.tempClass>span {
+			text-align: center;
+		}
+		
+
+
+	</style>
+
+</head>
+<!-- [head] 영역 끝 -->
+
+
+<body>
+	<div id="wrapper">
+	
+		<!-- [header] 영역 시작 -->
+    	<header th:replace = "/layout/fragment/header :: header"></header>
+    	<!-- [header] 영역 끝 -->		
+		
+		<div class="container">
+			<!-- bottom content -->
+			<section class="bg0 p-t-20 p-b-20">
+				<div class="row">
+		
+					<div class="col-md-2 col-lg-2 p-t-100 p-b-80">
+						<th:block th:replace="/layout/fragment/sidebar_customer :: sidebarCustomer"></th:block>
+					</div>
+		
+					<div class="col-md-10 col-lg-10 p-t-100 p-b-80">
+						<article layout:fragment="content"></article>
+					</div>
+		
+				</div>
+		
+			</section>
+		</div>
+				
+	</div>
+
+	<!-- [footer] 영역 시작 -->
+	<footer th:replace="/layout/fragment/footer :: footer"></footer>
+	<!-- [footer] 영역 끝 -->
+	
+	<script type="text/javascript">
+		$(window).on('scroll', function () {
+			if ($(window).scrollTop()) {
+				$('.container-menu-desktop').addClass('fix-menu-desktop');
+				$('.wrap-menu-desktop').css('top', '0');
+			} else {
+				$('.container-menu-desktop').removeClass('fix-menu-desktop');
+				$('.wrap-menu-desktop').css('top', '40px');
+			}
+		});
+	</script>
+</body>
+
+</html>

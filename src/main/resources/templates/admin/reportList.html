@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/customer_default_layout2}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+      			xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/customerDesign/noticeListCss/fonts/icomoon/style.css}">
+
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/owl.carousel.min.css}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/bootstrap.min.css}">
+    
+    <!-- Style -->
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/style.css}">
+
+    <title>faitmain</title>
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+	    <script type="text/javascript">
+	    $(function(){
+	    
+	    //전체 선택
+	      	$("#allCheck").click(function(){
+	      		var check = $("#allCheck").prop("checked");
+	      		if(check){
+	      			$(".RowCheck").prop("checked", true);
+	      		}else{
+	      			$(".RowCheck").prop("checked", false);
+	      		}
+	      	});
+	      	
+	      // 선택박스 선택시 전체 선택 박스 해제
+    		$(".RowCheck").click(function(){
+    			$("#allCheck").prop("checked", false);
+    		});
+	      
+    	
+    		 $(".selectDelete_btn").click(function(){
+    		 	var confirm_val = confirm("정말 삭제하시겠습니까?");
+    		  	
+    		  		if(confirm_val) {
+    		  			var checkArr = new Array();
+    		   
+    		  			$("input[class='RowCheck']:checked").each(function(){
+    		    			checkArr.push($(this).val());
+    		   			});
+		    		    
+		    		   	$.ajax({
+		    		    	url : "/customer/deleteGuide",
+		    		    	type : "POST",
+		    		    	data : { chbox : checkArr },
+		    		    	success : function(result){
+		    		    		
+		    		    		if(result == 1){
+		    		     			location.reload();
+		    		    		}else{
+		    		    			alert("삭제 실패");
+		    		    		}
+		    		    	}
+		    		   	});
+    		  		} 
+    			 });
+	    })
+	      </script>
+	    	
+	    	<!-- function deleteValue(){
+	    		var url = "deleteBoard";		//Controller로 보내고자하는 URL
+	    		var valueArr = new Array();
+	    		var list = $("input[name='RowCheck']");
+	    		for(var i=0; i<list.length; i++){
+	    			if(list[i].checked){		//체크되어 있으면 array에 값을 저장
+	    				valueArr.push(list[i].value);
+	    			}
+	    		}
+	    		
+	    		if(valueArr.length == 0){
+	    			alert("선택된 글이 없습니다.");
+	    		}else{
+	    			var chk = confirm("삭제하시겠습니까?");
+	    			$ajax({
+	    				url : url,
+	    				type : 'POST',
+	    				traditional : true,
+	    				data : {
+	    					valueArr : valueArr
+	    				},
+	    				success : function(jdata){
+	    					if(jdata = 1){
+	    						alert("삭제되었습니다.");
+	    						location.replace("liveGuideList")
+	    					}else{
+	    						alert("삭제되지 않았습니다.")
+	    					}
+	    				}
+	    			});
+	    		}
+	    		
+	    	}
+	    	
+	    </script> -->
+  </head>
+  <body>
+  
+<article class = "nl-1" layout:fragment = "content">
+    
+    <div class="container">
+    <input type="hidden" name="boardType" value='R'/> 
+      <h3 class="mb-5">신고 리스트</h3>
+      <hr/>
+
+      <div class="table-responsive">
+        <table class="table custom-table">
+          <thead>
+            <tr>
+              <th scope="col"><input id="allCheck" type="checkbox" name="allCheck"/></th>
+              <th scope="col">번호</th>
+              <th scope="col">제목</th>
+              <th scope="col">등록일</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:if="${not #lists.isEmpty( boardList )}" th:each="row : ${boardList}">
+            	<td class="text_ct"><input name="RowCheck" class="RowCheck" type="checkbox" th:value="${row.boardNumber}"/></td>
+				<td th:text="${row.boardNumber}"></td>
+				<td class="text-left">
+					<a th:href="@{/customer/detailGuide( boardType=${row.boardType})}" th:text="${row.boardTitle}"></a>
+				</td>
+				<td th:text="${#dates.format(row.boardRegDate, 'yyyy-MM-dd')}"></td>
+			</tr>
+            <tr th:unless="${not #lists.isEmpty( boardList )}">
+				<td colspan="5">조회된 결과가 없습니다.</td>
+			</tr>
+          </tbody>
+        </table>
+      </div>
+    
+		<th:block sec:authorize="isAuthenticated()">
+			<div class="btn_wrap text-right" sec:authorize="hasRole('ROLE_admin')">
+				<a th:href="@{/customer/addLiveGuide}" class="btn btn-primary waves-effect waves-light">등록</a>
+				<!-- <input type="button" value="선택삭제" class="btn btn-outline-info" onclick="deleteValue();"> -->
+				<button type="button" class="selectDelete_btn">선택삭제</button>	
+			</div> 	
+		</th:block>
+		
+    </div>
+    
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/jquery-3.3.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/popper.min.js}"></script>
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/main.js}"></script>
+ 	
+ </article>
+ </body>
+  
+</html>
+                   
+
+            

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/customer_layout}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+      			xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+<!--
+    <link rel="stylesheet" th:href="@{/customerDesign/noticeListCss/fonts/icomoon/style.css}">
+
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/owl.carousel.min.css}">
+
+     Bootstrap CSS 
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/bootstrap.min.css}">-->
+    
+    <!-- Style
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/style.css}"> -->
+	 <!-- Channel Plugin Scripts -->
+<script>
+  (function() {
+    var w = window;
+    if (w.ChannelIO) {
+      return (window.console.error || window.console.log || function(){})('ChannelIO script included twice.');
+    }
+    var ch = function() {
+      ch.c(arguments);
+    };
+    ch.q = [];
+    ch.c = function(args) {
+      ch.q.push(args);
+    };
+    w.ChannelIO = ch;
+    function l() {
+      if (w.ChannelIOInitialized) {
+        return;
+      }
+      w.ChannelIOInitialized = true;
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
+      s.charset = 'UTF-8';
+      var x = document.getElementsByTagName('script')[0];
+      x.parentNode.insertBefore(s, x);
+    }
+    if (document.readyState === 'complete') {
+      l();
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', l);
+    } else {
+      window.addEventListener('DOMContentLoaded', l, false);
+      window.addEventListener('load', l, false);
+    }
+  })();
+  ChannelIO('boot', {
+    "pluginKey": "d7f92812-9849-482b-84c6-731d4076b5df"
+  });
+</script>
+<!-- End Channel Plugin -->	
+    <title>faitmain</title>
+    
+    <style>
+    
+    	.move{
+			font-weight: bold;
+			color: #555;
+		}
+    	
+    	.btn{
+			background-color: black;
+			color:white;
+			border: none;
+		}
+		
+		.btn:hover{
+			background-color: black;
+			color:white;
+			border: none;
+		}
+		
+		.pageInfo_area{
+			list-style : none;
+		     display: inline-block;
+		  	 margin: 50px 0 0 100px;      
+		}
+		.pageInfo_area li{
+			float: left;
+		   	font-size: 15px;
+		   	margin-left: 18px;
+		   	padding: 7px;
+		   	font-weight: bold;
+		 }
+		 
+		.pageMaker_wrap a:link {
+			color:black; text-decoration: none;
+		}
+		
+		.pageMaker_wrap a:visited {
+			color:black; 
+			text-decoration: none;
+		}
+		
+		.pageMaker_wrap a, .move:hover {
+			color:black; 
+			text-decoration: underline;
+		}
+		
+		.active{
+			background-color: #cfcfcf;
+		}
+		
+		/* 페이지 버튼 인터페이스 */
+		 .pageMaker_wrap {
+		     text-align: center;
+		     margin-top: 30px;
+		     margin-bottom: 40px;
+		 }
+		
+		 .pageMaker {
+		     list-style: none;
+		     display: inline-block;
+		 }
+		
+		 .pageMaker_btn {
+		     float: left;
+		     width: 35px;
+		     height: 35px;
+		     line-height: 18px;
+		     border-radius: 50%;
+		 }
+		
+		
+		 .next, .prev {
+		     border: 1px solid #ff0404;
+		     padding: 0 10px;
+		 }
+		
+		 .next a, .prev a {
+		     color: #ff0000;
+		 }
+    </style>
+    
+   <!--  고유 스크립트 추가 -->
+    <script type="text/javascript"
+    		th:src = "@{/customerDesign/noticeListCss/js/listPage.js}"></script>
+ 
+    
+  </head>
+ 
+<body>
+  <div id = 'wrapper'>
+<article class = "nl-1" layout:fragment = "content">
+    
+    <div class="container">
+    <input type="hidden" name="boardType" value='N'/> 
+      <h3 class="mb-5">공지사항</h3>
+	
+	<!-- 검색 영역 -->
+    <div class = "search_wrap" style="float: right; margin-bottom: 20px;">
+        <form id = "searchForm" method = "get" th:action = "@{/customer/listBoard}">
+            <div class = "search_input">
+            
+				<div class="input-group mb-2">
+					<input name = "keyword" th:value = "${pageMaker.paging.keyword}" type = "text" class="bor19 stext-111 cl2 plh3 p-lr-18"/>
+					<button class = 'btn search_btn '>검 색</button>						
+				</div>
+				
+				<!--<input name = "keyword" th:value = "${pageMaker.paging.keyword}" type = "text" class="bor19 stext-111 cl2 plh3 p-lr-18">-->
+                <input name = "pageNum" th:value = "${pageMaker.paging.pageNum }" type = "hidden">
+                <input name = "amount" th:value = '${pageMaker.paging.amount}' type = "hidden">
+                <!--<button class = 'btn search_btn '>검 색</button>-->
+            </div>
+        </form>
+    </div>
+    
+      <div class="table-responsive">
+        <table class="table custom-table">
+          <thead>
+            <tr>
+              <th scope="col">번호</th>
+              <th scope="col">제목</th>
+              <th scope="col">작성자</th>
+              <th scope="col">등록일</th>
+              
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:if="${not #lists.isEmpty(boardList)}" th:each="row : ${boardList}">
+            	<td th:text="${row.boardNumber}"></td>
+				<td class="text-left">
+					<a class="move" th:href="@{/customer/detailBoard?boardNumber=__${row.boardNumber}__&pageNum=__${pageMaker.paging.pageNum}__}" th:text="${row.boardTitle}"></a>
+				</td>
+				<td th:text="${row.customerId.id}"></td> 
+				<td th:text="${#dates.format(row.boardRegDate, 'yyyy-MM-dd')}"></td>
+			
+			</tr>
+            <tr th:unless="${not #lists.isEmpty(boardList)}">
+				<td colspan="5">조회된 결과가 없습니다.</td>
+			</tr>
+          </tbody>
+        </table>
+        <form id="moveForm" method="get">    
+    	</form>
+      </div>
+		 
+        </div>
+
+        <!--         페이지 이동 인터페이스 영역-->
+        <div class = "pageMaker_wrap">
+        	<div class = "pageInfo_area">
+	            <ul class = "pageMaker">
+	                <!--  이전 버튼-->
+	                <th:block th:if = "${pageMaker.prev}">
+	                    <li class = "pageMaker_btn prev">
+	                        <a th:href = "@{${pageMaker.pageStart - 1}}">이전</a>
+	                    </li>
+	                </th:block>
+	
+	                <!-- 페이지 번호 -->
+	                <th:block th:each = "num,iterStat : ${#numbers.sequence(pageMaker.pageStart,pageMaker.pageEnd)}">
+	                    <li th:class = "|pageMaker_btn ${pageMaker.paging.pageNum == num ? 'active' : ''}|">
+	                        <a th:href = "@{/customer/listBoard (boardType=N,pageNum=${num})}" th:text = "${num}"></a>
+	                    </li>
+	                </th:block>
+	
+	                <!--  다음 버튼-->
+	                <th:block th:if = "${pageMaker.next}">
+	                    <li class = "pageMaker_btn next">
+	                        <a th:href = "@{${pageMaker.pageEnd + 1}}">다음</a>
+	                    </li>
+	                </th:block>
+	            </ul>
+            </div>
+        </div>	
+        
+        <form id = "moveForm" method = "get" th:action = "@{/customer/listBoard}">
+	        <input name = "pageNum" th:value = "${pageMaker.paging.pageNum}" type = "hidden">
+	        <input name = "amount" th:value = "${pageMaker.paging.amount}" type = "hidden">
+	        <input name = "keyword" th:value = "${pageMaker.paging.keyword}" type = "hidden">
+    	</form>
+		<th:block sec:authorize="isAuthenticated()">
+			<div class="btn_wrap text-right" sec:authorize="hasRole('ROLE_admin')">
+					<a th:href="@{/customer/addNotice?boardType=N}" class="btn btn-primary waves-effect waves-light">등록</a>
+			</div> 	
+		</th:block>
+		
+    </div>
+    
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/jquery-3.3.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/popper.min.js}"></script>
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/main.js}"></script>
+ 	
+ </article>
+ </div>
+ </body>
+  
+</html>
+                   
+
+            

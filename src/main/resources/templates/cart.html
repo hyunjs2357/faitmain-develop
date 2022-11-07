@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang = "ko" layout:decorate = "~{/layout/default_layout}"
+      xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+>
+<head>
+    <meta charset = "UTF-8">
+    <title>장바구니 페이지</title>
+
+
+    <link href="https://fonts.googleapis.com/earlyaccess/jejugothic.css" rel="stylesheet">
+
+    <script src = "/js/cart.js" type = "text/javascript"></script>
+    <!--  고유 CSS 추가 -->
+    <style>
+        #google {font-family: 'Jeju Gothic', sans-serif;
+        }
+    </style>
+
+    <style>
+    
+    	 * {
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+			color:unset;
+            text-decoration: none;            
+        }
+
+        /* 이미지 */
+        .img_product {
+            width: 100%;
+            height: 100%;
+        }
+
+        .img_product img {
+            max-width: 20%;
+            height: auto;
+            display: block;
+        }
+
+        .input_size_20 {
+            width: 15px;
+            height: 15px;
+            accent-color: #0b0b0b;
+        }
+
+        .all_check_input {
+            margin: 18px 0 18px 20px;
+        }
+
+        .all_chcek_span {
+            font-size: 15px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table_text_align_center {
+            text-align: center;
+        }
+
+        caption {
+            visibility: hidden;
+            width: 0;
+            height: 0;
+            font-size: 0;
+            line-height: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+	/*
+        .content_subject {
+		
+            height: 110px;
+            line-height: 110px;
+            background-color: #e0e0e0;
+            margin-bottom: 60px;
+            text-align: center;
+            color: #000000;
+			
+        }
+
+        .content_subject span {
+            padding-left: 30px;
+            display: inline-block;
+            color: #000000;
+            font-size: 50px;
+            font-weight: bolder;
+            text-align: center;
+        }
+		*/
+        .content_totalCount_section {
+            margin-bottom: 12px;
+        }
+
+        .content_btn_section {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .content_btn_section a {
+            color: #fefeff;
+            background-color: #0f1011;
+            min-width: 125px;
+            padding: 17px 25px;
+            display: inline-block;
+            height: 39px;
+            font-size: 23px;
+            font-weight: bold;
+            text-align: center;
+            margin-right: 14px;
+            line-height: 39px;
+        }
+
+
+        .subject_table {
+            font-size: 14px;
+            line-height: 20px;
+            width: 100%;
+            text-align: center;
+
+        }
+
+        th {
+            text-align: center;
+            color: #333;
+            border-bottom: 1px solid #e7e7e7;
+            border-top: 1px solid #181a1c;
+            background: #ffffff;
+            padding: 10px 0;
+        }
+			
+		td {
+            padding: 20px 0;
+        }
+			
+        .td_width_1 {
+            width: 5%;
+            text-align: center;
+
+        }
+
+        .td_width_2 {
+            width: 10%;
+            text-align: center;
+
+        }
+
+        .td_width_3 {
+            width: 25%;
+            text-align: center;
+
+        }
+
+        .td_width_4 {
+            width: 15%;
+            text-align: center;
+
+        }
+
+        .cart_table {
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        .cart_table tr {
+            height: 110px;
+        }
+
+        .price_td {
+            padding-left: 5px;
+        }
+
+        .red_color {
+            color: red;
+        }
+
+        .green_color {
+            color: #212521;
+        }
+
+        .cart_table td {
+            border-bottom: 1px solid #e7e7e7;
+        }
+
+        /**/
+        .quantity_div {
+            position: relative;
+            width: 42px;
+            height: 25px;
+            text-align: left;
+            margin: 5px auto;
+        }
+
+        .quantity_input {
+            position: absolute;
+            width: 27px;
+            height: 25px;
+            text-align: center;
+            border: 1px solid #cbcbcb;
+            border-right: 0px;
+            line-height: 19px;
+            font-size: 12px;
+            color: #4c4848;
+            left: 0;
+        }
+
+        .quantity_btn {
+            position: absolute;
+            border: 1px solid #cbcbcb;
+            color: #000000;
+            width: 14px;
+            height: 13px;
+            padding: 0px;
+            background-color: #fff;
+            font-weight: bold;
+            font-size: 7px;
+            line-height: 6px;
+            vertical-align: middle;
+        }
+
+        .plus_btn {
+            top: 0;
+            right: 0
+        }
+
+        .minus_btn {
+            bottom: 0;
+            right: 0
+        }
+
+        .quantity_modify_btn {
+            border: 1px solid #cbcbcb;
+            height: 30px;
+            /*line-height: 18px;*/
+            background-color: #ffffff;
+            text-align: center;
+            width: 41px;
+            color: #000000;
+            display: inline-block;
+            padding: 3px 6px 2px;
+            margin-top: 3px;
+        }
+/**/
+        .quantity_modify_btn:hover {
+	 		color: white !important;
+            background-color: #000000;
+           
+        }
+
+        .table_text_align_center {
+            text-align: center;
+        }
+
+        .delete_btn {
+            width: 40px;
+        }
+
+        .content_total_section {
+            /*background-color: rgb(224, 224, 224, 0.2);*/
+        }
+
+        .total_wrap {
+            width: 80%;
+            margin: auto;
+            padding: 10px 0 10px 0;
+        }
+
+        .total_wrap td {
+            width: 50%;
+            padding: 10px 0px;
+        }
+
+        .finalTotalPrice_span {
+            color: #000000;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .totalPoint_span {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .boundary_div {
+            font-size: 0;
+            border-bottom: 1px solid #efefef;
+            margin: 5px 0 5px 0;
+        }
+
+       
+
+        /* 화면 전체 렙 */
+        .wrapper {
+            width: 100%;
+        }
+
+        /* content 랩 */
+        .wrap {
+            width: 1080px;
+            margin: auto;
+        }
+
+        .delete_btn {
+            border: 1px solid #efefef;
+            color: black;
+            padding: 5px 5px;
+            cursor: pointer;
+            /*border-radius: 10%;
+            background-color: #000000;*/
+        }
+
+        .delete_btn:hover {
+            background-color: black;
+            color: white;
+        }
+
+        .order_btn {
+            border: none;
+            color: white;
+            padding: 5px 5px;
+            cursor: pointer;
+            border-radius: 5%;
+            background-color: #030303;
+        }
+
+        .order_btn:hover {
+            background-color: blue;
+        }
+        
+    </style>
+
+</head>
+<body>
+
+
+<!-- content -->
+<article id="google" layout:fragment = "content">
+    <div class = "container">
+    
+    	<div class="bread-crumb flex-w p-r-15 p-t-30 p-lr-0-lg p-b-20">
+			<a th:href="@{/}" class="stext-109 cl8 hov-cl1 trans-04">
+				Home
+				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+			</a>
+
+			<a th:href="@{/myPage}" class="stext-109 cl8 hov-cl1 trans-04">
+				My Page
+				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+			</a>
+
+			<span class="stext-109 cl4">
+				장바구니									
+			</span>
+		</div>
+
+        <div class = "content_area p-b-50">
+            <div class = "content_subject text-center"><span class="mtext-112 cl2 p-b-40">장바구니</span></div>
+            <!-- 장바구니 리스트 -->
+            <div class = "content_middle_section"></div>
+            <!-- 장바구니 가격 합계 -->
+
+            <!-- 장바구니 정보  -->
+            <div class = "content_totalCount_section">
+
+                <!-- 체크박스 전체 여부 -->
+                <div class = "all_check_input_div">
+                    <input checked = "checked" class = "all_check_input input_size_20" type = "checkbox"><span class = "all_chcek_span">전체선택</span>
+                </div>
+
+                <table class = "subject_table">
+                    <caption>표 제목 부분</caption>
+                    <tbody>
+
+                    <tr>
+                        <th class = "td_width_1"></th>
+                        <th class = "td_width_2"></th>
+                        <th class = "td_width_3">상품명</th>
+                        <th class = "td_width_4">가격</th>
+                        <th class = "td_width_4">수량</th>
+                        <th class = "td_width_4">합계</th>
+                        <th class = "td_width_4">삭제</th>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class = "cart_table">
+                    <caption>표 내용 부분</caption>
+                    <tbody>
+                    <th:block th:each = " cart : ${cartList}">
+                        <tr>
+                            <td class = "td_width_1 cart_info_td">
+                                <input checked = "checked" class = "individual_cart_checkbox input_size_20" type = "checkbox">
+                                <input class = "individual_productPrice_input" th:value = "${cart.productPrice}" type = "hidden">
+                                <input class = "individual_salePrice_input" th:value = "${cart.salePrice}" type = "hidden">
+                                <input class = "individual_productOrderCount_input" th:value = "${cart.productOrderCount}" type = "hidden">
+                                <input class = "individual_totalPrice_input" th:value = "${cart.salePrice * cart.productOrderCount}" type = "hidden">
+                                <input class = "individual_point_input" th:value = "${cart.point}" type = "hidden">
+                                <input class = "individual_totalPoint_input" th:value = "${cart.totalPoint}" type = "hidden">
+                                <input class = "individual_productNumber_input" th:value = "${cart.productNumber}" type = "hidden">
+                                <input class = "individual_productMainImage_input" th:value = "${cart.productMainImage}" type = "hidden">
+                            </td>
+                            <td class = "td_width_2">
+                                <img class = "img_product" th:src = "|../img/upload/${cart.productMainImage}|"/>
+                            </td>
+                            <td class = "td_width_3" th:text = "${cart.productName}"></td>
+                            <td class = "td_width_4 price_td">
+                                판매가 : <span class = "red_color" th:text = "${cart.salePrice}"></span><br>
+                                마일리지 : <span class = "green_color" th:text = "${cart.point}"></span>
+                            </td>
+                            <td class = "td_width_4 table_text_align_center">
+                                <div class = "table_text_align_center quantity_div">
+                                    <input class = "quantity_input" th:value = "${cart.productOrderCount}" type = "text">
+                                    <button class = "quantity_btn plus_btn" type = "button">+</button>
+                                    <button class = "quantity_btn minus_btn" type = "button">-</button>
+
+                                </div>
+                                <!-- <button class = "quantity_modify_btn" th:data-cartNumber = "${cart.cartNumber}">변경</button>-->
+                                <a class = "quantity_modify_btn stext-109 cl2 hov-cl0 trans-04" th:data-cart-number = "${cart.cartNumber}">변경</a>
+                            </td>
+                            <td class = "td_width_4 table_text_align_center">
+                                <th:block th:text = "${cart.salePrice * cart.productOrderCount}"/>
+                            </td>
+                            <td class = "td_width_4 table_text_align_center">
+                                <button class = "delete_btn" th:data-cart-number = "${cart.cartNumber}">삭제</button>
+                            </td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+                <table class = "list_table">
+                </table>
+            </div>
+            <!-- 가격 종합 -->
+            <div class = "content_total_section">
+                <div class = "total_wrap">
+                    <table>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>총 상품 가격</td>
+                                        <td>
+                                            <span class = "totalPrice_span"></span> 원
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>배송비</td>
+                                        <td>
+                                            <span class = "delivery_price"></span>원
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>총 주문 상품수</td>
+                                        <td><span class = "totalCount_span"></span>개
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class = "boundary_div">구분선</div>
+                    <table>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <strong>총 결제 예상 금액</strong>
+                                        </td>
+                                        <td>
+                                            <span class = "finalTotalPrice_span">70000</span> 원
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <strong>총 적립 예상 마일리지</strong>
+
+                                        </td>
+                                        <td>
+                                            <span class = "totalPoint_span">70000</span> 원
+                                        </td>
+                                    </tr>
+                                    </tbody>
+
+                                </table>
+                            </td>
+                        </tr>
+                        <!-- 구매 버튼 영역 -->
+                        <div class = "content_btn_section">
+                            <button class = "order_btn">주문하기</button>
+                        </div>
+
+                    </table>
+                </div>
+
+            </div>
+
+
+
+            <!-- 수량 조정 form -->
+            <form class = "quantity_update_form" method = "post" th:action = "@{/cart/update}">
+                <input class = "update_cartNumber" name = "cartNumber" style = "display: none" type = "number">
+                <input class = "update_productOrderCount" name = "productOrderCount" style = "display: none" type = "number">
+                <input name = "buyerId" th:value = "${#authentication.principal.user.id}" type = "hidden">
+            </form>
+
+            <!-- 삭제 form -->
+            <form action = "/cart/delete" class = "quantity_delete_form" method = "post">
+                <input class = "delete_cartNumber" name = "cartNumber" type = "hidden">
+                <input name = "buyerId" th:value = "${#authentication.principal.user.id}" type = "hidden">
+            </form>
+
+            <!-- 주문 form -->
+            <form class = "order_form" method = "POST" th:action = "@{/order/__${#authentication.principal.user.id}__}">
+            </form>
+        </div>
+    </div>
+</article>
+
+
+</body>
+</html>

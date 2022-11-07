@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/default_layout}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="EUC-KR">
+<title>addLiveReservationView</title>
+	
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	
+	<!-- Bootstrap -->
+		<!-- CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+		
+		<!-- JS -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+
+	<!-- 추가 JS -->
+	<script src="/js/addliveReservationView.js"></script>
+	
+</head>
+<body>
+	<article layout:fragment="content">
+		<div class="container">
+		
+			<h5 style="margin-top: 10px; font-size: 30px;">프리미엄 라이브 예약 등록</h5>
+			
+			<hr/>
+			
+			<form>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="reservationDate">년월일</label>
+						<input type="date" class="form-control" id="reservationDate" name="reservationDate"/>
+					</div>
+					<div id="timeDiv" class="form-group col-md-6">
+						<label for="reservationTime">시작 시간</label>
+						<select id="reservationTime" class="form-control" name="reservationTime">
+							<option id="timeOption"/>
+						</select>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="reservationTitle">방송 제목</label>
+					<input type="text" class="form-control" id="reservationTitle" name="reservationTitle" placeholder="50자 이내">
+				</div>
+				
+				<h6 style="display: inline; margin-right: 6px;">등록 상품 선택</h6><small id="checkboxProductHelp" class="text-muted" style="display: inline">5개 이내</small>
+				
+				<div class="form-check" th:each="product : ${list}">
+					<input class="form-check-input" type="checkbox" th:value="${product.productNumber}" id="liveProductNum" name="liveProductNum">
+					<label class="form-check-label" for="liveProduct" th:text="${product.productName}">productName</label>
+				</div>
+				<div style="display: flex; flex-direction: column-reverse; align-items: center; margin-top: 60px;">
+					<button type="button" class="btn btn-success">등록하기</button>
+				</div>
+				
+			</form>
+			
+		</div>
+	</article>
+</body>
+</html>

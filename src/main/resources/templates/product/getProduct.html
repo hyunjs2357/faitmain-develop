@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang = "ko" layout:decorate = "~{layout/default_layout}"
+      xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset = "UTF-8">
+    <title>상품 조회</title>
+
+	
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/slick/slick.css">
+		
+	<script src="/productDesign/vendor/sweetalert/sweetalert.min.js"></script>
+	        
+	<!-- 카카오 공유하기 -->
+	<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+	<!-- 
+	<meta property="og:title" th:attr="content=${product.productName}">
+	<meta property="og:url" th:attr="content=|http://192.168.0.90:8080/product/getProduct?productNumber=${product.productNumber}|">
+	<meta property="og:image" th:attr="content=|http://192.168.0.90:8080/img/upload/${product.productMainImage}|">
+	-->
+	
+    <style>
+    
+        .form-group {
+            margin-top: 10px;
+        }
+
+        h5, span {
+            font-family: 'Nanum Gothic Coding', monospace;
+        }
+		
+		#buttonArea{
+			text-align: center;			
+		}
+		
+		#buttonArea li {
+			display: inline-block;			
+			list-style-type: none;
+			/*float: left;*/
+			margin-right: 10px;
+		}
+
+		
+    </style>
+    
+</head>
+
+<body>
+
+<article class="py-5" layout:fragment="content">
+
+	<!-- breadcrumb -->
+	<div class="container">
+		<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+			<a th:href="@{/}" class="stext-109 cl8 hov-cl1 trans-04">
+				Home
+				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+			</a>
+
+			<a th:href="@{/product/getProductList?resultJsp=listProduct}" class="stext-109 cl8 hov-cl1 trans-04">
+				Product
+				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+			</a>
+
+			<span class="stext-109 cl4">
+				<th:block th:if="${product.categoryCode == '01'}">식품</th:block>
+				<th:block th:if="${product.categoryCode == '02'}">생활</th:block>	
+				<th:block th:if="${product.categoryCode == '03'}">뷰티</th:block>	
+				<th:block th:if="${product.categoryCode == '04'}">패션</th:block>	
+				<th:block th:if="${product.categoryCode == '05'}">인테리어</th:block>	
+				<th:block th:if="${product.categoryCode == '06'}">출산/유아동</th:block>									
+			</span>
+		</div>
+	</div>
+
+	<!-- Product Detail -->
+	<section class="sec-product-detail bg0 p-t-65 p-b-60">
+
+		<div class="container">
+
+			<!-- ---------------------------- 필요 데이터 -------------------------------------------- -->
+			<input type="hidden" id="productGroupNumber" th:value="${ product.productNumber }" />
+			<input type="hidden" id="productGroupName" th:value="${ product.productName }" />
+			<input type="hidden" id="productPrice" th:value="${ product.productPrice }" />
+			<input type="hidden" id="productMainImage" th:value="${ product.productMainImage }" />
+			<input type="hidden" id="productQuantity" th:value="${ product.productQuantity }" />
+			<!-- ---------------------------------------------------------------------------------- -->
+			<div class="row">	
+			
+				<!-- ------------- 메인 사진 & 추가 사진 표시 -------------- -->	
+				<div class="col-md-6 col-lg-7 p-b-30">
+					<div class="p-l-25 p-r-30 p-lr-0-lg">
+						<!-- 추가 사진 (화면 왼쪽 표시) -->
+						<div class="wrap-slick3 flex-sb flex-w">
+							<div class="wrap-slick3-dots"></div>
+							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+							
+							<div class="slick3 gallery-lb">
+							
+								<div class="item-slick3" th:data-thumb="|../img/upload/${ product.productMainImage }|">
+									<div class="wrap-pic-w pos-relative">
+										<img th:src="|../img/upload/${ product.productMainImage }|" alt="IMG-PRODUCT">
+								
+										
+									</div>
+								</div>
+									
+								<th:block th:each="extraImg : ${product.productExtraImage}">
+									<div class="item-slick3" th:data-thumb="|../img/upload/${ extraImg.imageName }|">
+										<div class="wrap-pic-w pos-relative">
+											<img th:src="|../img/upload/${ extraImg.imageName }|" alt="IMG-PRODUCT">								
+										</div>
+									</div>
+								</th:block>							
+							</div>
+							
+						</div>
+					</div>
+					<script src="/productDesign/vendor/slick/slick.min.js"></script>
+					<script src="/productDesign/js/slick-custom.js"></script>
+					
+				</div>
+				<!-- --------------------------------------- -->
+				
+				<div class="col-md-6 col-lg-5 p-b-30">
+					<div class="p-r-50 p-t-5 p-lr-0-lg">
+					
+						<form id="getProductForm" method="post" th:object="${product}">
+							
+							<!-- 구매자 정보 확인 -->
+							<th:block sec:authorize="isAuthenticated()">
+								<input type="hidden" name="buyerId" th:value="${#authentication.principal.user.id}" />
+							</th:block>
+							
+							<!-- 상품명, 가격 표시 -->
+							<p class="stext-301 cl3 p-t-23">
+								<a th:href="@{/product/getStoreInfo(storeId=*{store.id})}" th:text="*{store.storeName}" class="stext-107 cl7 hov-cl1 trans-04"></a>
+								<i id="create-kakao-link-btn" href="javascript:;" class="fs-16 zmdi zmdi-share hov-btn2 p-lr-10"></i>
+							</p>
+							<h4 class="mtext-105 cl2 js-name-detail p-b-14" th:text="*{ productName }"></h4>	
+													
+							<span class="mtext-106 cl2" th:text="*{#numbers.formatInteger(productPrice, 3, 'COMMA') + '원'}"></span>
+							
+							<div class="p-t-33">							
+								
+								<!-- 단일 상품(옵션 없는 상품) 정보 -->
+								<th:block th:if="${#lists.size(product.productOptions) <= 0}">
+				
+									<input id="" name="orderPageProductList[0].productNumber" th:value="*{productNumber}" type="hidden" />
+									<input id="" name="orderPageProductList[0].productName" th:value="*{productName}" type="hidden" />
+									<input name="orderPageProductList[0].productMainImage" th:value="*{productMainImage}" type="hidden" />							
+									
+									<div class="flex-w flex-r-m p-b-10">
+									
+										<div class="size-203 flex-c-m respon6">
+											구매수량
+										</div>
+										
+										<!-- 수량 조절 -->
+										<div class="size-204 flex-w flex-m respon6-next">
+											<div class="wrap-num-product flex-w m-r-20 m-tb-10">
+											
+												<div class="btn-num-product-down cl8 hov-btn2 trans-04 flex-c-m">
+													<i class="fs-16 zmdi zmdi-minus"></i>
+												</div>
+												
+												<input class="mtext-104 cl3 txt-center num-product" name="orderPageProductList[0].productOrderCount" 
+														readonly="readonly"	type="text" value="1" />
+														
+												<div class="btn-num-product-up cl8 hov-btn2 trans-04 flex-c-m">
+													<i class="fs-16 zmdi zmdi-plus"></i>
+												</div>
+												
+											</div>											
+										</div>
+										<!-- ------ -->
+										
+									</div>
+		
+								</th:block>
+								<!-- --------------------------- -->
+								
+								<!-- 옵션 있는 상품이면 옵션 선택하도록 함 -->
+								<th:block th:if="${#lists.size(product.productOptions) > 0}">
+									<div class="flex-w flex-r-m p-b-10">
+									
+										<div class="size-203 flex-c-m respon6 stext-117">
+											상품선택
+										</div>
+								
+										<div class="size-204 respon6-next">
+											<div class="rs1-select2 bor8 bg0">
+												<select id="productOption" name="options" class="js-select2">
+													<option disabled selected>상품선택</option>
+													<option th:each="productOption : ${product.productOptions}" 
+															th:if="${productOption.productStatus.equals('01')}"
+															th:text="${productOption.productName}" 
+															th:value="${productOption.productNumber}"
+															th:value1="${productOption.productQuantity}">
+													</option>
+												</select>
+												<div class="dropDownSelect2"></div>
+											</div>
+										</div>
+										
+									</div>
+									
+									<!-- 옵션 선택에 따라 내용이 채워질 div -->
+									<div id="optionArea"></div>
+									
+								</th:block>	
+								<!-- 옵션 선택 디자인 적용인듯 -->
+								<script src="/productDesign/vendor/select2/select2.min.js"></script>
+								<script>
+									$(".js-select2").each(function () {
+										$(this).select2({
+											minimumResultsForSearch: 20,
+											dropdownParent: $(this).next('.dropDownSelect2')
+										});
+									})
+								</script>								
+								<!-- ------------------------ -->
+								
+								<!-- 총 상품 가격 표시 (선택 수량에 따라 값 변동) -->
+								<div class="flex-w flex-r-m p-b-10">
+								
+									<div class="size-203 flex-c-m respon6 stext-117">
+										총 상품 가격
+									</div>
+								
+									<div class="size-204 flex-w flex-m respon6-next" id="totalPriceArea">
+										<th:block id = "totalPrice" th:if = "${#lists.size(product.productOptions) == 0}" th:text = "${#numbers.formatInteger(product.productPrice, 3, 'COMMA') + '원'}">
+										</th:block>
+										<th:block th:if = "${#lists.size(product.productOptions) != 0}">0</th:block>																		
+									</div>
+									
+									<input type="hidden" id="totalPrice" th:value="${#lists.size(product.productOptions) == 0 ? product.productPrice : 0}" />
+									
+								</div>
+								<!-- -------------------------------- -->
+								
+								<!-- 장바구니 & 구매하기 버튼 -->
+								<div class="flex-w flex-r-m p-b-10">
+									<ul id="buttonArea">									
+										<li>
+											<button id="addCart" type="button" class="flex-c-m stext-101 cl2 size-101 bg0 bor13 hov-btn1 p-lr-15 trans-04 pointer m-tb-10">
+												장바구니
+											</button>
+										</li>
+										<li>
+											<button id="addOrder" type="button"	class="flex-c-m stext-101 cl2 size-101 bg0 bor13 hov-btn1 p-lr-15 trans-04 pointer m-tb-10">
+												구매하기
+											</button>
+										</li>
+									</ul>									
+								</div>
+								<!-- ---------------- -->
+								
+							</div>
+							
+							<!-- getProduct에 적용할 script (해당 위치에 적어야 동작함) -->
+							<script th:inline="javascript" src="/js/getProduct.js"></script>
+							
+						</form>					
+						
+					</div>
+				</div>
+			</div>
+			<!-- ----------------------- -->
+			
+			<!-- 상품 상세, 문의, 리뷰 -->
+			<div class="bor10 m-t-50 p-t-43 p-b-40">
+			
+				<!-- Tab01 -->
+				<div class="tab01">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item p-b-10">
+							<a class="nav-link active" data-toggle="tab" href="#description" role="tab">상품 상세 설명</a>
+						</li>
+					
+						<li class="nav-item p-b-10">
+							<a class="nav-link" data-toggle="tab" href="#reviews" role="tab">리뷰(<th:block th:text="${product.reviewCount}"></th:block>)</a>
+						</li>
+					
+						<li class="nav-item p-b-10">
+							<a class="nav-link" data-toggle="tab" href="#inquiry" role="tab">문의(<th:block th:text="${product.inquiryCount}"></th:block>)</a>
+						</li>
+					</ul>
+					
+					<!-- Tab panes -->
+					<div class="tab-content p-t-43">
+						
+						<!-- 상품 상세 정보 -->
+						<div class="tab-pane fade show active" id="description" role="tabpanel">
+							<div class="how-pos2 p-lr-15-md">
+								<th:block th:utext = "${ product.productDetail }"></th:block>
+							</div>	
+						</div>
+						<!-- ----------- -->
+						
+						<!-- 리뷰 -->
+						<div class="tab-pane fade" id="reviews" role="tabpanel">
+							<div class="row">
+								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
+									<div class="p-b-30 m-lr-15-sm">
+									
+										<!-- 리뷰 없음 -->
+										<th:block th:if="${#lists.size(product.reviewList) == 0}">
+											<p class="stext-102 cl6">
+												리뷰가 없습니다.
+											</p>
+										</th:block>
+										
+										<!-- 리뷰 있음 -->
+										<th:block th:unless="${#lists.size(product.reviewList) == 0}" th:each="review : ${product.reviewList}">
+											<div class="flex-w flex-t p-b-68">								
+												
+												<div class="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
+													<img th:if="${ not #strings.isEmpty(review.reviewImage) }" th:src="|../img/upload/${ review.reviewImage }|" alt="Review-IMG">
+												</div>
+												
+												<div class="size-207">
+													<div class="flex-w flex-sb-m p-b-17">
+														<span class="mtext-107 cl2 p-r-20" th:text="|${#strings.substring(review.userId, 0, 3)}****|">																
+														</span>
+												
+														<span class="fs-18 cl11">
+															<th:block th:each="num : ${#numbers.sequence(1, 5)}">
+																<i class="zmdi zmdi-star" th:if="${num le review.rating}"></i>
+																<i class="zmdi zmdi-star-outline" th:if="${num gt review.rating}"></i>
+															</th:block>
+														</span>
+													</div>
+												
+													<p class="stext-102 cl6" th:text="${review.reviewContent}">															
+													</p>
+												</div>
+												
+											</div>	
+										</th:block>
+																			
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- -------------- -->
+						
+						<!-- 문의 -->
+						<div class="tab-pane fade" id="inquiry" role="tabpanel">
+							<div class="how-pos2 p-lr-15-md">
+							
+								<div>
+									<button id="addInquiry" type="button" class="flex-c-m stext-101 cl2 size-101 bg0 bor13 hov-btn1 p-lr-15 trans-04 pointer m-tb-10">
+										문의하기
+									</button>
+								</div>								
+								
+								<!-- 문의 없음 -->
+								<th:block th:if="${#lists.size(product.inquiryList) == 0}">
+									<p class="stext-102 cl6">
+										문의가 없습니다.
+									</p>
+								</th:block>
+								
+								<!-- 문의 있음 -->
+								<th:block th:unless="${#lists.size(product.inquiryList) == 0}">
+									<div class="wrap-table-shopping-cart">
+										<table class="table-shopping-cart" id="inquiryTable">
+											<tr class="table_head">
+												<th class="column-1"></th>
+												<th class="column-2">제목</th>
+												<th class="column-3">작성자</th>
+												<th class="column-4">작성일</th>
+												<th class="column-5">답변상태</th>
+											</tr>
+								
+											<tr class="table_row"  th:each="inquiry : ${product.inquiryList}">
+												<td class="column-1">
+													<img src="/productDesign/images/icons/lock.png" alt="IMG" th:if="${inquiry.secret}">
+													<button th:if="${!inquiry.secret}" class="getInquiry"  onclick="getInquirys(this)">
+														<input type="hidden" th:value="${inquiry.inquiryNumber}" />
+														<img src="/productDesign/images/icons/arrow_down.png" alt="IMG">	
+													</button>
+													
+												</td>
+												<td class="column-2" th:text="${inquiry.secret} ? '비밀문의' : ${inquiry.inquiryTitle}"></td>
+												<td class="column-3" th:text="|${#strings.substring(inquiry.userId, 0, 3)}****|"></td>
+												<td class="column-4" th:text="${inquiry.inquiryDate}"></td>
+												<td class="column-5" th:text="${inquiry.inquiryReplyStatus} ? '답변완료' : '미답변'"></td>
+												<td class="getInquiryArea"></td>
+											</tr>
+											
+										</table>
+									</div>
+								</th:block>
+								
+							</div>
+						</div>	
+						<!-- -------------- -->	
+								
+					</div>
+				</div>			
+			</div>	
+			<script src="/productDesign/vendor/bootstrap/js/popper.js"></script>
+			<script src="/productDesign/vendor/bootstrap/js/bootstrap.min.js"></script>
+								
+		</div>	
+	</section>
+</article>
+</body>
+</html>

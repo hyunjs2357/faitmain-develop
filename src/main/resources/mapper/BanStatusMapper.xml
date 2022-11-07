@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.faitmain.domain.customer.mapper.BanMapper">
+	
+	<resultMap id="banStatusMap" type="BanStatus">
+		<result property="reportNumber"				column="report_number" 			jdbcType="INTEGER"/>
+		<result property="respondentId"				column="respondent_id"			jdbcType="VARCHAR" />
+		<result property="respondentNickname"  		column="respondent_nickname"	jdbcType="VARCHAR" />
+		<result property="respondentStoreName" 		column="respondent_store_name" 	jdbcType="VARCHAR" />
+		<result property="reportTitle"				column="report_title" 			jdbcType="VARCHAR" />
+		<result property="reportContent"			column="report_content" 		jdbcType="VARCHAR" />
+		<result property="reportRegDate"			column="reg_date"	 			jdbcType="DATE" />
+		<result property="statusNumber"  			column="status_number"			jdbcType="INTEGER" />
+		<result property="periodNumber"  			column="ban_period_number" 		jdbcType="INTEGER" />
+		<result property="endDate"					column="ban_end_date" 			jdbcType="DATE" />
+		<result property="reportImage" 				column="report_image" 			jdbcType="VARCHAR" />
+		
+		<association property="respondent" javaType="User" >	
+			<id property="id" column="respondent_id" jdbcType="VARCHAR"/>
+			<result property="respondentNickname" column="nickname" jdbcType="VARCHAR"/>
+			<result property="respondentStoreName" column="store_name" jdbcType="VARCHAR"/>
+		</association>
+		
+	</resultMap>
+	
+	<resultMap id="imageSelectMap" type="com.faitmain.global.common.Image">
+		<result property="imageNumber" column="image_number" jdbcType="INTEGER"/>
+		<result property="imageClassificationCode" column="image_classification_code" jdbcType="CHAR"/>
+		<result property="imageClassificationNumber" column="image_classification_number" jdbcType="INTEGER"/>
+		<result property="imageName" column="image_name" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+<!-- ============================================================================= -->	
+	
+ 	<insert id="addReport" parameterType="BanStatus" >
+		    INSERT INTO report
+		    ( report_number, respondent_id, respondent_nickname, report_title, report_content, reg_date, report_image )
+		VALUES
+		    ( #{reportNumber}, #{respondentId.id}, #{respondentNickname.nickname}, #{reportTitle}, #{reportContent}, 
+		    NOW(), #{reportImage})    
+	</insert>
+ 	
+ 	
+</mapper>

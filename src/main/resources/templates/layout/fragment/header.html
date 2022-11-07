@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
+
+<!-- Header -->
+	<!-- Header -->
+	<header th:fragment="header" class="header">
+		<!-- Header desktop -->
+		<div class="container-menu-desktop">
+			<!-- Topbar -->
+			<div class="top-bar bg10">
+				<div class="content-topbar flex-sb-m h-full container">
+					<div class="left-top-bar">
+						
+					</div>
+
+					<div class="right-top-bar flex-w h-full">
+						<a sec:authorize="isAnonymous()" th:href="@{/user/addUser}" class="flex-c-m trans-04 p-lr-25">
+							회원가입
+						</a>
+
+						<a sec:authorize="isAnonymous()" th:href="@{/user/login}" class="flex-c-m trans-04 p-lr-25">
+							로그인
+						</a>
+						
+						<th:block   sec:authorize="isAuthenticated()" >
+							<a sec:authorize="isAuthenticated()" th:href="@{/user/logout}" class="flex-c-m trans-04 p-lr-25">
+								로그아웃
+							</a>
+                   		</th:block>
+                   		
+                   		<a sec:authorize="isAuthenticated" th:href="@{/myPage}" class="flex-c-m trans-04 p-lr-25">
+							My Page
+						</a>
+
+						<a th:href="@{/customer/listBoard?boardType=N}" class="flex-c-m trans-04 p-lr-25">
+							고객센터
+						</a>
+						
+					</div>
+				</div>
+			</div>
+
+			<div class="wrap-menu-desktop">
+				<nav class="limiter-menu-desktop container">
+					
+					<!-- Logo desktop -->		
+					<a th:href="@{/}" class="logo" style="font-family: 'Jeju Gothic'; font-weight: bold; color: #0f0e0e; font-size: 1.50em;">
+						Fait-Main
+					</a>
+
+					<!-- Menu desktop -->
+					<div class="menu-desktop">
+						<ul class="main-menu">
+						
+							<li class="active-menu">
+								<a th:href="@{/product/getProductList(resultJsp='listProduct')}">전체 카테고리</a>
+								<ul class="sub-menu">
+									<li><a th:href="@{/product/getProductList(resultJsp=listProduct,searchCategory='01')}">식품</a></li>
+									<li><a th:href="@{/product/getProductList(resultJsp=listProduct,searchCategory='02')}">생활</a></li>
+									<li><a th:href="@{/product/getProductList(resultJsp=listProduct,searchCategory='03')}">뷰티</a></li>
+									<li><a th:href="@{/product/getProductList(resultJsp=listProduct,searchCategory='04')}">패션</a></li>
+									<li><a th:href="@{/product/getProductList(resultJsp=listProduct,searchCategory='05')}">인테리어</a></li>
+								</ul>
+							</li>
+
+							<li class="label1" data-label1="hot">
+								<a th:href="@{/live/getLiveReservationCal}">프리미엄 라이브 예약 확인</a>
+							</li>
+							
+						</ul>
+					</div>	
+
+					<!-- Icon header -->
+					<div class="wrap-icon-header flex-w flex-r-m">
+											
+						<a sec:authorize="isAuthenticated()" th:href="@{/cart/{buyerId}(buyerId=${#authentication.principal.user.id})}">
+							<div class="icon-header-item cl7 hov-cl1 trans-04 p-l-22 p-r-11  js-show-cart">
+								<i class="zmdi zmdi-shopping-cart"></i>
+							</div>
+						</a>
+						
+					</div>
+				</nav>
+			</div>	
+		</div>
+		
+	</header>
+	
+</html>

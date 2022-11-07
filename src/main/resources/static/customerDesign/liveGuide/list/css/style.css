@@ -1,0 +1,106 @@
+ body, html {
+        	height: 100%;
+       }
+       
+
+th, td{
+		
+	text-align: center;
+		
+}
+
+td > a{
+	color: #777;
+	font-weight: bold;
+}
+
+td > a:hover{
+	color: black;
+}
+
+.btn{			
+	background-color: #333;
+	border: none;
+	margin-right: 10px;
+}
+  	
+  
+  	.move{
+	font-weight: bold;
+	color: #555;
+}
+  	
+  	.btn{
+	background-color: black;
+	color:white;
+	border: none;
+}
+
+.btn:hover{
+	background-color: black;
+	color:white;
+	border: none;
+}
+
+.pageInfo_area{
+	list-style : none;
+     display: inline-block;
+  	 margin: 50px 0 0 100px;      
+}
+.pageInfo_area li{
+	float: left;
+   	font-size: 15px;
+   	margin-left: 18px;
+   	padding: 7px;
+   	font-weight: bold;
+ }
+ 
+.pageMaker_wrap a:link {
+	color:black; text-decoration: none;
+}
+
+.pageMaker_wrap a:visited {
+	color:black; 
+	text-decoration: none;
+}
+
+.pageMaker_wrap a, .move:hover {
+	color:black; 
+	text-decoration: underline;
+}
+
+.active{
+	background-color: #cfcfcf;
+}
+
+/* 페이지 버튼 인터페이스 */
+ .pageMaker_wrap {
+     text-align: center;
+     margin-top: 30px;
+     margin-bottom: 40px;
+ }
+
+ .pageMaker {
+     list-style: none;
+     display: inline-block;
+ }
+
+ .pageMaker_btn {
+     float: left;
+     width: 35px;
+     height: 35px;
+     line-height: 18px;
+     border-radius: 50%;
+ }
+
+
+ .next, .prev {
+     border: 1px solid #ff0404;
+     padding: 0 10px;
+ }
+
+ .next a, .prev a {
+     color: #ff0000;
+ }
+     
+      

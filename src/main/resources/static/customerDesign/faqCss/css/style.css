@@ -1,0 +1,368 @@
+@charset "UTF-8";
+ body, html {
+        	height: 100%;
+       }
+       
+.container {
+
+	/*width: 800px; */
+	margin: 0 auto; 
+	overflow: hidden
+	
+}
+
+a{text-decoration: none}
+/*  body, html {
+        	height: 100%;
+       }
+        */
+#faq-links {
+	padding: 10px 20px;
+	border-bottom: 1px solid #efefef;
+	margin-bottom: 10px;	
+}
+
+#faq-links div {
+    color: #aeaeaf;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: capitalize;
+    margin: 18px 0;
+}
+
+.faq-group {
+    padding: 10px 20px 50px 20px;
+    position: relative
+}
+
+.faq-group div {
+    font-weight: 700;
+    text-align: center;
+}
+
+.faq-group hr {
+        border: 0;
+    border-top: 1px solid #606060;
+    clear: both;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+            box-sizing: content-box;
+    height: 0;
+}
+
+.faq-group:after {
+    top: 33%;
+	 left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-top-color: #393939;
+	border-width: 15px;
+  margin-left: -15px
+}
+
+.faq-accordion>li  {
+    border-top: 1px solid rgba(198, 198, 198, 0.4);
+    color: #666;
+    padding: 20px 0;
+    list-style: none;
+}
+
+.faq-accordion li a {
+    color: #666;
+    padding: 1.125em;
+}
+
+.faq-accordion > li:last-child {
+    border-bottom: 1px solid rgba(198, 198, 198, 0.4);
+}
+
+.faq-accordion > li > a:before {
+    content: 'Q.';
+    padding-right: 0.313em
+}
+
+.faq-accordion > li > a:after {
+    color: #cfcfcf;
+    content: '+';
+    float: right;
+    font-weight:300;
+    margin-right: 1.25em;
+    -webkit-transform: scale(2);
+    -ms-transform: scale(2);
+            transform: scale(2);
+    overflow-y: hidden;
+}
+
+.faq-accordion > li > a.expanded:after {
+    color:  #333;
+    content: '\2212';
+    -webkit-transform: scale(2);
+    -ms-transform: scale(2);
+            transform: scale(2);
+}
+
+.faq-accordion > li > a.expanded {font-weight: 700; opacity: 1 !important}
+
+.faq-content {
+    background-color: #ececec;
+    margin: 20px 0 -20px;
+}
+
+.faq-content p:before {
+    content: 'A.';
+    color: #333;
+    float: left;
+    font-weight: 700;
+  margin-right: .5em
+}
+
+.faq-content p {
+    margin: 0 1.2em;
+    padding: 1.250em 0
+
+}
+
+.faq-hide {display: none}
+
+.faq-selected {
+    color: #49494b!important;
+ -webkit-transition: all 1s ease;
+         transition: all 1s ease;
+}
+
+
+.slide-left{
+
+	-webkit-animation-name: slide-left;	
+  -moz-animation-name: slide-left;	
+  	animation-name: slide-left;
+
+	
+	-webkit-animation-duration: 1s;
+  -moz-animation-duration: 1s;
+  animation-duration: 1s;	
+
+		
+	-webkit-animation-timing-function: ease-in-out;	
+  -moz-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
+
+}
+
+
+
+@-webkit-keyframes slide-left {
+	0% {
+		-webkit-transform: translateX(150%);
+	}
+	50%{
+		-webkit-transform: translateX(-8%);
+	}
+	65%{
+		-webkit-transform: translateX(4%);
+	}
+	80%{
+		-webkit-transform: translateX(-4%);
+	}
+	95%{
+		-webkit-transform: translateX(2%);
+	}			
+	100% {
+		-webkit-transform: translateX(0%);
+	}
+}
+
+@-moz-keyframes slide-left {
+	0% {
+		-webkit-transform: translateX(150%);
+    -moz-transform: translateX(150%);
+		        transform: translateX(150%);
+	}
+	50%{
+		-webkit-transform: translateX(-8%);
+    -moz-transform: translateX(-8%);
+		        transform: translateX(-8%);
+	}
+	65%{
+		-webkit-transform: translateX(4%);
+    -moz-transform: translateX(4%);
+		        transform: translateX(4%);
+	}
+	80%{
+		-webkit-transform: translateX(-4%);
+    -moz-transform: translateX(-4%);
+		        transform: translateX(-4%);
+	}
+	95%{
+		-webkit-transform: translateX(2%);
+    -moz-transform: translateX(2%);
+		        transform: translateX(2%);
+	}			
+	100% {
+		-webkit-transform: translateX(0%);
+    -moz-transform: translateX(0%);
+		        transform: translateX(0%);
+	}
+}
+@keyframes slide-left {
+	0% {
+		-webkit-transform: translateX(150%);
+    -moz-transform: translateX(150%);
+		        transform: translateX(150%);
+	}
+	50%{
+		-webkit-transform: translateX(-8%);
+    -moz-transform: translateX(-8%);
+		        transform: translateX(-8%);
+	}
+	65%{
+		-webkit-transform: translateX(4%);
+    -moz-transform: translateX(4%);
+		        transform: translateX(4%);
+	}
+	80%{
+		-webkit-transform: translateX(-4%);
+    -moz-transform: translateX(-4%);
+		        transform: translateX(-4%);
+	}
+	95%{
+		-webkit-transform: translateX(2%);
+    -moz-transform: translateX(2%);
+		        transform: translateX(2%);
+	}			
+	100% {
+		-webkit-transform: translateX(0%);
+    -moz-transform: translateX(0%);
+		        transform: translateX(0%);
+	}
+}
+
+div#total{
+	float: left;
+	margin-inline: 50px;
+	padding-left: 50px;
+}
+
+div#pay{
+	float: left;
+	margin-inline: 50px;
+}
+
+div#return{
+	float: left;
+	margin-inline: 50px;
+}
+
+div#order{
+	float: left;
+	margin-inline: 50px;
+}
+
+div#live{
+	float: left;
+	margin-inline: 50px;
+}
+
+div#point{
+	text-align: center;
+	margin-inline: 50px;
+}
+
+h3.mb-5{
+	/*margin-top: 40px;*/
+	text-align: center;
+}
+
+.btn_updateFAQ, .btn_deleteFAQ{
+	margin-right: 20px;	
+	margin-bottom: 20px;
+}
+
+.btn_updateFAQ.new{
+	margin: 20px 10px 0px 20px;
+	padding-bottom: 20px;
+}
+
+
+  
+  	.move{
+	font-weight: bold;
+	color: #555;
+}
+  	
+  	.btn{
+	background-color: black;
+	color:white;
+	border: none;
+}
+
+.btn:hover{
+	background-color: black;
+	color:white;
+	border: none;
+}
+
+.pageInfo_area{
+	list-style : none;
+     display: inline-block;
+  	 margin: 50px 0 0 100px;      
+}
+.pageInfo_area li{
+	float: left;
+   	font-size: 15px;
+   	margin-left: 18px;
+   	padding: 7px;
+   	font-weight: bold;
+ }
+ 
+.pageMaker_wrap a:link {
+	color:black; text-decoration: none;
+}
+
+.pageMaker_wrap a:visited {
+	color:black; 
+	text-decoration: none;
+}
+
+.pageMaker_wrap a, .move:hover {
+	color:black; 
+	text-decoration: underline;
+}
+
+.active{
+	background-color: #cfcfcf;
+}
+
+/* 페이지 버튼 인터페이스 */
+ .pageMaker_wrap {
+     text-align: center;
+     margin-top: 30px;
+     margin-bottom: 40px;
+ }
+
+ .pageMaker {
+     list-style: none;
+     display: inline-block;
+ }
+
+ .pageMaker_btn {
+     float: left;
+     width: 35px;
+     height: 35px;
+     line-height: 18px;
+     border-radius: 50%;
+ }
+
+
+ .next, .prev {
+     border: 1px solid #ff0404;
+     padding: 0 10px;
+ }
+
+ .next a, .prev a {
+     color: #ff0000;
+ }

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/myPage_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+<head>
+	
+</head>
+<title> 회원 리스트 조회 </title>
+
+
+<style>
+	.form-group {
+
+		margin-top: 10px;
+
+	}
+
+
+	.card {
+		position: relative;
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		-ms-flex-direction: column;
+		flex-direction: column;
+		min-width: 0;
+		word-wrap: break-word;
+		background-color: #fff;
+		background-clip: border-box;
+		border: 0px solid transparent;
+		border-radius: 0px;
+	}
+
+
+	.card-body {
+		-webkit-box-flex: 1;
+		-ms-flex: 1 1 auto;
+		flex: 1 1 auto;
+		padding: 1.25rem;
+	}
+
+	.card .card-title {
+		position: relative;
+		font-weight: 600;
+		margin-bottom: 10px;
+	}
+
+
+	.table {
+		width: 100%;
+		max-width: 100%;
+		margin-bottom: 1rem;
+		background-color: transparent;
+	}
+
+	* {
+		outline: none;
+	}
+
+	.table th,
+	.table thead th {
+		font-weight: 500;
+	}
+
+
+	.table th,
+	.table thead th {
+		font-weight: 500;
+	}
+
+
+	th {
+		text-align: inherit;
+	}
+
+
+	.m-b-20 {
+		margin-bottom: 20px;
+	}
+
+
+
+	.customcheckbox input {
+		position: absolute;
+		opacity: 0;
+		cursor: pointer;
+	}
+
+	.checkmark {
+		position: absolute;
+		top: -3px;
+		left: 0;
+		height: 20px;
+		width: 20px;
+		background-color: rgb(255, 255, 255);
+		border-radius: 6px;
+	}
+
+
+	.customcheckbox input:checked~.checkmark {
+		background-color: #2196BB;
+	}
+
+
+	.customcheckbox .checkmark:after {
+		left: 8px;
+		top: 4px;
+		width: 5px;
+		height: 10px;
+		border: solid white;
+		border-width: 0 3px 3px 0;
+		-webkit-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
+
+
+	#p-b-52 {
+		padding-bottom: 5px;
+	}
+
+
+	.Tsize-114 {
+		width: calc(100% - 38px);
+	}
+	
+</style>
+
+<body>
+	<article layout:fragment="content">
+		<div class="container col-lg-2">
+		</div>
+
+
+		<div class="container col-lg-8">
+			<div>
+
+				<h4 class="title mtext-112 cl2 p-b-33">회원 조회 </h4>
+
+			</div>
+			<br>
+
+
+
+			<div class="container">
+				<div class="flex-w flex-sb-m p-b-52" style="padding-bottom:10px ;">
+					<div class="flex-w flex-l-m filter-tope-group m-tb-10">
+	 
+						<th:div class="getUserList">
+
+							<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
+								th:href='@{/user/getUserlist(keyword=ALL)}'>
+								ALL
+							</a>
+						</th:div>
+
+						<th:div class="getUserList">
+
+							<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
+								th:href='@{/user/getUserlist(keyword=user)}'>
+								user
+							</a>
+						</th:div>
+						<th:div class="getUserList">
+							<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
+								th:href='@{/user/getUserlist(keyword=store)}'>
+								store
+							</a>
+						</th:div>
+
+
+					</div>
+
+		 
+
+
+
+
+
+
+
+
+
+
+				<!-- ---- 리스트  --- -->
+				<div class="container">
+
+
+					<div class="row">
+						<div class="col-12">
+							<div class="card">
+
+								<div class="table-responsive">
+									<table class="table">
+										<thead class="thead-light">
+											<tr>
+												<th scope="col"> </th>
+
+												<th scope="col">아이디</th>
+												<th scope="col">이름</th>
+												<th scope="col">휴대전화 번호</th>
+												<th scope="col">role</th>
+
+												<th scope="col">가입일</th>
+											</tr>
+										</thead>
+										<tbody class='customtable'>
+											<tr class="table_row" th:each="user:${userList}">
+												<td></td>
+												<td> <a class="cl7 hov-cl1" th:text="${user.id}" th:href="@{/user/getUser(id=${user.id})}">
+														..</a> </td>
+												<td th:text="${user.name}"> </td>
+												<td th:text="${user.phoneNumber}"> </td>
+												<td th:text="${user.role}"> </td>
+
+												<td th:text="${user.regDate}"></td>
+
+											</tr>
+
+
+										</tbody>
+									</table>
+
+
+								</div>
+
+
+
+
+
+
+							</div>
+						</div>
+					</div>
+
+
+
+
+				</div>
+
+
+
+ 
+	
+
+			</div>
+
+
+
+	
+					<!--         페이지 이동 인터페이스 영역-->
+					<div class="flex-c-m flex-w w-full p-t-38" th:fragment="pageNavi">
+						<nav aria-label="Page navigation">
+					
+							<ul class="pageMaker pagination">
+					
+								<!--  이전 버튼-->
+								<th:block th:if="${pageMaker.prev}">
+									<li class="pageMaker_btn prev">
+										<a th:href="@{${pageMaker.pageStart - 1}}">이전</a>
+									</li>
+								</th:block>
+					
+								<!-- 페이지 번호 -->
+								<th:block th:each="num,iterStat : ${#numbers.sequence(pageMaker.pageStart,pageMaker.pageEnd)}">
+									<li th:class="|pageMaker_btn ${pageMaker.paging.pageNum == num ? 'active' : ''}|">
+										<a th:href="@{${num}}" th:text="${num}" class="flex-c-m how-pagination1 trans-04 m-all-7"></a>
+									</li>
+								</th:block>
+					
+								<!--  다음 버튼-->
+								<th:block th:if="${pageMaker.next}">
+									<li class="pageMaker_btn next">
+										<a th:href="@{${pageMaker.pageEnd + 1}}">다음</a>
+									</li>
+								</th:block>
+							</ul>
+							
+							<form id="moveForm" method="get" th:action="@{/user/getUserlist}">
+								<input name="pageNum" th:value="${pageMaker.paging.pageNum}" type="hidden">
+								<input name="amount" th:value="${pageMaker.paging.amount}" type="hidden">
+								<input name="keyword" th:value="${pageMaker.paging.keyword}" type="hidden">
+							</form>
+							
+							<script src="/js/userlist.js"></script>
+						</nav>
+					</div>
+					
+					
+				
+			</div>	</div>
+
+
+			<div class="container col-lg-2">
+
+
+
+	</article>
+
+</body>
+
+
+</html>

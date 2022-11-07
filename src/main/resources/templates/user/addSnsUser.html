@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{/layout/default_layout}">
+<head>
+
+ 
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <meta charset = "UTF-8">
+    <title>회원 가입 </title>
+    <style>
+	  .form-group{
+ 
+		margin-top:10px ;
+ 	 
+		}
+		
+		h5,span{font-family: 'Nanum Gothic Coding', monospace;}
+		 
+    </style>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<!-- 주소 api-->
+<script type="text/javascript">
+ 
+ 
+			
+				
+	 		$(function() {	
+		
+		
+				$("#nickname").on("keyup",function (){ 		
+				  var  nickname = $('#nickname').val(); //id값이 "id"인 입력란의 값을 저장
+				
+					console.log("nickname :: "+ nickname ) ;
+					 if(nickname!= null ) {
+						
+						 $('#nickname_info').text("닉네임을 입력해주세요.");
+
+					}
+						
+					if(nickname!= null && nickname.length >1) {
+											console.log("닉네임검사하러감  ")
+	
+							 $.ajax({
+					             url:"/user/nicknameCheck?nickname="+nickname,
+					             type:'GET',
+					             
+					             success:function(cnt){ //컨트롤러에서 넘어온 cnt값을 받는다 
+					                 if(cnt != 1){ //cnt가 1이 아니면(=0일 경우) -> 사용 가능한 아이디 
+					             
+					             
+					             
+										 $('#nickname_info').text("사용가능한 닉네임입니다.");
+										   $('#nickname_info').css("color" ,"green");
+
+					                   //  $('#nickname_ok').css("display", "inline-block");
+					                     
+					                     
+					                     
+					            //       $(".successPhoneChk").text("인증번호가 일치합니다.!!1");
+								//	 $(".successPhoneChk").css("color","green");
+								 
+					                     
+ 	 									 total_check_nickname = 1 ;
+	
+					                 } else { // cnt가 1일 경우 -> 이미 존재하는 닉네임
+										 //$('#nickname_info').css("display","none");
+					                     //$('#nickname_ok').css("display", "none");
+					                     
+					                     $('#nickname_info').text("사용이 불가한 닉네임입니다. ");
+ 										 $('#nickname_info').css("color" ,"red");
+					                     
+					                     total_check_nickname = 0 ;
+					                 }
+					             },
+					             error:function(){
+					                 alert("에러입니다");
+					             }
+							         });		
+							      }
+							         
+							})	
+			});		
+			
+			
+  function findAddr() {
+            new daum.Postcode({
+                oncomplete: function (data) {
+
+                    console.log(data);
+
+                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+                    // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                    var roadAddr = data.roadAddress; // 도로명 주소 변수
+                    var jibunAddr = data.jibunAddress; // 지번 주소 변수
+                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                    $("#userAddress1").val(data.zonecode);
+
+//			            document.getElementById('member_post').value = data.zonecode;
+                    if (roadAddr !== '') {
+                        $("#userAddress2").val(roadAddr);
+
+                        //  document.getElementById("member_addr").value = roadAddr;
+                    } else if (jibunAddr !== '') {
+                        $("#userAddress2").val(jibunAddr);
+
+                        // document.getElementById("member_addr").value = jibunAddr;
+                    }
+                }
+            }).open();
+                 $("#userAddress3").focus();
+
+        }
+			
+ 
+		 
+			
+ 
+		
+//회원가입 버튼 눌렀을때 
+		  $(function() {	
+				$("#loginButton").on("click",function(){
+					alert("회원가입 눌림") 
+					var name=$("input[name='name']").val();
+ 				
+					           
+ 				   
+			 
+						
+						 if( name == null && name.length<1){
+							alert("입력하신 이름을 확인해주세요 ") 
+											$("input:text[name='name']").focus();				
+							return  ; 
+						}	
+					
+					if(  total_check_nickname !=1){
+							alert("닉네임을 확인해 주세요 ") 
+											$("input:text[name='nickname']").focus();				
+							return  ; 
+						}
+				
+		 
+		
+					$("form").attr("method","POST").attr("action","/user/addSnsUser").submit();
+
+													
+					
+					
+					})
+			
+			
+			});		
+			
+	
+ </script>
+ 
+</head>
+<body>
+	
+<article  class="py-5" layout:fragment="content"  >
+
+
+<div  class="container col-lg-3">
+</div>
+
+
+<div  class="container col-lg-6">
+    <!-- Team members section-->
+     
+ 
+        
+            <div class="text-center">
+                <h2 class="fw-bolder">sns 회원 가입 </h2>
+                <p class="lead fw-normal text-muted ">회원 정보를 입력해주세요 </p>
+            </div>
+            
+             
+            
+            
+            
+         <div   class="container col-md-9">
+         
+		<form name ="form"   class="form-horizontal">
+		
+		  <div class="form-group">
+		    <!--<label for="userId" class="col-form-label-lg" style="font-size:20px;">아 이 디</label>  -->
+		    <h5 class="fw-bolder"> 아이디</h5>
+		    <div >
+		      <input type="hidden"  id="id" name="id" th:value="${userid}" >
+		       <input type="hidden"  id="joinPath" name="joinPath" th:value="${joinPath}" >
+
+		       [[${userid}]] 
+ 		    </div>
+		  
+		  </div>
+		  
+ 
+		  <div class="form-group">
+		    <!--<label for="name" class="col-md-8 control-label">이름</label>-->
+		    <h5 class="fw-bolder" >이름</h5>
+		    <div >
+		      <input type="text" class="form-control" id="name" name="name" placeholder="회원이름" >
+		    </div>
+		    
+	    
+		  </div>
+		  <div class="form-group">
+		  <!--  <label for="userName" class="col-md-8 control-label">닉네임</label>-->
+		  <h5 class="fw-bolder" >닉네임</h5>
+		    <div >
+		      <input type="text" class="form-control" id="nickname" name="nickname" maxlength='10'  placeholder="2~10자 사이의 사용할 닉네임을 입력해주세요"  >
+		     <span id="helpBlock" class="help-block">
+ 		     	 <!--<span id ="nickname_ok"class="text" 		 style="display:none;" > 사용가능한 닉네임입니다. </span> -->
+ 				 <span id ="nickname_info"class="text"  >사용이 가능한 닉네임을 입력해주세요</span>
+		      </span>
+		    </div>
+		    
+	    
+		  </div>		  
+		
+		    <div class = "form-group">
+
+
+                    <!--<label for="userId" class="col-md-8control-label">주소</label>-->
+                    <h5 class = "fw-bolder"> 주소 </h5>
+                    <div>
+                        <div class = "input-group mb-2">
+
+     
+                            
+                             <input class = "form-control" id = "userAddress1" name = "userAddress1" placeholder = "우편주소."
+                                   readonly type = "text"/>
+                            <button class = "btn btn-success" id = "button-newsletter" onclick = "findAddr()"
+                                    type = "button">주소찾기
+                            </button>
+                        </div>
+                        <input class = "form-control" id = "userAddress2"  name = "userAddress2" placeholder = "주소" readonly type = "text">
+                        <input class = "form-control" id = "userAddress3"   name = "userAddress3" placeholder = "추가입력" type = "text">
+                        <input id = "address" name = "address" type = "hidden" value = "">
+ 
+                        </div>
+
+                        <input name = "joinPath" type = "hidden" value = "KAKAO">
+                    </div>
+ 
+		
+<!--    sns 휴대전화 번호 
+		  <div class="form-group">
+ 					<h5 class="fw-bolder"> 인증번호 </h5>			
+			  <div >
+			  		<div class="input-group mb-2">
+                                    <input id="phone" class="form-control" type="type" name="phoneNumber" placeholder="휴대전화번호 입력 01012345678" /> 
+                                    <span class="btn btn-success" id="phoneChk" > 인증번호 보내기</span>
+                     </div>
+ 		    </div>
+ 			   
+			  				
+			  <div >
+			  		<div class="input-group mb-2">
+                                   <input id="phone2"	 class="form-control"  type="number" name="CertificationNumber" placeholder="인증번호 입력" disabled required/> 
+
+ 									 <span class="btn btn-success" id="phoneChk2" name="CertificationNumber" placeholder="인증번호 입력" disabled required  >  본인인증</span>
+
+                     </div>
+                         <span class="point successPhoneChk">휴대폰 번호 입력후 인증번호 보내기를 해주십시오.</span>  
+
+ 		    </div>
+ 			    
+		 
+			   <input type="hidden" id="phoneDoubleChk"/> </p> 
+		</div>
+ 	--> 	
+		
+			
+			   
+			 <div class="form-group">
+		      <h5 class="fw-bolder">성별&nbsp;&nbsp;&nbsp;</h5>
+		      <p class="tip"> 
+			    <input type="radio" name="gender" value="M">남
+				<input type="radio" name="gender" value="W">여
+
+			    </p> 
+
+		    </div>
+		  
+		  		 <div class="form-group">
+		   		    <div >
+		                   <span class="fw-bolder btn btn-success col-md-12" id="loginButton" > 회원가입</span></div>
+		  
+		  		  </div>   
+		 	</div>
+			  
+			  
+			  		
+			
+ 
+ 		  
+		
+
+            </form>
+       
+        </div>
+     </div>  
+    
+    
+     <div  class="container col-lg-3">
+	</div>
+     
+     
+     
+    </div>
+    
+    
+    
+     
+  </div>
+  
+  
+  
+  
+  
+</article>
+	
+	
+	
+	 
+
+
+
+ </body>
+ 
+</html>

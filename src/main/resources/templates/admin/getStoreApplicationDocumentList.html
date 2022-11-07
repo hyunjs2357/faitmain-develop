@@ -1,0 +1,403 @@
+	<!DOCTYPE html>
+	<html layout:decorate="~{layout/myPage_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	
+	
+	<head>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<!--<link th:href="@{/css/styles.css}" rel="stylesheet" />-->
+	</head>
+	
+	<title> 스토어 신청서 조회 </title>
+	
+	<style>
+		.form-group {
+	
+			margin-top: 10px;
+	
+		}
+		
+		.card {
+			position: relative;
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: flex;
+			-webkit-box-orient: vertical;
+			-webkit-box-direction: normal;
+			-ms-flex-direction: column;
+			flex-direction: column;
+			min-width: 0;
+			word-wrap: break-word;
+			background-color: #fff;
+			background-clip: border-box;
+			border: 0px solid transparent;
+			border-radius: 0px;
+		}
+	
+	
+		.card-body {
+			-webkit-box-flex: 1;
+			-ms-flex: 1 1 auto;
+			flex: 1 1 auto;
+			padding: 1.25rem;
+		}
+	
+		.card .card-title {
+			position: relative;
+			font-weight: 600;
+			margin-bottom: 10px;
+		}
+	
+	
+		.table {
+			width: 100%;
+			max-width: 100%;
+			margin-bottom: 1rem;
+			background-color: transparent;
+		}
+	
+		* {
+			outline: none;
+		}
+	
+		.table th,
+		.table thead th {
+			font-weight: 500;
+		}
+	
+	
+		.table th,
+		.table thead th {
+			font-weight: 500;
+		}
+	
+	
+		th {
+			text-align: inherit;
+		}
+	
+	
+		.m-b-20 {
+			margin-bottom: 20px;
+		}
+	
+	
+	
+		.customcheckbox input {
+			position: absolute;
+			opacity: 0;
+			cursor: pointer;
+		}
+	
+		.checkmark {
+			position: absolute;
+			top: -3px;
+			left: 0;
+			height: 20px;
+			width: 20px;
+			background-color: rgb(255, 255, 255);
+			border-radius: 6px;
+		}
+	
+	
+		.customcheckbox input:checked~.checkmark {
+			background-color: #2196BB;
+		}
+	
+	
+		.customcheckbox .checkmark:after {
+			left: 8px;
+			top: 4px;
+			width: 5px;
+			height: 10px;
+			border: solid white;
+			border-width: 0 3px 3px 0;
+			-webkit-transform: rotate(45deg);
+			-ms-transform: rotate(45deg);
+			transform: rotate(45deg);
+		}
+	
+	
+		#p-b-52 {
+			padding-bottom: 5px;
+		}
+	
+	
+		.Tsize-114 {
+			width: calc(100% - 38px);
+		}
+	
+		/* 페이지 버튼 인터페이스 */
+		.pageMaker_wrap {
+			text-align: center;
+			margin-top: 30px;
+			margin-bottom: 40px;
+		}
+	
+		.pageMaker {
+			list-style: none;
+			display: inline-block;
+		}
+	
+		.pageMaker_btn {
+			float: left;
+			width: 70px;
+			height: 40px;
+			line-height: 40px;
+			margin-left: 20px;
+			border-radius: 5px;
+		}
+	
+		.active {
+			border: 2px solid black;
+			font-weight: 400;
+		}
+	
+		.next,
+		.prev {
+			border: 1px solid #ff0404;
+			padding: 0 10px;
+		}
+	
+		.next a,
+		.prev a {
+			color: #ff0000;
+		}
+	</style>
+	
+	
+	<script type="text/javascript">
+	
+		function fncGetList(currentPage) {
+			$("#currentPage").val(currentPage);
+			$("form").submit();
+		}
+	
+	
+	
+	
+	</script>
+	<!--  고유 스크립트 추가 -->
+	
+	<body>
+		<article layout:fragment="content">
+	
+	
+			<div class="container col-lg-2">
+			</div>
+	
+			<div class="container col-lg-8">
+	
+				<div >
+	
+					<h2 class="title mtext-112 cl2 p-b-33"> 스토어 신청서 조회 </h2>
+				</div>
+	
+	
+				<br>
+	
+				<div>
+	
+				</div>
+				<!-- 정렬 조건  -->
+	
+				<form id="form">
+					<div class="flex-w flex-sb-m p-b-52" style="padding-bottom:10px ;">
+						<div class="flex-w flex-l-m filter-tope-group m-tb-10">
+							<th:div class="getStoreAPPList">
+								<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" name="searchCondition"
+									th:href='@{/user/getStoreApplicationDocumentList(Keyword=ALL)}' value="ALL">
+									ALL
+								</a>
+							</th:div>
+							<th:div class="getStoreAPPList">
+	
+								<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" name="searchCondition" value="W"
+									th:href='@{/user/getStoreApplicationDocumentList(Keyword=W)}'>
+									대기
+								</a>
+							</th:div>
+	
+							<th:div class="getStoreAPPList">
+	
+								<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" name="searchCondition" value="A"
+									th:href='@{/user/getStoreApplicationDocumentList(Keyword=A)}'>
+									승인
+								</a>
+							</th:div>
+							<th:div class="getStoreAPPList">
+								<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" name="" value="R"
+									th:href='@{/user/getStoreApplicationDocumentList(Keyword=R)}'>
+									반려
+								</a>
+							</th:div>
+	
+	
+						</div>
+	
+	
+	
+						<!-- ---- 리스트  --- -->
+						<div class="container">
+	
+	
+	
+							<div class="row">
+								<div class="col-12">
+									<div class="card">
+	
+										<div class="table-responsive">
+											<table class="table">
+												<thead class="thead-light">
+													<tr>
+														<th scope="col"> </th>
+														<th scope="col">스토어신청서 번호</th>
+														<th scope="col">스토어 아이디</th>
+														<th scope="col">스토어 이름</th>
+														<th scope="col">신청일</th>
+														<th scope="col">심사결과</th>
+	
+													</tr>
+												</thead>
+	
+												<tbody class='customtable'>
+	
+													<tr class="table_row" th:each="StoreApplicationDocument:${list}  ">
+														<td></td>
+														<td class="Number "
+															th:text="${StoreApplicationDocument.storeApplicationDocumentNumber}"
+															onclick="getStoreApplication()"
+															th:value="${StoreApplicationDocument.storeApplicationDocumentNumber}" />
+														<td> <a th:href="@{/user/getStoreApplicationDocument(storeApplicationDocumentNumber =${StoreApplicationDocument.storeApplicationDocumentNumber})}"
+																th:text="${StoreApplicationDocument.id}"> dd..</a></td>
+														<td th:text="${StoreApplicationDocument.storeName}" />
+														<td th:text="${StoreApplicationDocument.regDate}" />
+														<th:block
+															th:if="${StoreApplicationDocument.examinationStatus.equals('A')}">
+	
+															<td> <a
+																	th:href="@{/user/getStoreApplicationDocument(storeApplicationDocumentNumber =${StoreApplicationDocument.storeApplicationDocumentNumber})}">
+																	승인</a> </td>
+														</th:block>
+														<th:block
+															th:if="${StoreApplicationDocument.examinationStatus.equals('W')}">
+															<td> <a
+																	th:href="@{/user/getStoreApplicationDocument(storeApplicationDocumentNumber =${StoreApplicationDocument.storeApplicationDocumentNumber})}">
+																	대기</a></td>
+														</th:block>
+														<th:block
+															th:if="${StoreApplicationDocument.examinationStatus.equals('R')}">
+															<td> <a
+																	th:href="@{/user/getStoreApplicationDocument(storeApplicationDocumentNumber =${StoreApplicationDocument.storeApplicationDocumentNumber})}">
+																	반려</a> </td>
+														</th:block>
+	
+	
+													</tr>
+	
+												</tbody>
+											</table>
+										</div>
+	
+	
+									</div>
+	
+	
+								</div>
+	
+	
+	
+	
+	
+	
+	
+							</div>
+						</div>
+	
+	
+	
+	
+	
+	
+					</div>
+	
+	
+				</form>
+	
+				<div>
+					<!------------------ 검색 영역----------------- -->
+					<div class="search_wrap">
+						<form id="searchForm" method="get" th:action="@{/user/list}">
+							<div class="search_input">
+								<input name="keyword" th:value="${pageMaker.paging.keyword}" type="hidden">
+								<input name="pageNum" th:value="${pageMaker.paging.pageNum }" type="hidden">
+								<input name="amount" th:value='${pageMaker.paging.amount}' type="hidden">
+							</div>
+						</form>
+					</div>
+	
+	
+	
+	
+	
+					<!--         페이지 이동 인터페이스 영역-->
+					
+					<div class="flex-c-m flex-w w-full p-t-38" th:fragment="pageNavi" >
+								<ul class="pageMaker">
+									<!--  이전 버튼-->
+									<th:block th:if="${pageMaker.prev}">
+										<li class="pageMaker_btn prev">
+											<a th:href="@{${pageMaker.pageStart - 1}}">이전</a>
+										</li>
+									</th:block>
+			
+									<!-- 페이지 번호 -->
+									<th:block th:each="num,iterStat : ${#numbers.sequence(pageMaker.pageStart,pageMaker.pageEnd)}">
+										<li th:class="|pageMaker_btn ${pageMaker.paging.pageNum == num ? 'active' : ''}|">
+											<a th:href="@{${num}}" th:text="${num}"></a>
+										</li>
+									</th:block>
+			
+									<!--  다음 버튼-->
+									<th:block th:if="${pageMaker.next}">
+										<li class="pageMaker_btn next">
+											<a th:href="@{${pageMaker.pageEnd + 1}}">다음</a>
+										</li>
+									</th:block>
+								</ul>
+							</div>
+			
+							<form id="moveForm" method="get" th:action="@{/user/getStoreApplicationDocumentList}">
+								<input name="pageNum" th:value="${pageMaker.paging.pageNum}" type="hidden">
+								<input name="amount" th:value="${pageMaker.paging.amount}" type="hidden">
+								<input name="keyword" th:value="${pageMaker.paging.keyword}" type="hidden">
+							</form>
+			
+							<script src="/js/userlist.js"></script>
+			
+			
+					
+				</div> <!-- 검ㅅ개 끝-->
+	
+	
+	
+			</div>
+	
+	
+	
+	
+	
+	
+			<div class="container col-lg-2">
+			</div>
+	
+	
+	
+	
+	
+		</article>
+	
+	</body>
+	
+	
+	</html>

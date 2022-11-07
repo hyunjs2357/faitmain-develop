@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="설치 없이 가입 즉시 바로 이용할 수 있는 무료 채팅 서비스를 제공 해 드리겠습니다." />
+    <meta name="author" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="바로 이용하는 무료 채팅 솔루션" />
+    <meta property="og:description" content="설치 없이 가입 즉시 바로 이용할 수 있는 무료 채팅 서비스를 제공 해 드리겠습니다." />
+    <meta property="og:image" content="https://www.vchatcloud.com/img/common/og_img.png" />
+    <meta property="og:url" content="https://www.vchatcloud.com" />
+
+    <title>라이브커머스형</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="/css/liveReset.css" rel="stylesheet" />
+    <link href="/css/liveStyle.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/c13f14f04a.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+
+    <script src="/js/vchatcloud-1.2.0.min.js"></script>
+    <script src="/js/like.js"></script>
+    <script src="/js/draw.js"></script>
+   <script src="/js/chat.js"></script>
+    <script src="/js/errMsg.js"></script>
+    
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+
+</head>
+
+<style>
+    /* 210625 추가 */
+   
+    
+    .livecommerce .chat {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 250px;
+    margin-top: 196px;
+   }
+    
+    .livecommerce .title span {
+   
+   font-size: 15px;
+   color: #fff;
+   border-radius: 3px;
+   background: #ec2014;
+   padding: 2px 10px;
+   
+   }
+
+
+    body {
+   background-color:black;
+   }
+   
+   video {
+   width: 900px;
+   }
+    
+    
+    div.livecommerce {
+	   width: 900px;
+	   height: 675px;
+	   position: absolute;
+     
+   }
+    
+    .title p {
+        text-align: right;
+    }
+    
+    .title i {
+        font-size: 20px;
+        color: #fff;
+    }
+    
+    div.carousel-inner {
+   vertical-align: middle;
+}
+    
+</style>
+
+<body>
+	<!-- ================================= 필요 데이터 =========================================================== -->
+      <input type="hidden" id="storeNickname" th:value="${#authentication.principal.user.storeName}" /> 
+      <input type="hidden" id="storeId" th:value="${#authentication.principal.user.id}" />   
+      <input type="hidden" id="channelKey" th:value="${channelKey}"/> 
+	<!-- ====================================================================================================== -->
+
+	<div id="wrap" style="width:55%; height:700px; margin-top: 50px;">
+		<section>
+		<!-- 샘플 화면 -->
+			<div class="livecommerce" style="margin-left: 50px;">
+			                
+				<div class="my_cam" style="height : 675px"></div>
+	
+			
+			                    
+				<div class="remote_cam"></div>
+			
+			
+				<div class="errorpopup">
+					<p><i class="fas fa-exclamation-circle"></i></p>
+					<p>시스템이 원활하지 않아 오류가 발생하였습니다. 잠시 후, 다시 참여해 주시기 바랍니다.</p>
+					<a class="popupbtn" href="#!">닫기</a>
+				</div>
+				<!-- 커스텀 팝업 -->
+				<div class="custompopup">
+					<p>팝업</p>
+					<a class="popupbtn" href="#!">확인</a><a class="popupbtn" href="#!">취소</a>
+				</div>
+			<!-- 방제 / 채팅방 정보  -->
+			<article class="title">
+				<div>
+					<div style="width:80%; float: left;">
+						<p id=roomNm><span>Live</span>[[${live.liveTitle}]]</p>
+						                    	
+					</div>
+					<div style="width:20%; float: right;">
+						<!-- 나가기 버튼 -->
+						<button type="button" class="btn btn-warning" th:onClick="exit()" style="margin-top:20px; margin-left:80px; margin-bottom: 50px;">나가기</button>
+					</div>
+				</div>
+				                    
+				<div>
+					<button type="button" onclick="open_popup()" style="margin-left: 10px;">채팅창 관리</button>
+				</div>
+			       				
+			</article>
+			
+			<!-- 채팅방 -->
+				<article class="chat">
+					<!-- 채팅 -->
+					<div class="chat_contents">
+						<div id="content1">
+						</div>
+					</div>
+						<div class="chat_bottom">
+						<!-- 메시지 작성 -->
+						<div class="chat_input">
+							<div class="textbox" id="content" contenteditable="true" placeholder="메세지 입력하기"></div>
+							<div class="send"><a href="#!" id="sendCounter">전송</a></div>
+						</div>
+					</div>
+				</article>
+			</div>
+		</section>
+	</div>
+	
+   	<div style="float: right; width:40%; height:700px; background-color:white; border-radius: 30px; margin-top:50px; margin-right:70px;">
+   		<div>
+   			<h5 style="margin-left:50px; margin-top:15px; margin-bottom:15px; font-size: 30px; font-family:jua; font-weight: bold; ">상품 목록</h5>
+   		</div>
+   		<div style="height:620px; width:750px; overflow: auto; margin-left:5px;">
+   			<table class="table">
+   				<colgroup>
+   					<col width="150px"/>
+   					<col width="550px"/>
+   				</colgroup>
+				<thead class="thead-dark">
+			    	<tr>
+			      		<th scope="col" style="font-family:jua;">사진</th>
+			      		<th scope="col" style=font-family:jua;"">상품</th>
+			    	</tr>
+			  	</thead>
+			  	<tbody>
+			  		<th:block th:each="productList : ${listProduct}">
+				    	<tr style="cursor:pointer" th:onclick="'openProductView('+${productList.productNumber}+');'">
+						    <th scope="row">
+						    	<img th:src="'../img/upload/'+${productList.productMainImage}" style="width:150px; height:150px;">
+						    </th>
+						    <td>
+						    	<div th:text="${productList.productName}" style="font-family:jua;"></div>
+		                        <div th:text="${productList.price}" style="font-family:jua;"></div>
+		                	</td>
+					    </tr>
+				    </th:block>
+				</tbody>
+			</table>
+   			
+   		</div>
+   	</div>
+   
+   <!-- =========================== 카메라 / 마이크 ON OFF ============================================== -->
+
+        <div class="cam-footer" style="width: 1046px; text-align: center;">
+          <div class="cam-btn">
+            <div class="mic btn_on" onclick="mic_on_off(this)" style="display:inline-block;">
+              <img src="https://www.vchatcloud.com/chat-demo/iframe/iframe_rtc_2/img/webRTC/on_mic.png" alt="마이크 재생">
+            </div>
+
+            <div class="cam btn_on" onclick="cam_on_off(this)" style="display:inline-block;">
+              <img src="https://www.vchatcloud.com/chat-demo/iframe/iframe_rtc_2/img/webRTC/on_cam.png" alt="카메라 재생">
+            </div>
+          </div>
+        </div>
+   <!-- ===================================================================================================== -->
+     
+</body>
+
+
+<script th:inline="javascript">
+
+
+//채널에 접속하기 위해서 사용자의 userNick, userKey와 CMS에서 발급받은 channelKey가 필요합니다.
+
+
+var channelKey = $('#channelKey').val(); // CMS에서 발급받은 키 값, 발급 받은 키 값을 입력해보세요!
+    
+    function open_popup(){
+    window.open('/live/liveManageTab', 'popup', 'width=650, height=300, left=1200, top=50, scrollbar=yes');
+   }
+
+   // 새로운 유저가 채팅방에 입장 시 팝업 갱신을 위한 function
+function call_chlid(){  //부모창에서 자식창에 값 전달
+
+            popup.lol(); // 자식창 함수 호출
+
+    }
+
+
+function videoInit() {
+   // 로컬 접속 종료 시
+   channel.on('onNotifyJoinUser',function(event){
+       console.log('onNotifyJoinUser', event)
+   })
+   
+   
+   channel.on('rtcLocalStreamRemove', function(event){
+      let html = $('.my_cam > video');
+      html.remove();
+   })
+  // 로컬 접속 시
+  channel.on("rtcLocalStreamAppend", function (event) {
+        myVideo = document.createElement("video");
+       let stream = event.target;
+       myVideo.srcObject = stream;
+       myVideo.setAttribute("autoplay", true);
+       myCam.append(myVideo);
+       channel.setRTCLocalMedia(myVideo);
+  });
+}
+
+
+
+// 공통 코드 =====================================
+const vChatCloud = new VChatCloud();
+
+let channel, // joinRoom() 내부에서 채널 객체를 저장할 곳
+  userId = $('#storeId').val(), // 접속자의 닉네임, 사용자에게 입력받은 값을 사용해도 된다.
+  userNick = $('#storeNickname').val(),
+  userKey; // 접속자 고유 키
+// rtc
+let myCam
+
+	window.addEventListener("load", function () {
+		
+  	// 접속자의 미디어 소스를 보여줄 위치
+  	 c = $('div.chat_contents').hide();
+  	likeInif();
+  
+  	myCam = $('.my_cam');
+  	myCam.attr('name', 'my_cam');
+
+    $('div.bottom div.name').text(userNick)
+    
+    joinRoom(channelKey,  userId, userNick, function(err, history) {
+    	if(err){
+    		openError(err.code, function(){
+    			c.hide();
+    			vChatCloud.disconnect();
+    		});
+    		c.show();
+    		
+    	}else{
+    		videoInit();
+    		//채팅영역에 글쓰기가 활성화될시 활성화(최신공지 한개만 남기기)
+    		let flag = undefined;
+    		if(typeof write == 'function') history && history.forEach(function(m){
+    			if(m.messageType == 'notice'){
+    				if(flag == undefined){
+    					flag = true;
+    					write(m, 'notice', 'history');
+    				}
+    			}else{
+    				write(m, '', 'history');
+    			}
+    		});
+    			
+    		c.show();
+    	
+   			//이벤트 바인딩 시작
+   			chatInit();
+   			personalInit();
+   			msgInit();
+   			getRoomInfo();
+   			likeInif();
+   		}	
+   	});
+})
+
+	
+  function joinRoom(roomId, clientKey, nickName, callback) {
+  // vchatcloud 객체
+  
+  channel = vChatCloud.joinChannel(
+    {
+      roomId: roomId,
+      clientKey: clientKey,
+      nickName: nickName
+    },
+    
+    function (error, history) {
+      $('div#content1 p').remove();
+      if (error) {
+        if (callback) return callback(error, null);
+        return error;
+      }
+      if (callback) callback(null, history);
+      // 채팅영역에 글쓰기가 활성화될시 활성화
+      if (typeof write == "function")
+        write(
+          "실시간 채팅에 오신 것을 환영합니다. 개인정보를 보호하고 커뮤니티 가이드를 준수하는 것을 잊지 마세요!",
+          "notice"
+        );
+    }
+  );
+}
+
+function getRoomInfo() {
+  const api_url = "https://vchatcloud.com/api/openapi/getChatRoomInfo";
+  let param = {
+    room_id: channelKey
+  };
+  $.post(
+    api_url,
+    param,
+    function (data) {
+      if (data.result_cd == 1) {
+        console.log(data);
+        // $("#roomNm").append(data.param.room_nm);
+      } else {
+        console.log("조회 실패");
+        oastPopup("조회 실패");
+      }
+    },
+    "json"
+  );
+}
+
+function openError(code, callback) {
+  let p = $("div.errorpopup").hide();
+  if (errMsg[code] == undefined) {
+    $("p:nth-child(2)", p).text(code);
+  } else {
+    $("p:nth-child(2)", p).text(errMsg[code].kor);
+  }
+  $("a", p)
+    .off()
+    .click(function () {
+      p.hide();
+      if (typeof callback == "function") {
+        callback();
+      }
+    });
+  p.show();
+}
+
+// 마이크 온/오프
+function mic_on_off(item) {
+  if (channel) {
+    var chk = $(item).attr("class");
+    var img = $(item).children("img")[0];
+    var cam_mic = $("div[name=my_cam]").children("img")[0];
+    if (chk == "mic btn_on") {
+      // 마이크 끄기
+      channel.toggleRTCAudioControl(false);
+      $(item).attr("class", "mic btn_off");
+      $(img).attr(
+        "src",
+        "https://www.vchatcloud.com/chat-demo/iframe/iframe_rtc_1/img/webRTC/off_mic.png"
+      );
+      $(cam_mic).show();
+    } else {
+      // 마이크 켜기
+      channel.toggleRTCAudioControl(true);
+      $(item).attr("class", "mic btn_on");
+      $(img).attr(
+        "src",
+        "https://www.vchatcloud.com/chat-demo/iframe/iframe_rtc_1/img/webRTC/on_mic.png"
+      );
+      $(cam_mic).hide();
+    }
+  } else {
+    // 로그인이 필요함
+  }
+}
+
+// 카메라 온/오프
+function cam_on_off(item) {
+  if (channel) {
+    var chk = $(item).attr("class");
+    var img = $(item).children("img")[0];
+    var video = $("div[name=my_cam]").children("div.camvideo")[0];
+
+    if (chk == "cam btn_on") {
+      // 카메라 끄기
+      channel.toggleRTCVideoControl(false);
+      $(item).attr("class", "cam btn_off");
+      $(img).attr(
+        "src",
+        "https://www.vchatcloud.com/chat-demo/iframe/iframe_rtc_1/img/webRTC/off_cam.png"
+      );
+    } else {
+      // 카메라 끄기
+      channel.toggleRTCVideoControl(true);
+      $(item).attr("class", "cam btn_on");
+      $(img).attr(
+        "src",
+        "https://www.vchatcloud.com/chat-demo/iframe/iframe_rtc_1/img/webRTC/on_cam.png"
+      );
+      // 카메라 켜짐
+    }
+  } else {
+    // 미 로그인 상태
+  }
+}
+
+function exit() {
+  if (channel) {
+    var exit_chk = confirm("종료 하시겠습니까?");
+    if (!exit_chk) return;
+    $(".cam-footer .cam-btn .mic").off("click.rtc");
+    $(".cam-footer .cam-btn .cam").off("click.rtc");
+    vChatCloud.disconnect();
+    channel = undefined;
+
+    self.location="/live/liveStatusUpdate";
+
+  } else {
+    // 로그인 되지 않았음!
+  }
+}
+
+function openProductView(productNumber){
+	var win = window.open('/product/getProduct?productNumber='+productNumber, '_blank');
+	win.focus();
+	}
+
+
+</script>
+
+</html>

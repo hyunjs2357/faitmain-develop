@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/customer_layout}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+      			xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	
+<head>	
+	<th:block layout:fragment="title">
+	<link th:href="@{/css/customer.css}" rel="stylesheet" />
+		<title>faitmain</title>
+	</th:block>
+</head>
+
+<body>
+	<article class="py-5" layout:fragment="content">
+			<div class="card-content">
+				<form class="form-h" th:action="@{/customer/addBoard}" method="post" id="addFAQForm" > <!-- onsubmit="return registerBoard(this)" -->
+				
+					
+					<input type="hidden" name="boardType" value='F'/> 
+					<h4>자주묻는질문 등록</h4>
+					<hr />
+					
+					<div class="form-group">
+				    <label for="FAQCategoryCode" class="col-sm-offset-1 col-sm-3 control-label">FAQ 카테고리</label>
+				    <div class="col-sm-4">
+				      <select  name="FAQCategoryCode" id="FAQCategoryCode" >
+				      
+				      	<option  value='01'>결제</option>
+				      	<option  value='02'>교환/반품</option>
+				      	<option  value='03'>배송</option>
+				      	<option  value='04'>라이브</option>
+				      	<option  value='05'>포인트</option>
+				      </select>
+				    </div>
+				
+	
+					
+						<label for="title" class="col-sm-2 control-label">제목</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="boardTitle" placeholder="제목을 입력해 주세요." />
+						</div>
+					
+	
+					
+						<label for="contents" class="col-sm-2 control-label">내용</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" name="boardContent" placeholder="내용을 입력해 주세요."></textarea>
+						</div>
+					</div>
+	
+					<div class="btn_wrap text-center">
+						<a th:href="@{/myPage}" class="btn btn-default waves-effect waves-light">뒤로가기</a>
+						<button type="submit" class="btn btn-primary waves-effect waves-light">저장하기</button>
+					</div>
+				</form>
+			</div>
+	</article>
+</body>
+</html>

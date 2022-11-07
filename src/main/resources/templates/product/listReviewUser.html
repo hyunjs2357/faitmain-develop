@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko" layout:decorate="~{layout/myPage_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset = "UTF-8">
+    <title>나의 리뷰 목록</title>
+		
+	<script src="/productDesign/vendor/sweetalert/sweetalert.min.js"></script>
+	
+	<style>
+			
+		.statusDeleteBtnArea{
+			display: block;
+			/*border: 1px solid red;*/
+			margin: 0px;
+			height: 70px;			
+		}
+		
+		.statusDeleteBtnArea button{	
+			float: right;
+			margin-left: 20px;
+		}
+		
+		.statusDeleteBtnArea input{	
+			float: left;
+			margin-top: 25px;
+			margin-left: 20px;
+			height: 30%;
+		}
+		
+		.checkReview{
+			margin-left: 20px;
+			margin-right: 0px;
+		}		
+		
+   	</style>
+    
+   	<script type="text/javascript">
+   	
+	   	function fncGetList(currentPage) {
+			$("#currentPage").val(currentPage);	
+			$("form").submit();		
+		}
+		
+		
+		$(function () {
+			
+				//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+				$("#search").on("click", function () {
+					fncGetList(1);
+				});
+
+				$(".orderName li").on("click", function () {
+					alert("선택됨" + $(this).text());
+					let selectOrderBy = $(this).text();
+
+					if (selectOrderBy == '최신순') {
+						$("#orderName").val("reg_date DESC");
+					} else if (selectOrderBy == '낮은 가격순') {
+						$("#orderName").val("product_price");
+					} else if (selectOrderBy == '높은 가격순') {
+						$("#orderName").val("product_price DESC");
+					}
+					$("form").submit();
+				});
+ 
+				
+				$("#checkAll").change(function(){
+					
+					let checked = $(this).prop("checked");
+					
+					if(checked){
+						$(".checkReview").prop("checked", true);
+					}else{
+						$(".checkReview").prop("checked", false);
+					}
+					
+				});
+				
+				$("#deleteReview").on("click", function(){
+					
+					console.log("삭제");
+					
+					var checkArray = new Array();
+					
+					$(".checkReview:checked").each(function(){
+						checkArray.push($(this).val());
+					});
+					
+					if(checkArray.length < 1){
+						
+						swal("리뷰 삭제", "리뷰가 선택되지 않았습니다", "info");
+						
+					}else{
+						
+						console.log(checkArray);
+						
+						swal({
+							title: checkArray.length + "개의 리뷰를 삭제하시겠습니까?",
+							text: "선택하신 리뷰를 삭제하면 다시 복구되지 않습니다.",
+							icon: "info",
+							buttons: true,
+							dangerMode: true,
+						}).then((result) => {
+							if (result) {
+
+								$.ajax({
+									url: "/review/json/deleteReview",
+									type: "post",
+									dataType: "json",
+									data: {
+										"reviewNumbers": checkArray
+									},
+									success: function (data) {
+										console.log("컨트롤러에서 받은 data : " + data);
+
+										if (data == '1') {
+											swal("리뷰 삭제", "삭제가 완료되었습니다!", "success").then(function () {
+												location.reload();
+											});
+
+										} else {
+											swal("리뷰 삭제", "리뷰가 삭제되지 않았습니다", "error");
+										}
+									}
+								});
+
+							} else {
+								swal("취소되었습니다");
+							}
+
+						});						
+						
+					}
+				});
+				
+			});
+   	</script>
+	
+	
+</head>
+<body >
+	<article layout:fragment="content">
+	
+		<div class="container">
+			<div class="row">
+	
+				<div class="m-l-25 m-r--38 m-lr-0-xl">
+	
+					<!-- 모든 리뷰 삭제 -->
+					<div class="statusDeleteBtnArea">
+	
+						<button type="button" id="deleteReview" class="btn btn-danger">
+							삭제
+						</button>
+	
+						<input type="checkbox" id="checkAll" />
+	
+					</div>
+					<!-- ========== -->
+					
+					<!-- 리뷰 목록 -->
+					<div class="wrap-table-shopping-cart">
+	
+						<table class="table-shopping-cart">
+							<tr class="table_head">
+								<th class="column-3"></th>
+								<th class="column-3">상품명</th>
+								<th class="column-1">리뷰</th>
+								<th class="column-2"></th>
+								<th class="column-3">별점</th>
+								<th class="column-5">등록날짜</th>								
+							</tr>
+	
+							<th:block th:each="review : ${list}">
+								<tr class="table_row">
+									<td class="column-3">
+										<input type="checkbox" class="checkReview" th:value="${review.reviewNumber}" />
+									</td>
+									<td class="column-3">
+										<span th:text="${review.orderProduct.productName}" class="stext-117 cl6 p-b-26"></span>
+									</td>
+									<td class="column-1">
+										<div class="how-itemcart">
+											<th:block th:if="${not #strings.isEmpty(review.reviewImage)}">
+												<img th:src="|../img/upload/${review.reviewImage}" alt="IMG">
+											</th:block>											
+										</div>
+									</td>
+									<td class="column-2">
+										<a class="stext-115 cl7 hov-cl1 size-213 p-t-18"
+											th:href="@{/review/updateReview(reviewNumber=${review.reviewNumber})}">
+											<p th:text="${review.reviewContent}"
+												style="width: 150px; word-wrap: break-word;"></p>
+										</a>
+									</td>
+									<td class="column-3">
+										<span class="fs-18 cl11">
+											<th:block th:each="num : ${#numbers.sequence(1, 5)}">
+												<i class="zmdi zmdi-star" th:if="${num le review.rating}"></i>
+												<i class="zmdi zmdi-star-outline" th:if="${num gt review.rating}"></i>
+											</th:block>
+										</span>
+									</td>
+									<td class="column-5" th:text="${review.reviewRegDate}"></td>									
+								</tr>
+							</th:block>
+	
+						</table>
+	
+					</div>
+	
+				</div>
+				
+			</div>
+			
+		</div>
+		
+		
+	
+		<!-- 템플릿 디자인 관련 js -->
+		<script src="/productDesign/vendor/jqueryui/jquery-ui.js"></script>
+		<script src="/productDesign/vendor/bootstrap/js/bootstrap.min.js"></script>
+		<!-- ============ -->
+		
+		
+	</article>
+</body>
+</html>

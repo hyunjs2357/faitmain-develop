@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html
+        layout:decorate = "~{/layout/default_layout}"
+        xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+<head>
+    <link href = "https://fonts.googleapis.com" rel = "preconnect">
+    <link crossorigin href = "https://fonts.gstatic.com" rel = "preconnect">
+    <link href = "@{/css/styles.css}" rel = "stylesheet"/>
+
+    <link href = "https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&display=swap"
+          rel = "stylesheet">
+
+    <meta charset = "UTF-8">
+    <title>회원 가입 </title>
+    <style>
+        .form-group {
+
+            margin-top: 10px;
+
+        }
+
+        h5, span {
+            font-family: 'Nanum Gothic Coding', monospace;
+        }
+
+    </style>
+
+    <script src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <!-- 주소 api-->
+    <script type = "text/javascript">
+
+        var total_check_id = 0;
+        var total_check_phoneNumber = 0;
+        var total_check_nickname = 0;
+        var total_check_password = 0;
+
+
+        function email_check(id) {
+
+            var emailRule = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
+            return (id != '' && id != 'undefined' && emailRule.test(id));
+
+        }
+
+        function phone_check(phone) {
+
+            console.log("phone " + phone)
+
+            $.ajax({
+                url: "/user/phoneNumbereCheck?phoneNumber=" + phone,
+                type: 'GET',
+
+                success: function (cnt) { //컨트롤러에서 넘어온 cnt값을 받는다
+                    if (cnt != 1) { //cnt가 1이 아니면(=0일 경우) -> 사용 가능한 아이디
+
+                        console.log("DB에 중복되는 폰 넘버 없음 ")
+
+                        return cnt;
+
+
+                    } else { // cnt가 1일 경우 -> 이미 존재하는 아이디
+
+
+                        //  $('.text-danger').css("display","inline-block");
+                        //  $('.id_ok').css("display", "none");
+                        // $('.id_info').css("display", "none");
+                        //	$('.id_info').css("text", "none");
+                        alert("다른 휴대전화번호를 입력해주세요")
+                        return cnt;
+
+                    }
+                },
+                error: function () {
+                    alert("에러입니다");
+                }
+            });
+
+            return false;
+
+
+        }
+
+
+        $(function () {
+            $("#password2").on("keyup", function () {
+                console.log($("input[name='password']"))
+
+                var pw = $("input[name='password']").val();
+                var pw_confirm = $("input[name='password2']").val();
+                console.log(pw);
+                console.log(pw_confirm);
+
+
+                if (pw != pw_confirm) {
+                    $("input:text[name='password2']").focus();
+                    $('.pw_ok').css("display", "none");
+                    $('.text-dange').css("display", "inline-block");
+
+                    total_check_password = 0;
+
+                    return;
+                }
+
+
+                $('.pw_ok').css("display", "inline-block");
+                $('.text-dange').css("display", "none");
+                total_check_password = 1;
+
+
+            })
+
+        });
+
+
+        $(function () {
+            $("#id").on("keyup", function () {
+                var id = $('#id').val(); //id값이 "id"인 입력란의 값을 저장
+
+                console.log("id :: " + id);
+
+                if (id == null && id.length < 9) {
+                    $('.text-danger').css("display", "none");
+                    $('.id_ok').css("display", "none");
+                    $('.id_info').css("display", "inline-block");
+                    total_check_id = 0;
+                    console.log("이메일 검사 ")
+                    return false;
+                }
+                if (email_check(id)) {
+                    $.ajax({
+                        url: "/user/idCheck?id=" + id,
+                        type: 'GET',
+
+                        success: function (cnt) { //컨트롤러에서 넘어온 cnt값을 받는다
+                            if (cnt != 1) { //cnt가 1이 아니면(=0일 경우) -> 사용 가능한 아이디
+
+                                $('.text-danger').css("display", "none");
+                                $('.id_ok').css("display", "inline-block");
+                                $('.id_info').css("display", "none");
+                                total_check_id = 1
+
+
+                            } else { // cnt가 1일 경우 -> 이미 존재하는 아이디
+                                $('.text-danger').css("display", "inline-block");
+                                $('.id_ok').css("display", "none");
+                                $('.id_info').css("display", "none");
+                                total_check_id = 0;
+
+                            }
+                        },
+                        error: function () {
+                            alert("에러입니다");
+                        }
+                    });
+
+                } else {
+                    $('.text-danger').css("display", "none");
+                    $('.id_ok').css("display", "none");
+                    $('.id_info').css("display", "inline-block");
+                    total_check_id = 0;
+
+                }
+            })
+        });
+
+
+        $(function () {
+
+
+            $("#nickname").on("keyup", function () {
+                var nickname = $('#nickname').val(); //id값이 "id"인 입력란의 값을 저장
+
+                console.log("nickname :: " + nickname);
+                if (nickname != null) {
+
+                    $('#nickname_info').text("닉네임을 입력해주세요.");
+
+                }
+
+                if (nickname != null && nickname.length > 1) {
+                    console.log("닉네임검사하러감  ")
+
+                    $.ajax({
+                        url: "/user/nicknameCheck?nickname=" + nickname,
+                        type: 'GET',
+
+                        success: function (cnt) { //컨트롤러에서 넘어온 cnt값을 받는다
+                            if (cnt != 1) { //cnt가 1이 아니면(=0일 경우) -> 사용 가능한 아이디
+
+
+                                $('#nickname_info').text("사용가능한 닉네임입니다.");
+                                $('#nickname_info').css("color", "green");
+
+                                //  $('#nickname_ok').css("display", "inline-block");
+
+
+                                //       $(".successPhoneChk").text("인증번호가 일치합니다.!!1");
+                                //	 $(".successPhoneChk").css("color","green");
+
+
+                                total_check_nickname = 1;
+
+                            } else { // cnt가 1일 경우 -> 이미 존재하는 닉네임
+                                //$('#nickname_info').css("display","none");
+                                //$('#nickname_ok').css("display", "none");
+
+                                $('#nickname_info').text("사용이 불가한 닉네임입니다. ");
+                                $('#nickname_info').css("color", "red");
+
+                                total_check_nickname = 0;
+                            }
+                        },
+                        error: function () {
+                            alert("에러입니다");
+                        }
+                    });
+                }
+
+            })
+        });
+
+
+        function findAddr() {
+            new daum.Postcode({
+                oncomplete: function (data) {
+
+                    console.log(data);
+
+                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+                    // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                    var roadAddr = data.roadAddress; // 도로명 주소 변수
+                    var jibunAddr = data.jibunAddress; // 지번 주소 변수
+                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                    $("#userAddress1").val(data.zonecode);
+
+//			            document.getElementById('member_post').value = data.zonecode;
+                    if (roadAddr !== '') {
+                        $("#userAddress2").val(roadAddr);
+
+                        //  document.getElementById("member_addr").value = roadAddr;
+                    } else if (jibunAddr !== '') {
+                        $("#userAddress2").val(jibunAddr);
+
+                        // document.getElementById("member_addr").value = jibunAddr;
+                    }
+                }
+            }).open();
+                 $("#userAddress3").focus();
+
+        }
+
+
+        $(function () {
+
+            var code2 = "";
+
+            $("#phoneChk").on("click", function () {
+
+
+                console.log("phoneChe 옴 ");
+                var phone = $("#phone").val();
+
+                if (phone_check(phone) == 0) {
+
+                    alert("인증번호 발송이 완료되었습니다.\n휴대폰에서 인증번호 확인을 해주십시오.");
+
+                    $.ajax({
+                        type: "GET", url: "uphoneCheck?phone=" + phone,
+                        success: function (data) {
+                            if (data == "error") {
+
+                                alert("휴대폰 번호가 올바르지 않습니다.")
+                                $(".successPhoneChk").text("유효한 번호를 입력해주세요.");
+
+                                $(".successPhoneChk").css("color", "red");
+
+                                $("#phone").attr("autofocus", true);
+
+
+                            } else {
+
+
+                                $("#phone2").attr("disabled", false);
+                                $("#phoneChk2").css("display", "inline-block");
+                                $(".successPhoneChk").text("인증번호를 입력한 뒤 본인인증을 눌러주십시오.");
+                                $(".successPhoneChk").css("color", "green");
+                                $("#phone").attr("readonly", true);
+                                console.log("이거뭐야 data " + data)
+                                code2 = data;
+                            }
+                        }
+                    });
+
+
+                }// if문
+
+                console.log("dd");
+
+            })
+
+
+        })
+
+
+        $(function () {
+
+
+            $("#phoneChk2").on("click", function () {
+
+                var phone = $("#phone").val()
+                var phone2 = $("#phone2").val()
+                console.log("phone :" + phone)
+                console.log("phone2 :" + phone2)
+                console.log("체크체크까ㅣㅈ 옴 ")
+
+                $.ajax({
+                    type: "GET",
+                    url: "/user/smsCertificationRequest?phone=" + phone + "&phone2=" + phone2,
+
+
+                    success: function (data) {
+                        if (data == "error") {
+                            alert("유효하지 않습니다. .")
+
+                        } else if (data == "F") {
+                            console.log("   data " + data)
+                            $(".successPhoneChk").text("인증번호가 일치하지 않습니다. 확인해주시기 바랍니다.");
+                            $("#phoneDoubleChk").val("false");
+                            $(this).attr("autofocus", true);
+
+                            total_check_phoneNumber = 0;
+
+
+                        } else if (data = "T") {
+                            console.log("   data " + data)
+                            $(".successPhoneChk").text("인증번호가 일치합니다.!!1");
+                            $(".successPhoneChk").css("color", "green");
+                            $("#phoneDoubleChk").val("true");
+                            $("#phone2").attr("disabled", true);
+
+                            total_check_phoneNumber = 1;
+
+
+                        }
+
+
+                    }  // suceess
+                });
+
+
+            });
+
+
+        })
+
+
+        //회원가입 버튼 눌렀을때
+        $(function () {
+            $("#loginButton").on("click", function () {
+                alert("회원가입 눌림")
+                var name = $("input[name='name']").val();
+                var userAddress1 = $("input[name='userAddress1']")
+
+
+                if (total_check_id != 1) {
+                    alert("입력하신  아이디를 확인해 주세요 ")
+                    $("input:text[name='id']").focus();
+                    return;
+                }
+
+                if (total_check_password != 1) {
+                    alert("입력하신  비밀번호확인를 확인해 주세요 ")
+                    $("input:password[name='password']").focus();
+                    return;
+                }
+
+                if (name == null && name.length < 1) {
+                    alert("입력하신 이름을 확인해주세요 ")
+                    $("input:text[name='name']").focus();
+                    return;
+                }
+
+                if (total_check_nickname != 1) {
+                    alert("닉네임을 확인해 주세요 ")
+                    $("input:text[name='nickname']").focus();
+                    return;
+                }
+
+                if (total_check_phoneNumber != 1) {
+                    alert("휴대폰 인증을 확인해 주세요 ")
+                    $("input:text[name='password2']").focus();
+
+                    return;
+                }
+
+                if (userAddress1 == null) {
+                    alert("우편주소를 확인해주세요 ")
+
+                    return;
+                }
+
+
+                var addr =$("#userAddress1").val() + " ";
+                addr= $("#userAddress2").val() + " ";
+                console.log("주소 찍어라 " + addr)
+                addr += $("#userAddress3").val();
+                console.log("주소 찍어라 " + addr)
+ 
+ 
+
+                $("form").attr("method", "POST").attr("action", "/user/addUser").submit();
+
+
+            })
+
+
+        });
+
+
+    </script>
+
+
+</head>
+
+<body>
+
+<article class = "py-5" layout:fragment = "content">
+
+
+    <div class = "container col-lg-3">
+    </div>
+
+
+    <div class = "container col-lg-6">
+        <!-- Team members section-->
+
+
+        <div class = "text-center">
+            <h2 class = "fw-bolder">회원 가입 </h2>
+            <p class = "lead fw-normal text-muted ">회원 정보를 입력해주세요 </p>
+        </div>
+
+
+        <div class = "container col-md-9">
+
+            <form class = "form-horizontal" name = "form">
+
+                <div class = "form-group">
+                    <!--<label for="userId" class="col-form-label-lg" style="font-size:20px;">아 이 디</label>  -->
+                    <h5 class = "fw-bolder"> 아이디</h5>
+                    <div>
+                        <input class = "form-control" id = "id" name = "id" placeholder = "이메일을 입력하세요" type = "text">
+                        <span class = "help-block" id = "helpBlock">
+ 		     	  <span class = "id_ok" style = "display:none;">사용 가능한 id 입니다.</span>
+				 <span class = "text-danger" style = "display:none;">사용 불가한 id입니다.</span>
+				  
+				 <span class = "id_info" id = "id_info">사용 가능한 이메일을 입력해주세요</span>
+		      </span>
+                    </div>
+
+                </div>
+
+                <div class = "form-group">
+                    <!-- <label for="password" class="control-label">비밀번호</label>-->
+                    <h5 class = "fw-bolder"> 비밀번호</h5>
+                    <div>
+                        <input class = "form-control" id = "password" maxlength = '12' name = "password"
+                               placeholder = "비밀번호" type = "password">
+                    </div>
+                </div>
+
+                <div class = "form-group">
+                    <!--<label for="password2" class="col-md-8 control-label">비밀번호 확인</label> -->
+                    <h5 class = "fw-bolder"> 비밀번호 확인</h5>
+                    <div>
+                        <input class = "form-control" id = "password2" maxlength = '15' name = "password2"
+                               placeholder = "비밀번호 확인" type = "password">
+                    </div>
+                    <span class = "help-block" id = "helpBlock">
+ 		     	 <span class = "pw_ok" style = "display:none;">패스워드가 일치합니다.</span>
+ 				 <span class = "text-dange">일치하는 패스워드를 입력해주세요</span>
+		      </span>
+                </div>
+
+                <div class = "form-group">
+                    <!--<label for="name" class="col-md-8 control-label">이름</label>-->
+                    <h5 class = "fw-bolder">이름</h5>
+                    <div>
+                        <input class = "form-control" id = "name" name = "name" placeholder = "회원이름" type = "text">
+                    </div>
+
+
+                </div>
+                <div class = "form-group">
+                    <!--  <label for="userName" class="col-md-8 control-label">닉네임</label>-->
+                    <h5 class = "fw-bolder">닉네임</h5>
+                    <div>
+                        <input class = "form-control" id = "nickname" maxlength = '10' name = "nickname"
+                               placeholder = "2~10자 사이의 사용할 닉네임을 입력해주세요"
+                               type = "text">
+                        <span class = "help-block" id = "helpBlock">
+ 		     	 <!--<span id ="nickname_ok"class="text" 		 style="display:none;" > 사용가능한 닉네임입니다. </span> -->
+ 				 <span class = "text" id = "nickname_info">사용이 가능한 닉네임을 입력해주세요</span>
+		      </span>
+                    </div>
+
+
+                </div>
+
+
+                <div class = "form-group">
+
+
+                    <!--<label for="userId" class="col-md-8control-label">주소</label>-->
+                    <h5 class = "fw-bolder"> 주소 </h5>
+                    <div>
+                        <div class = "input-group mb-2">
+
+                           <!-- <input id = "postcode" name = "postcode" type = "text" value = "${vo.postcode}">&nbsp;
+                            <input class = "btn btn-default btn-sm" id = "searchAdd" type = "button" value = "우편번호 찾기"><br>
+                            <input class = "form-control" id = "roadAddress" name = "useraddress" type = "text"
+                                   value = "${vo.useraddress}">
+                            <input class = "form-control" id = "detailAddress" name = "detailAddress" placeholder = "상세주소"
+                                   type = "text">-->
+                            
+                            
+                            
+                             <input class = "form-control" id = "userAddress1" name = "userAddress1" placeholder = "우편주소."
+                                   readonly type = "text"/>
+                            <button class = "btn btn-success" id = "button-newsletter" onclick = "findAddr()"
+                                    type = "button">주소찾기
+                            </button>
+                        </div>
+                        <input class = "form-control" id = "userAddress2"  name = "userAddress2" placeholder = "주소" readonly type = "text">
+                        <input class = "form-control" id = "userAddress3"   name = "userAddress3" placeholder = "추가입력" type = "text">
+                        <input id = "address" name = "address" type = "hidden" value = "">
+ 
+                        </div>
+
+                        <input name = "joinPath" type = "hidden" value = "HOME">
+                    </div>
+
+
+                    <div class = "form-group">
+                        <!--	<label for="name" class="control-label">휴대폰번호</label> -->
+                        <h5 class = "fw-bolder"> 인증번호 </h5>
+                        <div>
+                            <div class = "input-group mb-2">
+                                <input class = "form-control" id = "phone" name = "phoneNumber"
+                                       placeholder = "휴대전화번호 입력 01012345678"
+                                       type = "type"/>
+                                <span class = "btn btn-success" id = "phoneChk"> 인증번호 보내기</span>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div class = "input-group mb-2">
+                                <input class = "form-control" disabled id = "phone2" name = "CertificationNumber"
+                                       placeholder = "인증번호 입력" required type = "number"/>
+
+                                <span class = "btn btn-success" disabled id = "phoneChk2"
+                                      name = "CertificationNumber" placeholder = "인증번호 입력" required>  본인인증</span>
+
+                            </div>
+                            <span class = "point successPhoneChk">휴대폰 번호 입력후 인증번호 보내기를 해주십시오.</span>
+
+                        </div>
+
+                        <!--  <button id="phoneChk" class="doubleChk"  > 인증번호 보내    </button> <br/>-->
+                        <!-- <span id="phoneChk" class="doubleChk">인증번호 보내기</span><br/>    -->
+                        <!--  <input id="phone2" type="text" name="CertificationNumber" placeholder="인증번호 입력" disabled required/>
+
+
+                      <button id="phoneChk2" class="doubleChk"  > 본인인증   </button> <br/> -->
+
+                        <!--   <span id="phoneChk2" class="doubleChk3">본인인증</span>  <br/>
+                       <span class="point successPhoneChk">휴대폰 번호 입력후 인증번호 보내기를 해주십시오.</span>     -->
+                        <input id = "phoneDoubleChk" type = "hidden"/> </p>
+                    </div>
+
+
+                    <div class = "form-group">
+                        <h5 class = "fw-bolder">성별&nbsp;&nbsp;&nbsp;</h5>
+                        <p class = "tip">
+                            <input name = "gender" type = "radio" value = "M">남
+                            <input name = "gender" type = "radio" value = "W">여
+
+                        </p>
+
+                    </div>
+
+                    <div class = "form-group">
+                        <div>
+                            <span class = "fw-bolder btn btn-success col-md-12" id = "loginButton"> 회원가입</span></div>
+
+                    </div>
+                </div>
+
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <div class = "container col-lg-3">
+    </div>
+
+
+    </div>
+
+
+    </div>
+
+
+</article>
+
+
+</body>
+
+
+</html>

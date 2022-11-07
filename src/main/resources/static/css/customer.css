@@ -1,0 +1,181 @@
+/* ---customer */
+@charset "UTF-8";
+
+
+
+
+ body, html {
+        	height: 100%;
+       }
+
+.bg-dark {
+  --bs-bg-opacity: 1;
+  background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem !important;
+}
+
+.pt-5 {
+  padding-top: 3rem !important;
+}
+
+	
+/* div#sidebarNav.col-md-2 {
+	width:250px;
+	height: 1000px;
+	padding-left: 15px;
+	padding-top: 20px;
+	margin-bottom: 0px;
+	border: 1px;
+	background-color: rgb(33, 37, 41);
+	
+} */
+
+h4.CustomerCenter{
+	color: white;
+	text-align: center;
+}
+
+a.Notification{
+	color: white;
+	text-align: center;
+}
+
+a.fandq{
+	color: white;
+	text-align: center;	
+}
+
+a.liveGuide{
+	color: white;
+	text-align: center;
+}
+
+a.report{
+	color: white;
+	text-align: center;
+}
+
+div.card-body{
+	text-align: center;
+}
+
+li {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    border : 0;
+    float: left;
+}
+
+
+article{
+	padding-bottom: 110px;
+}
+
+#mArticle{
+	padding-top: 0;
+	padding-bottom: 300px;
+}
+
+h2.screen_out{
+	text-align: center;
+}
+
+h3.tit_main{
+	text-align: center;
+}
+
+div.customer_main{
+	text-align: right;
+	margin: 10px
+}
+
+/* div.container{
+	position: relative;
+	height: 1000px;
+} */
+
+div.col-lg-15{
+	position: absolute;
+	width: 100%;
+	max-width: 100%;
+	overflow: auto;
+	list-style-type: none;
+}
+
+img.thumb_img{
+	width: 180px;
+	height: 180px;
+	display: block;
+	margin-right: 120px;
+	margin-top: 80px;
+	margin-left: 120px;
+	
+	
+}
+
+
+li.fst{
+	width:650;
+	margin: 0 auto;
+	padding-top: 10px;
+	overflow: hidden;
+	display: inline-block;
+	list-style: none;
+}
+
+a.link_service{
+	float:left;
+	text-align: center;
+	
+}
+
+.pagination{
+	display: flex;
+	padding-left: 0;
+	list-style: none;
+	text-align: center;
+}
+
+/* div#sidebar {
+			list-style-type: none;
+			width: 250px;
+			height: 100%;
+			padding-top: 50px;
+			margin-top: 120px;
+			background-color: #FFFFFF;
+			position: fixed;
+			overflow: auto;
+			top: 0px;
+			left: 0px;
+			text-align: center;
+		} */
+div.row{
+	margin-left: 120px;
+	margin-top: 0px;
+	padding-top: 0px;
+}
+
+div.col-lg-3{
+	position: absolute;
+	top: 0;
+}
+
+div.card-body{
+	margin: -60px;
+	text-align: center;
+}
+
+/* ================================================== */
+
+
+/*reportForm*/
+#results {
+  position: fixed;
+  right: 0;
+  top: 10%;
+}
+
+

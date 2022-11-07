@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/myPage_layout}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+		<meta charset="UTF-8">
+
+        <title>라이브 시작</title>
+		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    </head>
+<style>
+
+</style>
+<body>
+
+
+<div class="fakeloader">
+</div>
+<article  layout:fragment="content"  >
+
+
+<div  class="container col-lg-3">
+</div>
+
+
+<div  class="container col-lg-6">
+    <!-- Team members section-->
+        
+            <div class="text-center">
+                <h2 class="title mtext-112 cl2 p-b-33">방송 정보 </h2>
+                <p class="lead fw-normal text-muted  stext-117 cl2 p-b-33 ">방송 정보를 입력해주세요 </p>
+            </div>
+            
+
+            <br/>
+         <div class="container col-md-9">         
+		<form class="m-t" role="form" action="/live/create" id="Form" method="post">	
+		  <div class="form-group">
+		    <h5 class="fw-bolder stext-117 cl2 p-b-10">방송 제목</h5>
+		    <div >
+		      <input type="text" class="form-control" id="roomName" name="roomName" maxlength="20" placeholder="방송 제목을 입력해주세요."  required>
+		      <span class="liveProductInfo" id="liveProductInfo1"><h6 class="stext-111 cl2 p-t-10">최대 20자</h6></span>
+		      </span>
+		    </div>
+		  </div>
+		  <br/>
+		  <div class="form-group">
+		     <h5 class="fw-bolder stext-117 cl2 p-b-10">방송에서 판매할 상품</h5><h7 class="stext-111 cl2 p-b-20"><strong>상품은 최대 5개까지 선택 가능합니다</strong></h7>
+		      <div class="alert alert-primary" role="alert">   
+            <strong>
+		    <div th:each="lol : ${map.list}">   
+		      <input type="checkbox"  id="liveProduct" name="liveProduct" th:value="${lol.productNumber}">[[${lol.productName}]]<!-- forEach 돌릴 예정 -->
+		    </div>
+		    </strong>
+      		 </div>
+		  </div>
+		  <br/>
+		  	 <div class="form-group">
+		   		  <div>
+		          	<button id="liveStart" type="submit" class="fw-bolder btn btn-success col-md-12">방송 시작</button>	
+		          	</div>
+				 </form>
+			 <div  class="container col-lg-3">
+		  </div>
+		 </div>
+  	</article>
+	<script th:inline="javascript">
+	
+	
+
+
+    </script>
+	</body>
+	
+	
+</html>

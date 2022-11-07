@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko" layout:decorate="~{layout/myPage_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset = "UTF-8">
+    <title>상품 목록</title>
+	
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/productDesign/fonts/linearicons-v1.0.0/icon-font.min.css">
+	
+	<link rel="stylesheet" type="text/css" href="/productDesign/vendor/select2/select2.min.css">
+	
+	<style>
+	
+		
+   	</style>
+    
+   	<script type="text/javascript">
+   	
+	   	function fncGetList(currentPage) {
+			$("#currentPage").val(currentPage);	
+			$("form").submit();		
+		}
+		
+		
+		$(function () {
+			
+				//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+				$("#search").on("click", function () {
+					fncGetList(1);
+				});				
+				
+			});
+   	</script>
+	
+	
+</head>
+<body >
+	<article  layout:fragment="content">		
+				
+		<!-- Shoping Cart -->
+		<form class="bg0 p-t-75 p-b-85" th:action="@{/product/getProductList?resultJsp=listProductStore}" method="post">
+			<div class="container">
+				<div class="row">
+					<!-- 상품 -->
+					<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+						<div class="m-l-25 m-r--38 m-lr-0-xl">
+												
+							<div class="wrap-table-shopping-cart">
+							
+								<table class="table-shopping-cart">
+									<tr class="table_head">
+										<th class="column-1">상품명</th>
+										<th class="column-2"></th>
+										<th class="column-3">가격</th>
+										<th class="column-4">등록날짜</th>
+										<th class="column-5">판매상태</th>
+									</tr>
+									
+									<th:block th:each="product : ${list}">
+										<tr class="table_row">
+											<td class="column-1">
+												<div class="how-itemcart">
+													<img th:src="|../img/upload/${ product.productMainImage }|" alt="IMG">
+												</div>
+											</td>
+											<td class="column-2">
+												<a class="stext-115 cl7 hov-cl1 size-213 p-t-18" 
+													th:href="@{/product/updateProduct(productNumber=${product.productNumber})}" 
+													th:text="${product.productName}">
+												</a>									
+											</td>
+											<td class="column-3" th:text="${#numbers.formatInteger(product.productPrice, 3, 'COMMA') + '원'}"></td>
+											<td class="column-4" th:text="${product.productRegDate}"></td>
+											<td class="column-5">
+												<th:block th:if="${product.productStatus == '01'}">판매중</th:block>
+												<th:block th:if="${product.productStatus == '02'}">판매완료</th:block>
+												<th:block th:if="${product.productStatus == '03'}">품절</th:block>
+											</td>
+										</tr>
+									</th:block>
+									
+								</table>	
+								
+							</div>							
+							
+						</div>
+					</div>		
+					<!-- ======================== -->
+					
+					<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
+						<div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+							<h4 class="mtext-109 cl2 p-b-30">
+								검색
+								<input type="hidden" id="currentPage" name="currentPage" value="0"/>
+							</h4>
+							
+							<div class="flex-w flex-t bor12 p-t-15 p-b-30">
+								<div class="bor17 of-hidden pos-relative">
+							
+									<input class="stext-103 cl2 plh4 size-116 p-l-28 p-r-55" type="text" name="searchKeyword" placeholder="Search">
+									
+									<!-- 
+									<button class="flex-c-m size-122 ab-t-r fs-18 cl4 hov-cl1 trans-04">
+										<i class="zmdi zmdi-search"></i>
+									</button>
+									-->
+								</div>
+							
+							</div>
+							<!-- ============== -->
+							
+							<div class="flex-w flex-t bor12 p-t-15 p-b-30">
+								<div class="size-208 w-full-ssm">
+									<span class="stext-110 cl2">
+										Sort By
+									</span>
+								</div>
+							
+								<div class="size-209 p-r-18 p-r-0-sm w-full-ssm">
+							
+									<div class="p-t-15">
+							
+										<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
+											<select class="js-select2" name="searchCategory">
+												<option value="">카테고리</option>
+												<option value="01">식품</option>
+												<option value="02">생활</option>
+												<option value="03">뷰티</option>
+												<option value="04">패션</option>
+												<option value="05">인테리어</option>
+											</select>
+											<div class="dropDownSelect2"></div>
+										</div>
+										
+										<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
+											<select class="js-select2" name="searchStatus">
+												<option value="">판매상태</option>
+												<option value="01">판매중</option>
+												<option value="02">판매중지</option>
+												<option value="03">품절</option>
+											</select>
+											<div class="dropDownSelect2"></div>
+										</div>
+										
+										
+							
+									</div>
+								</div>
+								<script src="/productDesign/vendor/select2/select2.min.js"></script>
+								<script>
+									$(".js-select2").each(function () {
+										$(this).select2({
+											minimumResultsForSearch: 20,
+											dropdownParent: $(this).next('.dropDownSelect2')
+										});
+									})
+								</script>
+																						
+								
+							</div>
+							<!-- ============== -->	
+							
+							<button type="submit" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+								검색
+							</button>
+							
+						</div>
+					</div>	
+					
+				</div>
+			</div>
+			
+		</form>					
+			
+		<!-- 페이지(어떻게 할지 모르겠다) -->
+		<div  th:replace="/product/pageNavigation :: pageNavi">
+		</div>
+		
+	</article>
+</body>
+</html>

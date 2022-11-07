@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.faitmain.domain.customer.mapper.CustomerMapper">
+
+	<resultMap id="customerMap" type="Customer">
+		<result property="boardNumber"  				column="customer_board_number"		jdbcType="INTEGER"/>
+		<result property="boardTitle"					column="customer_board_title" 		jdbcType="VARCHAR" />
+		<result property="boardContent"					column="customer_board_content" 	jdbcType="VARCHAR" />
+		<result property="boardRegDate"					column="reg_date"	 				jdbcType="DATE" />
+		<result property="boardUpdateDate"				column="update_date" 				jdbcType="DATE" />
+		<result property="FAQCategoryCode"			 	column="customer_FAQ_category_code" jdbcType="VARCHAR" />
+		<result property="boardType"  					column="customer_board_type" 		jdbcType="CHAR" />
+		<association property="customerId" javaType="User" >	
+			<id property="id" column="customer_id" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap>
+	
+	<resultMap id="imageSelectMap" type="com.faitmain.global.common.Image">
+		<result property="imageNumber" column="image_number" jdbcType="INTEGER"/>
+		<result property="imageClassificationCode" column="image_classification_code" jdbcType="CHAR"/>
+		<result property="imageClassificationNumber" column="image_classification_number" jdbcType="INTEGER"/>
+		<result property="imageName" column="image_name" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+<!-- ============================================================================= -->	
+	<select id="customerCount" resultType ="int">
+ 		SELECT COUNT(customer_board_number) cnt FROM customer
+ 	</select>  
+	
+	 <select id="getCustomerBoard" parameterType="int" resultType="Customer" resultMap ="customerMap" >
+
+    	SELECT 
+    	customer_board_number, customer_board_title, customer_board_content, 
+		reg_date, update_date, customer_FAQ_category_code, customer_board_type, customer_id
+    	FROM customer 
+    	<where>
+			 customer_board_number = #{boardNumber} 
+      	</where>    			  	
+    </select>
+    
+    <select id="getLiveGuide"  parameterType="String" resultType="Customer" resultMap ="customerMap">
+
+    	SELECT 
+    	customer_board_number, customer_board_title, customer_board_content, 
+		reg_date, update_date, customer_FAQ_category_code, customer_board_type, customer_id
+    	FROM customer 
+    	<where>
+			customer_board_type = #{boardType}
+				
+      	</where>    	
+      		ORDER BY reg_date	
+      		DESC LIMIT 1	  	
+    </select>
+    
+	
+	<insert id="addCustomerBoard" parameterType="Customer" >
+		    INSERT INTO customer
+		    ( customer_board_title, customer_board_content, 
+		      reg_date, update_date,customer_FAQ_category_code, customer_board_type,  customer_id  )
+		VALUES
+		    ( #{boardTitle}, #{boardContent}, NOW(), NULL, #{FAQCategoryCode}, #{boardType}, #{customerId.id} )    
+	</insert>
+	
+	
+	<update id="updateCustomerBoard" parameterType="Customer"  >
+    	UPDATE customer
+    	<set>
+    		<!-- customer_board_type		= #{boardType},  -->
+    		customer_board_title	= #{boardTitle},
+    		customer_board_content	= #{boardContent},
+    		reg_date				= NOW()
+    	</set>
+		<where> 
+			customer_board_number = #{boardNumber}
+    	</where>
+    </update>
+    
+  <!--  게시판 삭제 -->  
+      <delete id="deleteCustomerBoard" parameterType="Customer" >
+    	DELETE FROM customer
+    	
+    	<where>
+    		customer_board_number = #{boardNumber}
+    	</where>
+    </delete>
+    
+ <!-- Enum 활용 삭제 -->   
+     <!-- <update id="deleteCustomerBoard" parameterType="int" >
+    	UPDATE customer
+    	
+    	<where>
+    		delete_Yn == 'Y' and customer_board_number = #{boardNumber}
+    	</where>
+    </update> -->
+    
+   <!--  <select id="getViewCount" parameterType="int" resultMap="customerMap">
+    	SELECT hit
+    	FROM customer
+    	<where>
+    		customer_board_number = ${boardNumber}
+    	</where>
+    </select> -->
+    
+    
+    
+<!-- 게시판 목록 -->
+	<select id="getCustomerBoardList" parameterType="com.faitmain.global.common.Paging"  resultMap="customerMap">
+	
+			SELECT * FROM(
+							SELECT customer_board_number, customer_board_title, customer_id, reg_date, customer_board_type, customer_board_content 
+							FROM customer 
+							<where>
+								customer_board_type = #{boardType}
+									<if test="paging.keyword != null">
+									AND	 customer_board_title LIKE concat('%',#{paging.keyword}, '%')
+									</if>
+							</where>
+							ORDER BY reg_date DESC ) as T1
+			LIMIT #{paging.skip}, #{paging.amount}
+							
+	</select>
+		
+	<select id="getFAQList" parameterType="com.faitmain.global.common.Paging"  resultMap="customerMap">
+	
+			SELECT * FROM(
+							SELECT customer_board_number, customer_board_title, customer_id, reg_date, customer_board_type, customer_FAQ_category_code  
+							FROM customer 
+							<where>
+								customer_FAQ_category_code = #{FAQCategoryCode}
+							</where>
+							ORDER BY reg_date DESC ) as T1
+			LIMIT #{paging.skip}, #{paging.amount}
+							
+	</select>	
+		
+							
+							
+	
+	
+    
+     <select id="getListPaging"   resultType="Customer"   >
+     
+		SELECT * FROM(
+				SELECT *
+				FROM customer
+				ORDER BY reg_date DESC ) as T1
+		
+		<!-- LIMIT ((${pageNum} - 1) * ${amount}), ${amount} -->
+		LIMIT #{skip}, #{amount}
+		    
+    </select>
+    
+<!-- FAQ 카테고리 리스트 -->    
+    <select id="getFAQCategoryList" parameterType="String" resultMap="customerMap" >
+    
+    	SELECT * 
+    	FROM customer
+   <!--  
+    <where>
+    	customer_FAQ_category_code = #{FAQCategoryCode}
+    </where>
+    
+    	
+    </select> 
+    
+    <select id="getFAQList" parameterType="String" resultMap="customerMap">
+	  	 SELECT *
+	  	FROM (	SELECT inner_table.* , @ROWNUM := @ROWNUM+1 AS row_seq
+	  					FROM		(	SELECT customer_board_number, customer_board_title, customer_board_content, reg_date, customer_FAQ_category_code 
+	  										FROM customer
+	  							<if test="searchCondition != null">
+	  							<where>
+									customer_board_number is null
+										<if test="searchCondition == FAQCategoryCode and searchKeyword == '01' ">
+							 				customer_FAQ_category_code = #{searchKeyword}
+										</if> 
+										<if test="searchCondition == FAQCategoryCode and searchKeyword == '02' ">
+							 				customer_FAQ_category_code = #{searchKeyword}
+										</if>										
+										<if test="searchCondition == FAQCategoryCode and searchKeyword == '03' ">
+							 				customer_FAQ_category_code = #{searchKeyword}
+										</if>	
+										<if test="searchCondition == FAQCategoryCode and searchKeyword == '04' ">
+							 				customer_FAQ_category_code = #{searchKeyword}
+										</if>
+										<if test="searchCondition == FAQCategoryCode and searchKeyword == '05' ">
+							 				customer_FAQ_category_code = #{searchKeyword}
+										</if>																		
+												
+								</where>
+								</if>
+								ORDER BY reg_date ) inner_table
+								WHERE (@ROWNUM:=0)=0 limit #{endRowNum} ) result_table
+								WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
+			SELECT * 
+			FROM customer -->
+			<where>
+				customer_board_type = 'F'
+				<if test="FAQCategoryCode != null and FAQCategoryCode != ''">
+					AND customer_FAQ_category_code = #{FAQCategoryCode} 
+				</if>
+			</where>
+	
+	</select>
+	 
+	 
+    
+    
+     <!-- 게시글 총 개수  -->
+    <select id="getBoardTotalCount"  resultType="int">
+    
+    	SELECT COUNT(*)
+    	FROM customer
+	    	 <where>
+	    		customer_board_type = #{boardType}
+		   			<if test = "paging.keyword != null">
+		    		AND	customer_board_title LIKE concat('%',#{paging.keyword}, '%')
+			    	</if>
+	    	</where>
+    </select> 
+    
+    
+    <select id="getFAQTotalCount"  resultType="int">
+    
+    	SELECT COUNT(*)
+    	FROM customer
+	    	 <where>
+	    		customer_FAQ_Category_code = #{FAQCategoryCode}
+		   			
+	    	</where>
+    </select> 
+    
+    
+    
+    
+    
+<!-- ============================================================================= -->	
+	<!-- <update id="viewCount">
+		UPDATE
+			customer
+		SET
+			view_cnt = view_cnt + 1
+		WHERE
+			customer_id = #{customerId}
+	</update> -->
+
+
+ 	
+</mapper>

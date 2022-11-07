@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/myPage_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+<head>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	
+</head>
+<title> 상품 목록 조회 </title>
+
+
+<style>
+
+	.card {
+		position: relative;
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		-ms-flex-direction: column;
+		flex-direction: column;
+		min-width: 0;
+		word-wrap: break-word;
+		background-color: #fff;
+		background-clip: border-box;
+		border: 0px solid transparent;
+		border-radius: 0px;
+	}
+
+
+	.card-body {
+		-webkit-box-flex: 1;
+		-ms-flex: 1 1 auto;
+		flex: 1 1 auto;
+		padding: 1.25rem;
+	}
+
+	.card .card-title {
+		position: relative;
+		font-weight: 600;
+		margin-bottom: 10px;
+	}
+
+
+	.table {
+		width: 100%;
+		max-width: 100%;
+		margin-bottom: 1rem;
+		background-color: transparent;
+	}
+
+	* {
+		outline: none;
+	}
+
+	.table th,
+	.table thead th {
+		font-weight: 500;
+	}
+
+
+	.table th,
+	.table thead th {
+		font-weight: 500;
+	}
+
+
+	th {
+		text-align: inherit;
+	}
+
+
+	.m-b-20 {
+		margin-bottom: 20px;
+	}
+
+
+
+	.customcheckbox input {
+		position: absolute;
+		opacity: 0;
+		cursor: pointer;
+	}
+
+	.checkmark {
+		position: absolute;
+		top: -3px;
+		left: 0;
+		height: 20px;
+		width: 20px;
+		background-color: rgb(255, 255, 255);
+		border-radius: 6px;
+	}
+
+
+	.customcheckbox input:checked~.checkmark {
+		background-color: #2196BB;
+	}
+
+
+	.customcheckbox .checkmark:after {
+		left: 8px;
+		top: 4px;
+		width: 5px;
+		height: 10px;
+		border: solid white;
+		border-width: 0 3px 3px 0;
+		-webkit-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
+
+
+	#p-b-52 {
+		padding-bottom: 5px;
+	}
+
+
+	.Tsize-114 {
+		width: calc(100% - 38px);
+	}
+</style>
+
+<body>
+	<article class="py-5" layout:fragment="content">
+		
+		<div class="container col-lg-2">
+		</div>
+
+		<div class="container col-lg-8">
+		
+			<div class="text-center">
+
+				<h4 class=".ltext-109 ">상품 조회</h4>
+
+			</div>
+			
+			<br/>
+			
+			<div class="container">
+				<div class="flex-w flex-sb-m p-b-52" style="padding-bottom:10px ;">
+					<div class="flex-w flex-l-m filter-tope-group m-tb-10">
+						
+						<th:div class="getUserList">
+							<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
+								th:href="@{/product/getProductList(resultJsp=listProductAdmin)}">
+								최신순 
+							</a>
+						</th:div>
+						
+						<th:div class="getUserList">
+							<a class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
+								th:href="@{/product/getProductList?(resultJsp=listProductAdmin,searchOrderName=reg_date)}">
+								오래된 순
+							</a>
+						</th:div>
+
+						
+					</div>
+
+					<script type="text/javascript">
+
+						function getUserList(text) {
+
+								console.log("text  " + text);
+								
+								$.ajax({
+									type: "GET",
+									url: "/user/json/getUserlist?order=" + text,
+									dataType: "json",
+									success: function (data) {
+										let addtbody = ""
+
+										$('.table_row').remove();
+
+										for (let i = 0; i < data.length; i++) {
+
+											console.log("userList." + data[i].id);
+											
+											addtbody +=
+												"<tr class='table_row'> <td></td>"
+												+ "<td> <a th:text='" + data[i].id + "' th:href='@{/user/getUser(id=" + data[i].id + "+)}'></a>  </td>"
+												+ "<td th:text=" + data[i].name + " > </td> "
+												+ "<td th:text=" + data[i].phoneNumber + " > </td> "
+												+ "<td th:text=" + data[i].role + " > </td> "
+												+ "<td th:text=" + data[i].regDate + " > </td> "
+
+												+ " </tr>  ";
+
+											$("table").children(":first").append(addtbody);
+
+											console.log(addtbody);
+
+										}
+									}
+
+								});
+
+							}; // 스크립트 
+
+					</script>					
+					
+				</div>
+				
+				<!-- ---- 리스트  --- -->
+				<div class="container">
+
+					<div class="row">
+						<div class="col-12">
+							<div class="card">
+
+								<div class="table-responsive">
+									<table class="table">
+										<thead class="thead-light">
+											<tr>
+												<th scope="col"></th>
+												<th scope="col">상품번호</th>
+												<th scope="col">상품명</th>
+												<th scope="col">상품상태</th>
+												<th scope="col">등록날짜</th>
+												<th scope="col">판매자</th>
+											</tr>
+										</thead>
+										
+										<tbody class='customtable'>
+										
+											<tr class="table_row" th:each="product:${list}">
+											
+												<td>
+													<input type="checkbox" class=""/>
+												</td>
+												<td> 
+													<a th:text="${product.productNumber}" 
+														th:href="@{/product/getProduct(productNumber=${product.productNumber})}">
+													</a>
+												</td>
+												<td th:text="${product.productName}"></td>
+												<td th:text="${product.productStatus}"></td>
+												<td th:text="${product.productRegDate}"></td>
+												<td th:text="${product.store.id}"></td>
+
+											</tr>
+
+										</tbody>
+										
+									</table>
+									
+								</div>
+								
+							</div>
+							
+						</div>
+						
+					</div>
+
+				</div>
+			</div>
+
+			<div class="container col-lg-2">
+			</div>
+			
+			<!-- 페이지(어떻게 할지 모르겠다) -->
+			<div th:replace="/product/pageNavigation :: pageNavi">
+			</div>
+			<!-- =============== -->
+	</article>
+
+</body>
+
+
+</html>

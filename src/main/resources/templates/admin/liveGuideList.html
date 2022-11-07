@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/customer_layout}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout"
+      			xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <!-- Required meta tags 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+-->
+    <link rel="stylesheet" th:href="@{/customerDesign/noticeListCss/fonts/icomoon/style.css}">
+
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/owl.carousel.min.css}">
+
+    <!-- Bootstrap CSS
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/bootstrap.min.css}">
+     -->
+    <!-- Style 
+    <link rel="stylesheet"  th:href="@{/customerDesign/noticeListCss/css/style.css}">
+-->
+<style>
+.pageInfo_area{
+	list-style : none;
+     display: inline-block;
+  	 margin: 50px 0 0 100px;      
+}
+.pageInfo_area li{
+	float: left;
+   font-size: 20px;
+   margin-left: 18px;
+   padding: 7px;
+   font-weight: 500;
+ }
+ 
+</style>
+	 <!-- Channel Plugin Scripts -->
+<script>
+  (function() {
+    var w = window;
+    if (w.ChannelIO) {
+      return (window.console.error || window.console.log || function(){})('ChannelIO script included twice.');
+    }
+    var ch = function() {
+      ch.c(arguments);
+    };
+    ch.q = [];
+    ch.c = function(args) {
+      ch.q.push(args);
+    };
+    w.ChannelIO = ch;
+    function l() {
+      if (w.ChannelIOInitialized) {
+        return;
+      }
+      w.ChannelIOInitialized = true;
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
+      s.charset = 'UTF-8';
+      var x = document.getElementsByTagName('script')[0];
+      x.parentNode.insertBefore(s, x);
+    }
+    if (document.readyState === 'complete') {
+      l();
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', l);
+    } else {
+      window.addEventListener('DOMContentLoaded', l, false);
+      window.addEventListener('load', l, false);
+    }
+  })();
+  ChannelIO('boot', {
+    "pluginKey": "d7f92812-9849-482b-84c6-731d4076b5df"
+  });
+</script>
+<!-- End Channel Plugin -->	
+    <title>faitmain</title>
+    
+
+  	
+
+    <style>
+    
+    	th, td{
+			
+			text-align: center;
+				
+		}
+		
+		td > a{
+			color: #777;
+			font-weight: bold;
+		}
+		
+		td > a:hover{
+			color: black;
+		}
+		
+		.btn{			
+			background-color: #333;
+			border: none;
+			margin-right: 10px;
+		}
+		
+		.btn_wrap{
+			
+			margin-bottom: 20px;
+			
+		}
+    	
+    </style>
+    
+
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+	    <script type="text/javascript">
+	    $(function(){
+	    
+	    //전체 선택
+	      	$("#allCheck").click(function(){
+	      		var check = $("#allCheck").prop("checked");
+	      		if(check){
+	      			$(".RowCheck").prop("checked", true);
+	      		}else{
+	      			$(".RowCheck").prop("checked", false);
+	      		}
+	      	});
+	      	
+	      // 선택박스 선택시 전체 선택 박스 해제
+    		$(".RowCheck").click(function(){
+    			$("#allCheck").prop("checked", false);
+    		});
+	      
+    	
+    		 $(".selectDelete_btn").click(function(){
+    		 	var confirm_val = confirm("정말 삭제하시겠습니까?");
+    		  	
+    		  		if(confirm_val) {
+    		  			var checkArr = new Array();
+    		   
+    		  			$("input[class='RowCheck']:checked").each(function(){
+    		    			checkArr.push($(this).val());
+    		   			});
+		    		    
+		    		   	$.ajax({
+		    		    	url : "/customer/deleteGuide",
+		    		    	type : "POST",
+		    		    	data : { chbox : checkArr },
+		    		    	success : function(result){
+		    		    		
+		    		    		if(result == 1){
+		    		     			location.reload();
+		    		    		}else{
+		    		    			alert("삭제 실패");
+		    		    		}
+		    		    	}
+		    		   	});
+    		  		} 
+    			 });
+	    })
+	      </script>
+	    	
+	    	<!-- function deleteValue(){
+	    		var url = "deleteBoard";		//Controller로 보내고자하는 URL
+	    		var valueArr = new Array();
+	    		var list = $("input[name='RowCheck']");
+	    		for(var i=0; i<list.length; i++){
+	    			if(list[i].checked){		//체크되어 있으면 array에 값을 저장
+	    				valueArr.push(list[i].value);
+	    			}
+	    		}
+	    		
+	    		if(valueArr.length == 0){
+	    			alert("선택된 글이 없습니다.");
+	    		}else{
+	    			var chk = confirm("삭제하시겠습니까?");
+	    			$ajax({
+	    				url : url,
+	    				type : 'POST',
+	    				traditional : true,
+	    				data : {
+	    					valueArr : valueArr
+	    				},
+	    				success : function(jdata){
+	    					if(jdata = 1){
+	    						alert("삭제되었습니다.");
+	    						location.replace("liveGuideList")
+	    					}else{
+	    						alert("삭제되지 않았습니다.")
+	    					}
+	    				}
+	    			});
+	    		}
+	    		
+	    	}
+	    	
+	    </script> -->
+  </head>
+  <body>
+  
+<article class = "nl-1" layout:fragment = "content">
+    
+	<div class="container">
+	
+		<input type="hidden" name="boardType" value='L' />
+		<h3 class="mb-5">라이브가이드 리스트</h3>
+	
+		<th:block sec:authorize="isAuthenticated()">
+			<div class="btn_wrap text-right" sec:authorize="hasRole('ROLE_admin')">
+				<a th:href="@{/customer/addLiveGuide}" class="btn btn-primary waves-effect waves-light">등록</a>
+				<!-- <input type="button" value="선택삭제" class="btn btn-outline-info" onclick="deleteValue();"> -->
+				<button type="button" class="selectDelete_btn">선택삭제</button>
+			</div>
+		</th:block>
+		
+		<div class="table-responsive">
+		
+			<table class="table custom-table">
+			
+				<thead>
+					<tr>
+						<th scope="col"><input id="allCheck" type="checkbox" name="allCheck" /></th>
+						<th scope="col">번호</th>
+						<th scope="col">제목</th>
+						<th scope="col">등록일</th>
+	
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr th:if="${not #lists.isEmpty( boardList )}" th:each="row : ${boardList}">
+						<td class="text_ct"><input name="RowCheck" class="RowCheck" type="checkbox"
+								th:value="${row.boardNumber}" /></td>
+						<td th:text="${row.boardNumber}"></td>
+						<td>
+							<a th:href="@{/customer/detailBoard(boardType=L, boardNumber=${row.boardNumber})}"
+								th:text="${row.boardTitle}"></a>
+						</td>
+						<td th:text="${#dates.format(row.boardRegDate, 'yyyy-MM-dd')}"></td>
+					</tr>
+					<tr th:unless="${not #lists.isEmpty( boardList )}">
+						<td colspan="5">조회된 결과가 없습니다.</td>
+					</tr>
+				</tbody>
+				
+			</table>
+					  <!--         페이지 이동 인터페이스 영역-->
+				<div class="pageMaker_wrap text-center p-t-50">
+					<div class="pageInfo_area">
+						<ul class="pageMaker">
+							<!--  이전 버튼-->
+							<th:block th:if="${pageMaker.prev}">
+								<li class="pageMaker_btn prev">
+									<a th:href="@{${pageMaker.pageStart - 1}}">이전</a>
+								</li>
+							</th:block>
+				
+							<!-- 페이지 번호 -->
+							<th:block th:each="num,iterStat : ${#numbers.sequence(pageMaker.pageStart,pageMaker.pageEnd)}">
+								<li th:class="|pageMaker_btn ${pageMaker.paging.pageNum == num ? 'active' : ''}|">
+									<a th:href="@{/customer/listBoard (boardType=L,pageNum=${num})}" th:text="${num}"></a>
+								</li>
+							</th:block>
+				
+							<!--  다음 버튼-->
+							<th:block th:if="${pageMaker.next}">
+								<li class="pageMaker_btn next">
+									<a th:href="@{${pageMaker.pageEnd + 1}}">다음</a>
+								</li>
+							</th:block>
+						</ul>
+					</div>
+				</div>
+		</div>
+		
+	</div>
+    
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/jquery-3.3.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/popper.min.js}"></script>
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/customerDesign/noticeListCss/js/main.js}"></script>
+ 	
+ </article>
+ <!--  고유 스크립트 추가 -->
+    <script type="text/javascript"
+    		th:src = "@{/customerDesign/liveGuide/list/js/listPage.js}"></script>
+ </body>
+  
+</html>
+                   
+
+            

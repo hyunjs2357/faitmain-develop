@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko" layout:decorate="~{layout/myPage_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset = "UTF-8">
+    <title>문의 목록</title>
+    		
+	<script src="/productDesign/vendor/sweetalert/sweetalert.min.js"></script>	
+	
+	<style>
+	
+ 	
+		div .wrap-table-shopping-cart {
+					
+			/* Box */
+			height: 100%;
+			width: 800.984px;
+			border: 0;
+			border-top: 0px none rgb(128, 128, 128);
+			border-right: 1px solid rgb(230, 230, 230);
+			border-bottom: 0px none rgb(128, 128, 128);
+			border-left: 1px solid rgb(230, 230, 230);
+			margin: 0px;
+			padding: 0px;
+			max-height: none;
+			min-height: 0px;
+			max-width: none;
+			min-width: 0px;
+		
+		}
+		
+    </style>
+    
+    <script type="text/javascript">
+    	
+    	//let searchCondition = '[[${ search.searchCondition }]]';
+    	
+    	function fncGetList(currentPage) {
+			$("#currentPage").val(currentPage);	
+			$("form").submit();		
+		}
+		
+		function getInquirys(e) {
+			let inquiryNumber = $(e).children("input[type=hidden]").val();
+			console.log("inquiryNumber : " + inquiryNumber);
+			$.ajax(
+				{
+					url: "/inquiry/json/getInquiry/" + inquiryNumber,
+					method: "GET",
+					dataType: "json",
+					headers: {
+						"Accept": "application/json",
+						"Content-Type": "application/json"
+					},
+					success: function (JSONData, status) {
+						console.log("inquiryContent : " + typeof JSONData.inquiryReplyStatus);
+						var displayValue = "<tr class='table_row getInquiryArea' id='" + JSONData.inquiryNumber + "'>"
+							+ "<td colspan='4' style='padding-left:40px;'> Q. " + JSONData.inquiryContent + "<br/>";
+						if (JSONData.inquiryReplyStatus) {
+							console.log("답변이 존재함");
+							displayValue += "A. " + JSONData.inquiryReplyContent + "<br/>"
+										 + "   " + JSONData.inquiryReplyDate
+										 + "</td>"
+										 + "<td>"										
+										 +		"<button type='button' class='deleteBtn'><img src='/productDesign/images/icons/icon-close2.png' width='60%'/></button>"
+										 + "</td>";
+						}else{
+							displayValue += "</td>"
+										 +  "<td>"
+										 +  	"<button type='button' class='updateBtn' style='padding-right:30px;'>수정</button>"
+										 +		"<button type='button' class='deleteBtn'><img src='/productDesign/images/icons/icon-close2.png' width='60%' /></button>"
+										 +	"</td>";
+						}
+
+						displayValue += "</tr>";
+
+						$(".table_row.getInquiryArea").remove();
+						
+						console.log("currentTr " + $(e).parent().parent().index());
+						
+						$("#inquiryTable tr").eq($(e).parent().parent().index()).after(displayValue);									
+					}
+				});
+			}
+    	
+    	$(function(){
+			
+			$(document).on("click", ".updateBtn", function () {
+				
+				var inquiryNumber= $(this).parent().parent().attr('id');
+				self.location = "/inquiry/updateInquiry?resultJsp=updateInquiryUser&inquiryNumber=" + inquiryNumber
+				
+			});
+			
+			$(document).on("click", ".deleteBtn", function () {
+				
+				console.log("삭제");
+				console.log($(this).parent().parent().attr('id'));
+				var inquiryNumber= $(this).parent().parent().attr('id');
+				/**/
+				
+				swal({
+						title: "삭제하시겠습니까?", 
+						icon: "info",
+						buttons: true,
+						dangerMode: true,
+					}).then((result) => {
+						if(result){
+							
+							$.ajax(
+								{
+									url: "/inquiry/json/deleteInquiry/" + inquiryNumber,
+									method: "GET",
+									dataType: "json",
+									headers: {
+										"Accept": "application/json",
+										"Content-Type": "application/json"
+									},
+									success: function (data) {
+										console.log("delete : " + data.responseCode);
+										swal("리뷰 삭제", "삭제가 완료되었습니다!", "success").then(function () {
+												location.reload();
+										});
+									}
+								})
+								
+						}else{
+							swal("취소되었습니다");
+						}
+
+					});	
+				
+				
+				
+			});
+			
+		});
+		
+    </script>
+</head>
+<body>
+	<article  class="py-5" layout:fragment="content">
+		<div class="container">
+			<div class="row">
+			<!-- 
+				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+					<div class="m-l-25 m-r--38 m-lr-0-xl">-->
+						<div class="wrap-table-shopping-cart" style="margin: 0 auto;">
+							<table class="table-shopping-cart" id="inquiryTable">
+								<tr class="table_head">
+									<th class="column-1" style="padding-right: 30px;">상품명</th>
+									<th class="column-2"></th>
+									<th class="column-3">문의제목</th>
+									<th class="column-4">답변상태</th>
+									<th class="column-5"></th>
+								</tr>
+								
+								<th:block th:each="inquiry : ${list}">
+									<tr class="table_row">
+										<td class="column-1">
+											<div class="how-itemcart">
+												<img th:src="|../img/upload/${ inquiry.inquiryProduct.productMainImage }|" alt="IMG">
+											</div>
+										</td>
+										<td class="column-2" th:text="${inquiry.inquiryProduct.productName}"></td>
+										<td class="column-3" th:text="${inquiry.inquiryTitle}"></td>
+										<td class="column-4">
+											<th:block th:if="${inquiry.inquiryReplyStatus == true}">답변완료</th:block>
+											<th:block th:if="${inquiry.inquiryReplyStatus == false}">미답변</th:block>
+										</td>
+										<td class="column-5">
+											<button type="button" class="getInquiry" onclick="getInquirys(this)">
+												<input type="hidden" th:value="${inquiry.inquiryNumber}" />
+												<img src="/productDesign/images/icons/arrow_down.png">
+											</button>										
+										</td>
+									</tr>
+								</th:block>	
+								
+							</table>	
+
+						</div>
+					<!-- 	
+					</div>
+				</div>
+				-->
+			</div>
+			
+			<!-- 페이지(어떻게 할지 모르겠다) -->
+				<div th:replace="/product/pageNavigation :: pageNavi">
+				</div>
+			<!-- =============== -->
+			
+		</div>		
+		  
+	</article>
+</body>
+</html>

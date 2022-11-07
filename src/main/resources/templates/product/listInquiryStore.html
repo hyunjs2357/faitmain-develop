@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko" layout:decorate="~{layout/myPage_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset = "UTF-8">
+    <title>문의 목록</title>
+    
+	
+	<style>	
+					
+		div .wrap-table-shopping-cart {
+					
+			/* Box */
+			height: 100%;
+			width: 800.984px;
+			border: 0;
+			border-top: 0px none rgb(128, 128, 128);
+			border-right: 1px solid rgb(230, 230, 230);
+			border-bottom: 0px none rgb(128, 128, 128);
+			border-left: 1px solid rgb(230, 230, 230);
+			margin: 0px;
+			padding: 0px;
+			max-height: none;
+			min-height: 0px;
+			max-width: none;
+			min-width: 0px;
+		
+		}
+				
+    </style>
+    
+    <script type="text/javascript">
+    	
+    	//let searchCondition = '[[${ search.searchCondition }]]';
+    	
+    	function fncGetList(currentPage) {
+			$("#currentPage").val(currentPage);	
+			$("form").submit();		
+		}	
+    	
+    	$(function(){
+						
+			$("#replyYes").on("click", function () {
+				$("#searchKeyword").val("true");
+				console.log($("#searchKeyword").val());
+				fncGetList(1);
+			});
+			
+			$("#replyNo").on("click", function () {
+				$("#searchKeyword").val("false");
+				fncGetList(1);
+			});
+			
+		});
+		
+    </script>
+</head>
+<body>
+	<article layout:fragment="content">
+		<div class="container">		
+						
+			<div class="row">
+				<form th:action="@{/inquiry/getInquiryList?resultJsp=listInquiryStore}" method="post">
+					<input type="hidden" name="searchCondition" value="replyStatus" />
+					<input type="hidden" id="searchKeyword" name="searchKeyword" value=""/>
+				</form>
+				
+			<!--
+				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+					<div class="m-l-25 m-r--38 m-lr-0-xl">-->
+						<div class="wrap-table-shopping-cart" style="margin: 0 auto;">
+							
+							<span class="flex-w flex-m stext-111 cl2 p-b-19">
+								<span>
+									<button type="button" class="cl4" id="replyYes">답변완료</button>
+									<span class="cl12 m-l-4 m-r-6">|</span>
+								</span>
+							
+								<span>
+									<button type="button" class="cl4" id="replyNo">미답변</button>
+								</span>
+							</span>
+						
+							<table class="table-shopping-cart" id="inquiryTable">
+								<tr class="table_head">
+									<th class="column-1">상품번호</th>
+									<th class="column-2">문의제목</th>
+									<th class="column-3">문의자</th>
+									<th class="column-4">답변상태</th>
+									<th class="column-5"></th>
+								</tr>
+								
+								<th:block th:each="inquiry : ${list}">
+									<tr class="table_row">
+										<td class="column-1">
+											<a class="stext-115 cl7 hov-cl1 size-213 p-t-18" 
+											   th:href="@{/product/getProduct(productNumber=${inquiry.inquiryProduct.productNumber})}" 
+											   th:text="${inquiry.inquiryProduct.productNumber}">
+											</a>
+										</td>
+										<td class="column-2" >
+										
+											<th:block th:if="${inquiry.inquiryReplyStatus == true}">
+												<a class="stext-115 cl7 hov-cl1 size-213 p-t-18" 
+												   th:href="@{/inquiry/updateInquiry?resultJsp=updateInquiryStore&inquiryNumber=} + ${inquiry.inquiryNumber}" 
+												   th:text="${inquiry.inquiryTitle}">
+												</a>
+											</th:block>
+											
+											<th:block th:if="${inquiry.inquiryReplyStatus == false}">
+												<a class="stext-115 cl7 hov-cl1 size-213 p-t-18" 
+												   th:href="@{/inquiry/updateInquiry?resultJsp=addInquiryReply&inquiryNumber=} + ${inquiry.inquiryNumber}" 
+												   th:text="${inquiry.inquiryTitle}">
+												</a>
+											</th:block>			
+																			
+										</td>
+										<td class="column-3" th:text="|${#strings.substring(inquiry.userId, 0, 3)}****|"></td>
+										<td class="column-4">
+											<th:block th:if="${inquiry.inquiryReplyStatus == true}">답변완료</th:block>
+											<th:block th:if="${inquiry.inquiryReplyStatus == false}">미답변</th:block>
+										</td>
+										<td class="column-5">																					
+										</td>
+									</tr>
+								</th:block>	
+								
+							</table>	
+
+						</div>
+						
+				<!--	</div>
+				</div> -->
+			</div>
+			
+			<!-- 페이지(어떻게 할지 모르겠다) -->
+				<div th:replace="/product/pageNavigation :: pageNavi">
+				</div>
+			<!-- =============== -->
+			
+		</div>		
+		  
+	</article>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html
+        layout:decorate = "~{/layout/customer_layout}"
+        xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+      			
+
+<head>	
+	
+	<title>faitmain</title>
+	
+	<style>
+	 
+	 	body, html {
+		
+        	height: 100%;
+        	
+       	}
+       	
+       	.btn_wrap{
+	
+			margin-left: 30px;
+			
+		}
+       
+	</style>
+	
+</head>
+
+<body>
+	<article class = "lgf-1" layout:fragment = "content">
+		 <div class = "container" th:action="@{/customer/detailBoard}">
+		 <input type="hidden" name="boardType" value='L'/> 
+		
+		<!-- 	<input type="hidden" name="boardType" value='L'/> --> 
+				<tr >
+					<td >
+						
+							<th:block th:utext = "${customer.boardContent}"></th:block>
+					</td>
+				</tr>
+				
+				<th:block sec:authorize="isAuthenticated()">
+					<div class="flex-c-m flex-w w-full p-t-38">
+					
+						<span class="btn_wrap text-center" sec:authorize="hasRole('ROLE_admin')">
+							<a th:href="@{/customer/listBoard?boardType=L}"
+								class="flex-c-m stext-101 cl2 size-112 bg2 bor11 hov-btn3 p-lr-10 trans-04 m-b-10">목록</a>
+						</span>
+					
+						<span class="btn_wrap text-center" sec:authorize="hasRole('ROLE_admin')">
+							<a th:href="@{/customer/updateBoard(boardType=L,boardNumber=${customer.boardNumber})}"
+								class="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-10 trans-04 m-b-10">수정</a>
+						</span>
+					
+					</div>
+				</th:block>
+		</div>
+	</article>
+	
+</body>
+</html> 
+					

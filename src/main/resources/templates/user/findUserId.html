@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layout/default_layout}">
+
+<head>
+
+
+	<meta charset="UTF-8">
+	<title>faitmain login</title>
+
+	<!-- 카카오  API -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic+Coding:wght@400;700&display=swap"
+		rel="stylesheet">
+
+	<!--   <link href="/css/login.css" rel="stylesheet" /> 
+	<script src="https://kit.fontawesome.com/10b89606ac.js" crossorigin="anonymous"></script>-->
+	<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+	<!--<script src="https://code.jquery.com/jquery-3.3.1.js"></script>-->
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+	<script type="text/javascript">
+
+		$(function () {
+			$("#findId").on("click", function () {
+
+
+
+				if ($("#name").val() == null) {
+ 					Swal.fire({
+						title:'아이디를 입력해주세요' ,
+						text:'',
+						icon:'info',
+						
+					});
+					
+					$("input:text[name='name']").focus();
+					return;
+				}
+
+
+				var formData = $("#form").serialize();
+				console.log(formData);
+				$.ajax({
+					url: "/user/json/findId",
+					type: 'POST',
+					data: formData,
+					dataType: "text",
+					success: function (data) { //컨트롤러에서 넘어온 cnt값을 받는다
+						if (data == ("입력하신 정보와 유효한 id가 존재하지 않습니다.")) {
+
+							//alert("결과 :: " + data);
+							
+							Swal.fire({
+								title: '',
+								text: data,
+								icon: 'warning',
+							});
+							
+							
+
+						} else {
+							$(".modal-content p").append("찾으시는 아이디는 " + data + "입니다.");
+
+							openModal(); //ㅡ modal 창 
+						}
+
+					} // success 괄호
+
+
+				}) //ajax 괄호
+
+			});
+
+		});
+		$(function () {
+
+			var code2 = "";
+
+			$("#phoneChk").on("click", function () {
+
+
+				var phone = $("#phone").val();
+
+
+
+
+				$.ajax({
+					type: "GET", url: "uphoneCheck?phone=" + phone,
+					success: function (data) {
+						if (data == "error") {
+
+ 						Swal.fire({
+								title: '',
+								text: '휴대폰 번호가 올바르지 않습니다.',
+								icon: 'warning',
+							});
+							
+					
+
+							$(".successPhoneChk").text("유효한 번호를 입력해주세요.");
+
+							$(".successPhoneChk").css("color", "red");
+
+							$("#phone").attr("autofocus", true);
+
+
+						} else {
+
+
+							$("#phone2").attr("disabled", false);
+							$("#phoneChk2").css("display", "inline-block");
+							$(".successPhoneChk").text("인증번호를 입력한 뒤 본인인증을 눌러주십시오.");
+							$(".successPhoneChk").css("color", "green");
+							$("#phone").attr("readonly", true);
+							console.log("이거뭐야 data " + data)
+							code2 = data;
+						}
+					}
+				});
+ 					Swal.fire({
+						title: '인증번호가 발송 되었습니다.',
+						text: '인증번호를  입력해주세요 ',
+						icon: 'success',
+					});
+
+
+				console.log("dd");
+
+			})
+
+
+		})
+
+
+		$(function () {
+
+
+			$("#phoneChk2").on("click", function () {
+
+				var phone = $("#phone").val()
+				var phone2 = $("#phone2").val()
+				console.log("phone :" + phone)
+				console.log("phone2 :" + phone2)
+				console.log("체크체크까ㅣㅈ 옴 ")
+
+				$.ajax({
+					type: "GET",
+					url: "/user/smsCertificationRequest?phone=" + phone + "&phone2=" + phone2,
+
+
+					success: function (data) {
+						if (data == "error") {
+							console.log("유효하지 않습니다. .")
+
+						} else if (data == "F") {
+							console.log("   data " + data)
+							$(".successPhoneChk").text("인증번호가 일치하지 않습니다. 확인해주시기 바랍니다.");
+							$("#phoneDoubleChk").val("false");
+							$(this).attr("autofocus", true);
+
+
+
+						} else if (data = "T") {
+							console.log("   data " + data)
+							$(".successPhoneChk").text("인증번호가 일치합니다.!!1");
+							$(".successPhoneChk").css("color", "green");
+							$("#phoneDoubleChk").val("true");
+							$("#phone2").attr("disabled", true);
+
+
+
+						}
+
+
+					}  // suceess
+				});
+
+
+			});
+
+
+		})
+
+
+	</script>
+
+
+	<style>
+		.wrapper {
+			display: grid;
+			place-items: center;
+		}
+
+
+		#formContent {
+			font-family: 'Nanum Gothic Coding', monospace;
+		}
+
+		#getUser,
+		p,
+		input,
+		select,
+		textarea {
+			color: #585858;
+			font-family: "Source Sans Pro", Helvetica, sans-serif;
+			font-size: 11pt;
+			font-weight: 300;
+			line-height: 1.75;
+		}
+
+		.modal {
+			display: none;
+			/* Hidden by default */
+			position: fixed;
+			/* Stay in place */
+			z-index: 1;
+			/* Sit on top */
+			left: 0;
+			top: 0;
+			width: 100%;
+			/* Full width */
+			height: 100%;
+			/* Full height */
+			overflow: auto;
+			/* Enable scroll if needed */
+			background-color: rgb(0, 0, 0);
+			/* Fallback color */
+			background-color: rgba(0, 0, 0, 0.4);
+			/* Black w/ opacity */
+		}
+
+		/*모달 박스 */
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			/* 15% from the top and centered */
+			padding: 20px;
+			border: 1px solid #888;
+			width: 50%;
+			/* Could be more or less, depending on screen size */
+		}
+
+		/* The Close Button */
+		.close {
+			color: #aaa;
+			float: right;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		
+		
+		.btn{
+			background-color: black;
+			color:white;
+			border: none;
+		}
+		
+		.btn:hover{
+			background-color: black;
+			color:white;
+			border: none;
+		}
+	</style>
+
+
+	</style>
+
+	<!-- 길이는 스타일 건들이 -->
+</head>
+
+
+<article layout:fragment="content">
+
+	<div class="container col-lg-2"> </div>
+
+
+
+	<div class="container col-lg-8">
+		<div class="wrapper">
+			<br>
+			<div id="formContent">
+				<h3>아이디찾기</h3>
+				<hr>
+
+				<form id="form" onsubmit="return false">
+
+					<div class="form-group">
+						<h5>이름</h5>
+						<div>
+							<input type="text" class="form-control" id="name" name="name" placeholder="회원이름">
+						</div>
+					</div>
+					<br>
+
+					<div class="form-group">
+						<h5> 휴대전화번호 </h5>
+						<div>
+							<div class="input-group mb-2">
+								<input class="form-control" id="phone" name="phoneNumber"
+									placeholder="휴대전화번호 입력 01012345678" type="text" />
+								<span class="btn btn-success" id="phoneChk"> 인증번호 보내기</span>
+							</div>
+						</div>
+
+
+						<div>
+							<div class="input-group mb-2">
+								<input class="form-control" disabled id="phone2" name="CertificationNumber"
+									placeholder="인증번호 입력" required type="text" />
+
+								<span class="btn btn-success" disabled id="phoneChk2" name="CertificationNumber"
+									placeholder="인증번호 입력" required> 본인인증</span>
+
+							</div>
+							<span class="point successPhoneChk">휴대폰 번호 입력후 인증번호 보내기를 해주십시오.</span>
+
+						</div>
+
+						<input id="phoneDoubleChk" type="hidden" /> </p>
+					</div>
+					<div class="form-group">
+						<div>
+							<span class="fw-bolder btn btn-success col-md-12" id="findId"> 아이디 찾기</span>
+						</div>
+
+					</div>
+
+				</form>
+			</div>
+
+
+			<!-- 모l -->
+			<div id="myModal" class="modal">
+
+				<!-- Modal content -->
+				<div class="modal-content">
+					<span id="close" class="close" onclick="clseoModal();">&times;</span>
+					<!--모달에 x버튼 클릭시 나가기  -->
+					<p> </p>
+
+				</div>
+
+			</div>
+
+			<script>
+
+				function openModal() {
+					modal.style.display = "block";
+				}
+				function clseoModal() {
+
+					console.log("spane");
+					modal.style.display = "none";
+
+
+					window.opener.top.location.href = "/user/login"
+					window.close()
+
+					modal.style.display = "block";
+				}
+
+				var modal = document.getElementById('myModal');
+
+				// Get the button that opens the modal
+				var btn = document.getElementById("myBtn");
+
+				// Get the <span> element that closes the modal
+				var span = document.getElementById("close");
+				console.log("span" + span);
+
+				// When the user clicks on the button, open the modal 
+				btn.onclick = function () {
+					modal.style.display = "block";
+				}
+
+				// When the user clicks on <span> (x), close the modal
+				span.onclick = function () {
+					console.log("spane");
+					modal.style.display = "none";
+
+
+					window.opener.top.location.href = "/user/login"
+					window.close()
+
+				}
+
+				// When the user clicks anywhere outside of the modal, close it
+				window.onclick = function (event) {
+					if (event.target == modal) {
+						modal.style.display = "none";
+					}
+				}
+
+			</script>
+
+		</div>
+
+	</div>
+
+
+
+	</div>
+
+
+	<div class="container col-lg-2"> <br> <br> <br> <br> </div>
+
+
+
+
+</article>
+
+</body>
+
+</html>

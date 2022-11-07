@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src = "https://code.jquery.com/jquery-1.12.4.min.js" type = "text/javascript"></script>
+<title>Fait-Main 채팅창 관리탭</title>
+<style>
+@import 'https://fonts.googleapis.com/css?family=Montserrat:300,400,700';
+body {
+  background-color:aqua;
+}
+
+tr.kick {
+	color:crimson;
+}
+
+tr.mute {
+	color:coral;
+}
+
+.rwd-table {
+  margin: 1em 0;
+  min-width: 300px;
+}
+.rwd-table tr {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+.rwd-table th {
+  display: none;
+}
+.rwd-table td {
+  display: block;
+}
+.rwd-table td:first-child {
+  padding-top: 0.5em;
+}
+.rwd-table td:last-child {
+  padding-bottom: 0.5em;
+}
+.rwd-table td:before {
+  content: attr(data-th) ": ";
+  font-weight: bold;
+  width: 6.5em;
+  display: inline-block;
+}
+@media (min-width: 480px) {
+  .rwd-table td:before {
+    display: none;
+  }
+}
+.rwd-table th, .rwd-table td {
+  text-align: left;
+}
+@media (min-width: 480px) {
+  .rwd-table th, .rwd-table td {
+    display: table-cell;
+    padding: 0.25em 0.5em;
+  }
+  .rwd-table th:first-child, .rwd-table td:first-child {
+    padding-left: 0;
+  }
+  .rwd-table th:last-child, .rwd-table td:last-child {
+    padding-right: 0;
+  }
+}
+
+body {
+  padding: 0 2em;
+  font-family: Montserrat, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  color: #444;
+  background: #eee;
+}
+
+h1 {
+  font-weight: normal;
+  letter-spacing: -1px;
+  color: #34495E;
+}
+
+.rwd-table {
+  background: #34495E;
+  color: #fff;
+  border-radius: 0.4em;
+  overflow: hidden;
+}
+.rwd-table tr {
+  border-color: #46637f;
+}
+.rwd-table th, .rwd-table td {
+  margin: 0.5em 1em;
+}
+@media (min-width: 480px) {
+  .rwd-table th, .rwd-table td {
+    padding: 1em !important;
+  }
+}
+.rwd-table th, .rwd-table td:before {
+  color: #dd5;
+}
+</style>
+</head>
+
+<body onLoad="self.focus();window.onblur=function(){ if(!opener.closed) window.focus()}">
+<script th:inline="javascript">
+    /*<![CDATA[*/ 
+
+$('body').on('click', '[name=return]', function(event) {
+	lel();
+});
+
+
+//강제퇴장 해제
+$('body').on('click', '[name=cancleKick]', function(event) {
+	
+	let clientKey = []; // key 값을 담을 배열
+    const roomId = $('.keepRoomId').val();
+           
+    //삭제 key value
+    // chk라는 클래스를 가진 체크박스 중에 체크가 된
+    // object들을 찾아서 delchk라는 배열에 담는다.
+
+    
+    $('.clientKey:checked').each(function(){
+        clientKey.push($(this).val());
+    });
+	   if( clientKey != "" ) {
+	$.ajax({
+		url : '/live/json/cancleKickUser/' + roomId + "/" + clientKey ,
+		type : 'GET',
+		async : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){},
+		error : function(error){}
+		
+	});
+	}
+	setTimeout(function(){
+    reloadSanctionUserList();
+    }, 100)
+});  
+
+
+$('body').on('click', '[name=cancleMute]', function(event) {
+	
+	let clientKey = []; // key 값을 담을 배열
+    const roomId = $('.keepRoomId').val();
+           
+    //삭제 key value
+    // chk라는 클래스를 가진 체크박스 중에 체크가 된
+    // object들을 찾아서 delchk라는 배열에 담는다.
+
+    
+    $('.clientKey:checked').each(function(){
+        clientKey.push($(this).val());
+    });
+	   if( clientKey != "" ) {
+	$.ajax({
+		url : '/live/json/cancleMuteUser/' + roomId + "/" + clientKey ,
+		type : 'GET',
+		async : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){},
+		error : function(error){}
+		
+	});
+	}
+	
+	setTimeout(function(){
+    reloadSanctionUserList();
+    }, 100)
+
+
+
+});     
+    
+//유저 강제퇴장 - 1
+function kickUser() { 
+	
+	var clientKey = []; // key 값을 담을 배열
+    var roomId = $('.keepRoomId').val();
+    
+    var ck = unescape(clientKey);
+           
+    //삭제 key value
+    // chk라는 클래스를 가진 체크박스 중에 체크가 된
+    // object들을 찾아서 delchk라는 배열에 담는다.
+    
+    $('.clientKey:checked').each(function(){
+        clientKey.push($(this).val());
+    });
+    console.log("클라이언트 키 : " + ck);
+    console.log("채널 키 : " + roomId);
+    
+    	$.ajax({
+		url :  '/live/json/kickUser/' + roomId + "/" + clientKey,
+		type : 'GET',
+		async : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){},
+		error : function(error){}
+		
+	});
+   }
+   
+   //유저 벙어리 - 1
+   function muteUser() { 
+	
+	var clientKey = []; // key 값을 담을 배열
+    var roomId = $('.keepRoomId').val();
+           
+    //삭제 key value
+    // chk라는 클래스를 가진 체크박스 중에 체크가 된
+    // object들을 찾아서 delchk라는 배열에 담는다.
+    
+    $('.clientKey:checked').each(function(){
+        clientKey.push($(this).val());
+    });
+    console.log("클라이언트 키 : " + clientKey);
+    console.log("채널 키 : " + roomId);
+    	$.ajax({
+		url : '/live/json/muteUser/' + roomId + "/" + clientKey ,
+		type : 'GET',
+		async : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){},
+		error : function(error){}
+		
+	});
+   }
+    opener.popup = this;
+
+//채팅방 유저 조회    
+function lol(){
+	if(status == 0){		
+	
+	$.ajax({
+		url : '/live/json/liveManageTab',
+		type : 'POST',
+		async : true,
+		cache : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){
+			var status = 0;
+			$('.test').remove();
+				var abc = "";		
+			for(let i = 0 ; i < data.length ; i++) {
+					abc += "<tr class='test'><td><input class='clientKey' type='checkbox' name='clientKey' value=" + data[i].clientKey + "></td>"
+					     + "<td data-th='ClientKey'>" + data[i].clientKey + "</td>"
+					     + "<td data-th='NickName'>" + data[i].nickName + "</td>"
+					     + "<td data-th='Grade'>" + data[i].grade + "</tr>";
+	}
+				console.log(abc);
+			
+				$("table").children(":first").append(abc);
+			
+			
+			
+		},
+		error : function(error){}	
+	});
+	}
+}
+
+//제재 유저 조회에서 다시 채팅방 유저 조회 페이지로...
+function lel(){
+	
+	$.ajax({
+		url : '/live/json/liveManageTab',
+		type : 'POST',
+		async : true,
+		cache : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){
+			status = 0;
+			$('.test').remove();
+			$('.kick').remove();
+			$('.mute').remove();
+			$('.muteBar').remove();
+			$('#cancleKick').remove();
+			$('#cancleMute').remove();
+			$('#return').remove();
+			$('div.button').append("<button type='button' class='btn btn-danger'  id='kick' onclick='kickUser()'>강제퇴장</button> ");
+			$('div.button').append('<button type="button" class="btn btn-warning" id="mute" onclick="muteUser()">채팅제한</button> ');
+			$('div.button').append('<button type="button" class="btn btn-warning" id="kickUserList" onclick="sanctionUserList()">제재 유저 조회</button>');
+			
+		
+				var abc = "";		
+			for(let i = 0 ; i < data.length ; i++) {
+					abc += "<tr class='test'><td><input class='clientKey' type='checkbox' name='clientKey' value=" + data[i].clientKey + "></td>"
+					     + "<td data-th='ClientKey'>" + data[i].clientKey + "</td>"
+					     + "<td data-th='NickName'>" + data[i].nickName + "</td>"
+					     + "<td data-th='Grade'>" + data[i].grade + "</td></tr>";
+	}
+				console.log(abc);
+			
+				$("table").children(":first").append(abc);
+				
+
+				
+			
+			
+			
+		},
+		error : function(error){}	
+	});
+}
+
+//강제퇴장 및 채팅제한 유저를 동시에 조회하는 식으로 구현해야함.. AND 해당되는 유저 체크박스 체크 후 제재해체 시 유저가 당한 제재가 풀리는식으로 ...
+//and  클라이언트키가 유지되게 만들어야함.. liveController 쪽에서 구현해봤는데 어려움 . 
+function sanctionUserList(){
+	
+	status = 1;
+	
+	$.ajax({
+		url : '/live/json/sanctionUserList',
+		type : 'POST',
+		async : true,
+		cache : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){
+			$(".test").remove();
+			$("#kickUserList").remove();
+			$('#mute').remove();
+			$('#kick').remove();
+			$("div.button").append("<button type='button' name='cancleKick' id='cancleKick' class='btn btn-danger'>강제퇴장 해제</button> ");
+			$("div.button").append("<button type='button' name='cancleMute' id='cancleMute' class='btn btn-warning'>채팅제한 해제</button> ");
+			$("div.button").append("<button type='button' name='return' id='return' class='btn btn-primary'>채팅방 유저 조회</button>");
+				var abc = "";		
+			for(let i = 0 ; i < data.length ; i++) {
+					abc += "<tr class='kick'><td><input class='clientKey' type='checkbox' name='clientKey' value=" + data[i].clientKey + "></td>"
+					     + "<td data-th='ClientKey'>" + data[i].clientKey + "</td>"
+					     + "<td data-th='NickName'>" + data[i].nickName + "</td>"
+					     + "<td data-th='Grade'>" + data[i].grade + "</td></tr>";
+	}
+				console.log(abc);
+				
+				$("table").children(":first").append(abc);
+				
+			
+			muteUserList();
+		},
+		error : function(error){}	
+	});
+}
+
+function muteUserList(){
+	
+	$.ajax({
+		url : '/live/json/muteUserList',
+		type : 'POST',
+		async : true,
+		cache : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){
+				var abc = "";
+				
+					abc+= "<tr class='muteBar'>"
+	    			    + "<th>Select</th>"
+	    				+ "<th>ClientKey</th>"
+	   					+ "<th>NickName</th>"
+	    				+ "<th>Grade</th>"
+	  					+ "</tr>";		
+			for(let i = 0 ; i < data.length ; i++) {
+					abc +="<tr class='mute'><td><input class='clientKey' type='checkbox' name='clientKey' value=" + data[i].clientKey + "></td>"
+					     + "<td data-th='ClientKey'>" + data[i].clientKey + "</td>"
+					     + "<td data-th='NickName'>" + data[i].nickName + "</td>"
+					     + "<td data-th='Grade'>" + data[i].grade + "</td></tr>";
+	}
+				console.log("알랄랄");
+			
+				$("table").children(":first").append(abc);
+			
+			
+			
+		},
+		error : function(error){}	
+	});
+}
+
+function reloadSanctionUserList(){
+	
+	status = 1;
+	
+	$.ajax({
+		url : '/live/json/sanctionUserList',
+		type : 'POST',
+		async : true,
+		cache : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){
+			$(".test").remove();
+			$("#kickUserList").remove();
+			$('#mute').remove();
+			$('.button').children().remove();
+			$('#kick').remove();
+			$('.kick').remove();
+			$('.mute').remove();
+			$("div.button").append("<button type='button' name='cancleKick' id='cancleKick' class='btn btn-danger'>강제퇴장 해제</button> ");
+			$("div.button").append("<button type='button' name='cancleMute' id='cancleMute' class='btn btn-warning'>채팅제한 해제</button> ");
+			$("div.button").append("<button type='button' name='return' id='return' class='btn btn-primary'>채팅방 유저 조회</button>");
+			$('.lol').remove();	
+				var abc = '<tr class="lol">\ <th>Select</th>\<th>ClientKey</th>\<th>NickName</th><th>Grade</th></tr>';
+		    	
+			for(let i = 0 ; i < data.length ; i++) {
+					abc += "<tr class='kick'><td><input class='clientKey' type='checkbox' name='clientKey' value=" + data[i].clientKey + "></td>"
+					     + "<td data-th='ClientKey'>" + data[i].clientKey + "</td>"
+					     + "<td data-th='NickName'>" + data[i].nickName + "</td>"
+					     + "<td data-th='Grade'>" + data[i].grade + "</td></tr>";
+	}
+				console.log(abc);
+				
+				$("table").children(":first").append(abc);
+			
+ 			 	reloadMuteUserList();
+
+		},
+		error : function(error){}	
+	});
+	
+}
+
+function reloadMuteUserList(){
+	
+	$.ajax({
+		url : '/live/json/muteUserList',
+		type : 'POST',
+		async : true,
+		cache : true,
+		dataType : "json",
+		timeout : 2000,
+		success : function(data){
+			$('.muteBar').remove();	
+				var abc = '<tr class="muteBar">\ <th>Select</th>\<th>ClientKey</th>\<th>NickName</th><th>Grade</th></tr>';
+					
+			for(let i = 0 ; i < data.length ; i++) {
+					abc +="<tr class='mute'><td><input class='clientKey' type='checkbox' name='clientKey' value=" + data[i].clientKey + "></td>"
+					     + "<td data-th='ClientKey'>" + data[i].clientKey + "</td>"
+					     + "<td data-th='NickName'>" + data[i].nickName + "</td>"
+					     + "<td data-th='Grade'>" + data[i].grade + "</td></tr>";
+	}
+				console.log("알랄랄");
+			
+				$("table").children(":first").append(abc);
+			
+			
+		},
+		error : function(error){}	
+	});
+}
+
+
+    /*]]>*/
+</script>
+
+<br/>
+<input class="keepRoomId" type="hidden" name="keepRoomId" th:value="${userList[0].roomId}"/> 
+<input type="hidden" id="storeNickname" th:value="${#authentication.principal.user.storeName}" />
+<h1> Live User List </h1>
+<div class="button">
+<button type="button" class="btn btn-danger"  id="kick" onclick="kickUser()"/>강제퇴장</button>
+<button type="button" class="btn btn-warning" id="mute" onclick="muteUser()"/>채팅제한</button>
+<button type="button" class="btn btn-warning" id="kickUserList" onclick="sanctionUserList()"/>제재 유저 조회</button>
+</div>
+<div style="height:200px; overflow:auto">
+	<table class="rwd-table">
+	  <tr class="lol">
+	    <th>Select</th>
+	    <th>ClientKey</th>
+	    <th>NickName</th>
+	    <th>Grade</th>
+	  </tr>
+	  <th:block th:each="data : ${userList}" >
+	  <tr class="test">
+		<td><input class="clientKey" type="checkbox" name="ClientKey" th:value="${data.clientKey}"/></td>
+		<input class="roomId" type="hidden" name="roomId" th:value="${data.roomId}"/> 
+		<input class="nickName" type="hidden" name="nickName" th:value="${data.nickName}"/>
+	    <td data-th="ClientKey">[[${data.clientKey}]]</td>
+	    <td data-th="NickName">[[${data.nickName}]]</td>
+	    <td data-th="Grade">[[${data.grade}]]</td>
+	  </tr>
+	  </th:block>
+	</table>
+</div>
+</body>
+</html>

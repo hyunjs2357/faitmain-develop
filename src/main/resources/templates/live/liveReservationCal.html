@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				layout:decorate = "~{layout/default_layout}"
+      			xmlns:layout = "http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+
+<meta charset="EUC-KR">
+<title>Live Reservation Calendar</title>
+
+	<!-- Full Calendar CDN -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.css" integrity="sha256-jLWPhwkAHq1rpueZOKALBno3eKP3m4IMB131kGhAlRQ=" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.js" integrity="sha256-bFpArdcNM5XcSM+mBAUSDAt4YmEIeSAdUASB2rrSli4=" crossorigin="anonymous"></script>
+	<script th:src="@{/js/liveFullCalendar.js}"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	
+	<style>
+		/*@font-face{
+			src: url("../font/BMJUA_ttf.ttf");
+			font-family: "jua";
+		}*/
+		
+		h2 {
+			/*padding-left: 50px;
+			padding-top : 30px;
+			margin-bottom: 15px;*/
+		}
+	
+		#calendar{
+			height : 800px;
+			width : 1000px;
+			padding-bottom: 50px;
+			margin : auto;
+		}
+	</style>
+</head>
+<body>
+	<article layout:fragment="content"  >
+		<div class="container p-t-70">
+			<h2 class="title mtext-112 cl2 p-b-40 p-lr-80">프리미엄 라이브 예약 캘린더</h2>
+			<form>
+				<div id='calendar'>
+				</div>
+				<input type="hidden" name="date" value="">
+			</form>
+		</div>
+	</article>
+
+</body>
+
+
+
+</html>
